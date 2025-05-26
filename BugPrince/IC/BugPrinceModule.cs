@@ -2,13 +2,17 @@
 using BugPrince.UI;
 using BugPrince.Util;
 using ItemChanger;
+using Modding;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
+using RandomizerMod.IC;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace BugPrince.IC;
 
@@ -43,7 +47,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     {
         Index();
 
-        Events.OnEnterGame += RegisterRoomSelector;
+        Events.OnEnterGame += DoLateInitialization;
     }
 
     internal void Index()
@@ -64,15 +68,27 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     public override void Unload()
     {
-        Events.OnEnterGame -= RegisterRoomSelector;
+        Events.OnEnterGame -= DoLateInitialization;
         On.GameManager.BeginSceneTransition -= SelectRandomizedTransition;
     }
 
-    private void RegisterRoomSelector() => On.GameManager.BeginSceneTransition += SelectRandomizedTransition;
+    private static RandomizerSettings RS() => RandomizerMod.RandomizerMod.RS;
 
-    private static RandoModContext RandoCtx => RandomizerMod.RandomizerMod.RS.Context;
+    private static RandoModContext RandoCtx() => RS().Context;
 
-    private static TransitionSettings TransitionSettings => RandomizerMod.RandomizerMod.RS.GenerationSettings.TransitionSettings;
+    private static TransitionSettings TransitionSettings() => RandomizerMod.RandomizerMod.RS.GenerationSettings.TransitionSettings;
+
+    private static Dictionary<Transition, ITransition> TransitionOverrides() => ItemChanger.Internal.Ref.Settings.TransitionOverrides;
+
+    private void DoLateInitialization()
+    {
+        // Must hook after ItemChanger.
+        On.GameManager.BeginSceneTransition += SelectRandomizedTransition;
+
+        UpdateTransitionPlacements();
+        RandomizerMod.RandomizerMod.RS.TrackerData.Reset();
+        RandomizerMod.RandomizerMod.RS.TrackerDataWithoutSequenceBreaks.Reset();
+    }
 
     private bool IsEligibleGroup(CostGroup group)
     {
@@ -98,7 +114,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     private static bool IsCompletable(ProgressionManager pm)
     {
-        var unclaimed = RandoCtx.itemPlacements;
+        List<ItemPlacement> unclaimed = [.. RandoCtx().itemPlacements];
 
         // TODO: Ensure all transitions are reachable as well.
         while (unclaimed.Count > 0)
@@ -123,18 +139,18 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     }
 
     private bool CanSwapTransitions(
-        IReadOnlyDictionary<Transition, RandoModTransition> transitionDefs,
         Transition src1, Transition dst1, Transition src2, Transition dst2)
     {
         if (src1 == src2 && dst1 == dst2) return true;
 
-        var lm = RandoCtx.LM;
-        ProgressionManager pm = new(lm, RandoCtx);
+        var ctx = RandoCtx();
+        var lm = ctx.LM;
+        ProgressionManager pm = new(lm, ctx);
         var mu = pm.mu;
 
         mu.AddWaypoints(lm.Waypoints);
         mu.AddTransitions(lm.TransitionLookup.Values);
-        mu.AddPlacements(RandoCtx.Vanilla);
+        mu.AddPlacements(ctx.Vanilla);
 
         List<UpdateEntry> updates = [];
         foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides)
@@ -148,8 +164,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
             TransitionPlacement t = new()
             {
-                Source = transitionDefs[src],
-                Target = transitionDefs[dst],
+                Source = RandoTransition(src),
+                Target = RandoTransition(dst),
             };
             updates.Add(new PrePlacedItemUpdateEntry(t));
         }
@@ -161,25 +177,104 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         return IsCompletable(pm);
     }
 
+
+    private void RecordEnterExit(Transition src, Transition dst)
+    {
+        ResolvedEnteredTransitions.Add(src);
+        ResolvedExitedTransitions.Add(dst);
+    }
+
+    private static readonly FieldInfo trackerUpdateTransitionLookupField = typeof(TrackerUpdate).GetField("transitionLookup", BindingFlags.NonPublic | BindingFlags.Instance);
+
+    private Dictionary<Transition, int>? srcTransitionIndices;
+    private int SrcTransitionIndex(Transition transition)
+    {
+        if (srcTransitionIndices == null)
+        {
+            srcTransitionIndices = [];
+            var ctx = RandoCtx();
+            for (int i = 0; i < ctx.transitionPlacements.Count; i++) srcTransitionIndices[ctx.transitionPlacements[i].Source.ToStruct()] = i;
+        }
+
+        return srcTransitionIndices[transition];
+    }
+
+    private Dictionary<Transition, RandoModTransition>? randoTransitions;
+    private RandoModTransition RandoTransition(Transition transition)
+    {
+        if (randoTransitions == null)
+        {
+            randoTransitions = [];
+            var ctx = RandoCtx();
+
+            // Targets take priority.
+            foreach (var p in ctx.transitionPlacements) randoTransitions[p.Source.ToStruct()] = p.Source;
+            foreach (var p in ctx.transitionPlacements) randoTransitions[p.Target.ToStruct()] = p.Target;
+        }
+
+        return randoTransitions[transition];
+    }
+
+    private void UpdateTransitionPlacements(List<Transition>? srcs = null)
+    {
+        var overrides = TransitionOverrides();
+        var ctx = RandoCtx();
+
+        var trackerUpdate = ItemChangerMod.Modules.Get<TrackerUpdate>();
+        var transitionLookup = (Dictionary<string, string>)trackerUpdateTransitionLookupField.GetValue(trackerUpdate);
+
+        if (srcs != null)
+        {
+            foreach (var src in srcs)
+            {
+                var idx = SrcTransitionIndex(src);
+                var dst = overrides[src].ToStruct();
+
+                ctx.transitionPlacements[idx] = new(RandoTransition(dst), RandoTransition(src));
+                transitionLookup[src.ToString()] = dst.ToString();
+            }
+        }
+        else
+        {
+            List<TransitionPlacement> updatedPlacements = [];
+            transitionLookup.Clear();
+            foreach (var p in ctx.transitionPlacements)
+            {
+                var src = p.Source;
+                var target = RandoTransition(overrides[p.Source.ToStruct()].ToStruct());
+                updatedPlacements.Add(new(target, p.Source));
+                transitionLookup[src.Name] = target.Name;
+            }
+            ctx.transitionPlacements.Clear();
+            ctx.transitionPlacements.AddRange(updatedPlacements);
+        }
+    }
+
     private void SwapTransitions(Transition src1, Transition src2)
     {
         var overrides = ItemChanger.Internal.Ref.Settings.TransitionOverrides;
         var dst1 = overrides[src1].ToStruct();
         var dst2 = overrides[src2].ToStruct();
-        ResolvedEnteredTransitions.Add(src1);
-        ResolvedExitedTransitions.Add(dst2);
+        RecordEnterExit(src1, dst2);
         (overrides[src1], overrides[src2]) = (overrides[src2], overrides[src1]);
 
-        if (TransitionSettings.Coupled)
+        List<Transition> toUpdate = [src1, src2];
+        if (TransitionSettings().Coupled)
         {
-            if (overrides.ContainsKey(dst1)) overrides[dst1] = src2;
+            if (overrides.ContainsKey(dst1))
+            {
+                overrides[dst1] = src2;
+                toUpdate.Add(dst1);
+            }
             if (overrides.ContainsKey(dst2))
             {
                 overrides[dst2] = src1;
-                ResolvedEnteredTransitions.Add(dst2);
-                ResolvedExitedTransitions.Add(src1);
+                RecordEnterExit(dst2, src1);
+                toUpdate.Add(dst2);
             }
         }
+
+        UpdateTransitionPlacements(toUpdate);
     }
 
     private List<SceneChoiceInfo>? CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
@@ -198,13 +293,6 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         }
 
         potentialTargets.Shuffle(new());  // FIXME: Seed
-
-        Dictionary<Transition, RandoModTransition> transitionDefs = [];
-        foreach (var t in RandoCtx.transitionPlacements)
-        {
-            transitionDefs[t.Source.ToStruct()] = t.Source;
-            transitionDefs[t.Target.ToStruct()] = t.Target;
-        }
 
         SortedDictionary<int, List<(Transition, Transition)>> backfillDict = [];
         SortedDictionary<int, List<(Transition, Transition)>> shopBackfillDict = [];
@@ -232,7 +320,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         // FIXME: Handle previous for rerolls
         bool MaybeAdd(Transition newSrc, Transition newTarget)
         {
-            if (!CanSwapTransitions(transitionDefs, src, target, newSrc, newTarget)) return false;
+            if (!CanSwapTransitions(src, target, newSrc, newTarget)) return false;
 
             SceneChoiceInfo info = new()
             {
@@ -341,23 +429,5 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 MaybeSelectNewPin(decision.newPin?.Target.SceneName);
                 return CalculateSceneChoices(src, target, choices);
             });
-    }
-}
-
-// Maybe delete
-internal class BugPrinceSceneLoadInfo : GameManager.SceneLoadInfo
-{
-    internal BugPrinceSceneLoadInfo(GameManager.SceneLoadInfo orig)
-    {
-        IsFirstLevelForPlayer = orig.IsFirstLevelForPlayer;
-        SceneName = orig.SceneName;
-        HeroLeaveDirection = orig.HeroLeaveDirection;
-        EntryGateName = orig.EntryGateName;
-        EntryDelay = orig.EntryDelay;
-        PreventCameraFadeOut = orig.PreventCameraFadeOut;
-        WaitForSceneTransitionCameraFade = orig.WaitForSceneTransitionCameraFade;
-        Visualization = orig.Visualization;
-        AlwaysUnloadUnusedAssets = orig.AlwaysUnloadUnusedAssets;
-        forceWaitFetch = orig.forceWaitFetch;
     }
 }

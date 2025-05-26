@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "BugPrince\\BugPrince.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "DataUpdater\\DataUpdater.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -13,8 +13,8 @@ public static class DataUpdater
         var producers = CostGroup.LoadProducers();
         foreach (var e in producers)
         {
-            if (e.Value is CostGroupProducer p) p.Name = e.Key;
-            else if (e.Value is TieredCostGroupProducer p) p.Name = e.Key;
+            if (e.Value is CostGroupProducer cgp) cgp.Name = e.Key;
+            else if (e.Value is TieredCostGroupProducer tcgp) tcgp.Name = e.Key;
         }
 
         JsonUtil.RewriteJsonFile(producers, costGroupsPath);

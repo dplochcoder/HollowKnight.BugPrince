@@ -20,8 +20,8 @@ internal record RoomSelectionDecision
 
 internal class RoomSelectionUI : MonoBehaviour
 {
-    internal delegate void SelectionCb(RoomSelectionDecision);
-    internal delegate List<SceneChoiceInfo>? RerollCb(RoomSelectionRerollDecision);
+    internal delegate void SelectionCb(RoomSelectionDecision decision);
+    internal delegate List<SceneChoiceInfo>? RerollCb(RoomSelectionRerollDecision decision);
 
     private BugPrinceModule? module;
     private List<SceneChoiceInfo> choiceInfos = [];
@@ -57,7 +57,7 @@ internal class RoomSelectionUI : MonoBehaviour
     private const float FINAL_SCENE_STAGGER = 0.5f;
     private const float FINAL_DELAY = 0.5f;
 
-    private List<SceneChoice> choiceObjects = [];
+    private readonly List<SceneChoice> choiceObjects = [];
 
     private IEnumerator LoadIn()
     {
@@ -78,7 +78,7 @@ internal class RoomSelectionUI : MonoBehaviour
     }
 
     private bool rerolled = false;
-    private bool havePinned => choiceInfos[choiceInfos.Count - 1].Pinned;
+    private bool HavePinned => choiceInfos[choiceInfos.Count - 1].Pinned;
 
     private int selection = 0;
     private int? newPinSelection;
@@ -104,7 +104,7 @@ internal class RoomSelectionUI : MonoBehaviour
     private void TrySelectIndex(int selection)
     {
         var info = choiceInfos[selection];
-        if (newPinSelection.HasValue && havePinned && selection != newPinSelection.Value && selection != choiceInfos.Count - 1)
+        if (newPinSelection.HasValue && HavePinned && selection != newPinSelection.Value && selection != choiceInfos.Count - 1)
         {
             // Can't make 2 pins.
             selectionCorners?.Shake();
