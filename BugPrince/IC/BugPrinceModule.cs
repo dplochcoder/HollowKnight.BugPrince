@@ -120,7 +120,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         return true;
     }
 
-    private bool CanSwapTransitions(IReadOnlyDictionary<Transition, RandoModTransition> transitionDefs,
+    private bool CanSwapTransitions(
+        IReadOnlyDictionary<Transition, RandoModTransition> transitionDefs,
         Transition src1, Transition dst1, Transition src2, Transition dst2)
     {
         if (src1 == src2 && dst1 == dst2) return true;
@@ -137,8 +138,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides)
         {
             var src = e.Key;
-            Transition dst;
 
+            Transition dst;
             if (src == src1) dst = dst2;
             else if (src == src2) dst = dst1;
             else dst = e.Value.ToStruct();
