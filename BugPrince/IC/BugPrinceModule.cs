@@ -166,12 +166,19 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         var overrides = ItemChanger.Internal.Ref.Settings.TransitionOverrides;
         var dst1 = overrides[src1].ToStruct();
         var dst2 = overrides[src2].ToStruct();
+        ResolvedEnteredTransitions.Add(src1);
+        ResolvedExitedTransitions.Add(dst2);
         (overrides[src1], overrides[src2]) = (overrides[src2], overrides[src1]);
 
         if (TransitionSettings.Coupled)
         {
             if (overrides.ContainsKey(dst1)) overrides[dst1] = src2;
-            if (overrides.ContainsKey(dst2)) overrides[dst2] = src1;
+            if (overrides.ContainsKey(dst2))
+            {
+                overrides[dst2] = src1;
+                ResolvedEnteredTransitions.Add(dst2);
+                ResolvedExitedTransitions.Add(src1);
+            }
         }
     }
 
