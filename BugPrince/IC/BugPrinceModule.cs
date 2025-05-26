@@ -99,6 +99,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     private static bool IsCompletable(ProgressionManager pm)
     {
         var unclaimed = RandoCtx.itemPlacements;
+
+        // TODO: Ensure all transitions are reachable as well.
         while (unclaimed.Count > 0)
         {
             List<ItemPlacement> reachable = [];
