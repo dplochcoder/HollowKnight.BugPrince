@@ -1,0 +1,12 @@
+PurenailCore
+RandomizerCore
+Randomizer 4
+ItemChanger
+RandoSettingsManager
+MenuChanger
+RandoPlus
+MoreLocations
+Randomizable Levers
+TheRealJournalRando
+Breakable Wall Randomizer
+SFCore

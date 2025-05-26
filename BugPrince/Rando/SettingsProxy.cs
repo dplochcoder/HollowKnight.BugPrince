@@ -1,0 +1,26 @@
+﻿using RandoSettingsManager;
+using RandoSettingsManager.SettingsManagement;
+using RandoSettingsManager.SettingsManagement.Versioning;
+
+namespace BugPrince.Rando;
+
+internal class SettingsProxy : RandoSettingsProxy<RandomizationSettings, string>
+{
+    public static void Hook() => RandoSettingsManagerMod.Instance.RegisterConnection(new SettingsProxy());
+
+    public override string ModKey => nameof(BugPrinceMod);
+
+    public override VersioningPolicy<string> VersioningPolicy => new StrictModVersioningPolicy(BugPrinceMod.Instance!);
+
+    public override bool TryProvideSettings(out RandomizationSettings? settings)
+    {
+        settings = BugPrinceMod.GS.RandoSettings;
+        return settings.CrownThePrince;
+    }
+
+    public override void ReceiveSettings(RandomizationSettings? settings)
+    {
+        // FIXME: ConnectionMenu
+        throw new System.NotImplementedException();
+    }
+}

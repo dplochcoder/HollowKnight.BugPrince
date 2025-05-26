@@ -1,0 +1,316 @@
+{
+  "420 Geo Rock": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "DiveFloors",
+    "SceneNames": [
+      "Deepnest_East_17"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Abyss": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "TitledAreaRando",
+    "SceneNames": [
+      "Abyss_06_Core"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Ancient Basin": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "MapOrTitledAreaRando",
+    "SceneNames": [
+      "Abyss_03",
+      "Abyss_04"
+    ],
+    "Type": "Gems",
+    "Cost": 2
+  },
+  "Black Egg Temple": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_temple"
+    ],
+    "Type": "Gems",
+    "Cost": 4
+  },
+  "Catacombs": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "RockWalls",
+    "SceneNames": [
+      "RestingGrounds_10"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Colosseum": {
+    "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_Colosseum_01"
+    ],
+    "Type": "Gems",
+    "Tiers": [
+      {
+        "Constraint": "TRJR",
+        "Cost": 2
+      },
+      {
+        "Constraint": "None",
+        "Cost": 1
+      }
+    ]
+  },
+  "Crystal Peaks": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "MapOrTitledAreaRando",
+    "SceneNames": [
+      "Mines_01",
+      "Mines_02",
+      "Mines_10"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Divine": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Grimm_Divine"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Grubfather": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Crossroads_38"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Herrah": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Deepnest_Spider_Town"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Iselda": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_mapper"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Jiji": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "EggShop",
+    "SceneNames": [
+      "Room_Ouiji"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Junk Shop": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "JunkShop",
+    "SceneNames": [
+      "Room_GG_Shortcut"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "King Fragment": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "White_Palace_09"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "King's Station'": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "TitledAreaRando",
+    "SceneNames": [
+      "Ruins2_05",
+      "Ruins2_06",
+      "Ruins2_10b"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Leg Eater": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Fungus2_26"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Lemm": {
+    "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Ruins1_05b"
+    ],
+    "Type": "Coins",
+    "Tiers": [
+      {
+        "Constraint": "LemmShop",
+        "Cost": 2
+      },
+      {
+        "Constraint": "None",
+        "Cost": 1
+      }
+    ]
+  },
+  "Lurien": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Ruins2_Watcher_Room"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Mantis Lords": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "Levers",
+    "SceneNames": [
+      "Fungus2_15"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Monomon": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Fungus3_archive_02"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Nailsmith": {
+    "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_nailsmith"
+    ],
+    "Type": "Coins",
+    "Tiers": [
+      {
+        "Constraint": "NailUpgrades",
+        "Cost": 2
+      },
+      {
+        "Constraint": "None",
+        "Cost": 1
+      }
+    ]
+  },
+  "Queen Fragment": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_Queen"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Queen's Gardens": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "MapOrTitledAreaRando",
+    "SceneNames": [
+      "Fungus3_22",
+      "Fungus3_34",
+      "Fungus3_39"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Queen's Station'": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "TitledAreaRando",
+    "SceneNames": [
+      "Fungus2_01"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Resting Grounds": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "MapOrTitledAreaRando",
+    "SceneNames": [
+      "Crossroads_50",
+      "RestingGrounds_02"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Salubra": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_Charm_Shop"
+    ],
+    "Type": "Coins",
+    "Cost": 1
+  },
+  "Seer": {
+    "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
+    "SceneNames": [
+      "RestingGrounds_07"
+    ],
+    "Type": "Gems",
+    "Tiers": [
+      {
+        "Constraint": "BossEssence",
+        "Cost": 2
+      },
+      {
+        "Constraint": "None",
+        "Cost": 1
+      }
+    ]
+  },
+  "Sly": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_shop"
+    ],
+    "Type": "Coins",
+    "Cost": 2
+  },
+  "Spirit's Glade": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "GhostEssence",
+    "SceneNames": [
+      "RestingGrounds_08"
+    ],
+    "Type": "Gems",
+    "Cost": 2
+  },
+  "Teacher's Archives": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "TitledAreaRando",
+    "SceneNames": [
+      "Fungus3_archive"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  },
+  "Vault": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "BugPrince_Vault"
+    ],
+    "Type": "Coins",
+    "Cost": 2
+  },
+  "Void Heart": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Abyss_15"
+    ],
+    "Type": "Gems",
+    "Cost": 1
+  }
+}

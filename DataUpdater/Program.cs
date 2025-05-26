@@ -1,0 +1,1 @@
+﻿BugPrince.Data.DataUpdater.Run();
