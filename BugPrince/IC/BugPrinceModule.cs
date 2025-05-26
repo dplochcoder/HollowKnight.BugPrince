@@ -3,6 +3,7 @@ using BugPrince.UI;
 using BugPrince.Util;
 using ItemChanger;
 using PurenailCore.SystemUtil;
+using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
@@ -239,44 +240,54 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         while (choices.Count < Settings.Choices && iter.MoveNext())
         {
             var (newSrc, newTarget) = iter.Current;
-            if (!IsValidSwap(src, target, newSrc, newTarget)) continue;
             if (chosenScenes.Contains(newTarget.SceneName)) continue;
-            if (newTarget.SceneName == PinnedScene)
-            {
-                pinBackfill.Add((newSrc, newTarget));
-                continue;
-            }
 
             bool isShop = costGroupByScene.TryGetValue(newTarget.SceneName, out var group) && !PaidCostGroups.Contains(group.Name);
             if (!RefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
-            if (isShop && !startedIneligibleShopBackfill.Value && !IsEligibleGroup(group))
+
+            if (!startedBackfill.Value)
             {
-                ineligibleShopBackfillDict.GetOrAddNew(refreshCount).Add((newSrc, newTarget));
-                continue;
+                if (!IsValidSwap(src, target, newSrc, newTarget)) continue;
+                if (newTarget.SceneName == PinnedScene)
+                {
+                    pinBackfill.Add((newSrc, newTarget));
+                    continue;
+                }
+                if (isShop && !IsEligibleGroup(group))
+                {
+                    ineligibleShopBackfillDict.GetOrAddNew(refreshCount).Add((newSrc, newTarget));
+                    continue;
+                }
             }
 
             bool isRedundantShop = haveShop && isShop;
-
-            // TODO: Simplify?
-            if (!startedBackfill.Value)
+            if ((refreshCount == 0 || startedBackfill.Value) && (!isRedundantShop || startedIneligibleShopBackfill.Value))
             {
-                if (refreshCount == 0 && !isRedundantShop) MaybeAdd(newSrc, newTarget);
-                else backfillDict.GetOrAddNew(refreshCount).Add((newSrc, newTarget));
+                if (MaybeAdd(newSrc, newTarget) && isShop) haveShop = true;
             }
-            else if (!startedShopBackfill.Value)
+            else
             {
-                if (!isRedundantShop) MaybeAdd(newSrc, newTarget);
-                else shopBackfillDict.GetOrAddNew(refreshCount).Add((newSrc, newTarget));
+                var backfill = startedBackfill.Value ? backfillDict : shopBackfillDict;
+                backfill.GetOrAddNew(refreshCount).Add((newSrc, newTarget));
             }
-            else MaybeAdd(newSrc, newTarget);
         }
+
+        // Sort the shops last.
+        choices.StableSort((c1, c2) =>
+        {
+            var shop1 = c1.Cost.HasValue;
+            var shop2 = c2.Cost.HasValue;
+
+            if (shop1 == shop2) return 0;
+            else return shop2 ? -1 : 1;
+        });
 
         // Reset refresh count for all selected choices.
         foreach (var choice in choices) RefreshCounters[choice.Target.SceneName] = Settings.RefreshCycle;
-
         // Add the pinned scene if we can.
         foreach (var (newSrc, newTarget) in pinBackfill) if (MaybeAdd(newSrc, newTarget)) break;
 
+        // TODO: Compare to previous.
         if (choices.Count == 0) throw new ArgumentException($"BugPrince mod found no viable choices for {src} -> {target}");
         return choices;
     }
