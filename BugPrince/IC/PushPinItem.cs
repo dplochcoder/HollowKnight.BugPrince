@@ -1,5 +1,6 @@
 ﻿using ItemChanger;
 using ItemChanger.UIDefs;
+using RandomizerCore.LogicItems;
 
 namespace BugPrince.IC;
 
@@ -8,6 +9,8 @@ public class PushPinItem : AbstractItem
     internal const string ITEM_NAME = "BugPrince-PushPin";
 
     internal static readonly EmbeddedSprite sprite = new("Items.push_pin");
+
+    internal static EmptyItem LogicItem() => new(ITEM_NAME);
 
     public PushPinItem()
     {

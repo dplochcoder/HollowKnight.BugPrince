@@ -10,3 +10,4 @@ Randomizable Levers
 TheRealJournalRando
 Breakable Wall Randomizer
 SFCore
+DebugMod

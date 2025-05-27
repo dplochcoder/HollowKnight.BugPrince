@@ -25,8 +25,7 @@ internal class Shaker : MonoBehaviour
 
         timer -= Time.deltaTime;
         if (timer <= 0) transform.localPosition = Vector3.zero;
-
-        transform.localPosition = new(Random.Range(-xRange, xRange), Random.Range(-yRange, yRange));
+        else transform.localPosition = new(Random.Range(-xRange, xRange), Random.Range(-yRange, yRange));
     }
 }
 
@@ -36,6 +35,7 @@ internal static class ShakerExtensions
     {
         GameObject child = new("Shaker");
         child.transform.SetParent(self.transform);
+        child.transform.localPosition = Vector3.zero;
 
         var shaker = child.AddComponent<Shaker>();
         shaker.Init(xRange, yRange, duration);

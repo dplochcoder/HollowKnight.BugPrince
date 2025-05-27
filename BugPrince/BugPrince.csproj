@@ -56,6 +56,9 @@
     <Reference Include="BreakableWallRandomizer">
       <HintPath>$(HollowKnightRefs)/Mods/Breakable Wall Randomizer/BreakableWallRandomizer.dll</HintPath>
     </Reference>
+    <Reference Include="DebugMod">
+      <HintPath>$(HollowKnightRefs)/Mods/DebugMod/DebugMod.dll</HintPath>
+    </Reference>
     <Reference Include="GalaxyCSharp">
       <HintPath>$(HollowKnightRefs)/GalaxyCSharp.dll</HintPath>
     </Reference>

@@ -18,7 +18,12 @@ internal class BugPrinceVariableResolver : VariableResolver
 
     public BugPrinceVariableResolver(VariableResolver inner) => Inner = inner;
 
-    internal ICostGroupProgressionProvider? GetProgressionProvider() => (progressionProviderOverride ?? ItemChangerMod.Modules.Get<BugPrinceModule>()?.AsProgressionProvider()) ?? RandoInterop.LS;
+    internal ICostGroupProgressionProvider? GetProgressionProvider()
+    {
+        if (progressionProviderOverride != null) return progressionProviderOverride;
+        if (RandoInterop.LS != null) return RandoInterop.LS;
+        return ItemChangerMod.Modules.Get<BugPrinceModule>()?.AsProgressionProvider();
+    }
 
     internal void OverrideProgressionProvider(ICostGroupProgressionProvider? progressionProvider) => progressionProviderOverride = progressionProvider;
 
@@ -27,15 +32,16 @@ internal class BugPrinceVariableResolver : VariableResolver
     private bool TryMatchImpl(LogicManager lm, string term, out LogicVariable variable)
     {
         variable = default;
+        if (term.StartsWith("$")) return false;
 
         var provider = GetProgressionProvider();
         if (provider == null) return false;
-        if (!provider.RandomizedTransitions().Contains(term)) return false;
+        if (!provider.IsRandomizedTransition(term)) return false;
         if (!term.ToTransition(out var transition)) return false;
         if (!provider.GetCostGroupByScene(transition.SceneName, out var groupName, out var group)) return false;
         if (Inner == null || !Inner.TryMatch(lm, term, out LogicVariable? inner)) return false;
 
-        BugPrinceLogicVariableBase varBase = new(this, term, groupName, lm.GetTerm(group.Type));
+        BugPrinceLogicVariableBase varBase = new(this, term, groupName, group.Type.GetTerm(lm));
         if (inner is StateModifier stateModifier) variable = new BugPrinceStateModifier(varBase, stateModifier);
         else if (inner is LogicInt logicInt) variable = new BugPrinceLogicInt(varBase, logicInt);
         return true;

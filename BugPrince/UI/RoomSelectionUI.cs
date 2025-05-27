@@ -3,6 +3,7 @@ using BugPrince.Util;
 using PurenailCore.SystemUtil;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BugPrince.UI;
@@ -23,39 +24,48 @@ internal class RoomSelectionUI : MonoBehaviour
     internal delegate void SelectionCb(RoomSelectionDecision decision);
     internal delegate List<SceneChoiceInfo>? RerollCb(RoomSelectionRerollDecision decision);
 
+    internal static bool uiPresent = false;
+
     private BugPrinceModule? module;
     private List<SceneChoiceInfo> choiceInfos = [];
+    private bool hiddenPin;
     private SelectionCb selectionCb = _ => { };
     private RerollCb rerollCb = _ => null;
 
     private RoomSelectionLayout? layout;
 
-    internal static RoomSelectionUI Create(BugPrinceModule module, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
+    internal static RoomSelectionUI Create(BugPrinceModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
     {
         GameObject obj = new("Room Selection");
+        obj.SetActive(false);
+        obj.transform.SetParent(GameObject.Find("_GameCameras/HudCamera").transform);
+        obj.transform.position = Vector3.zero;
+
         var ui = obj.AddComponent<RoomSelectionUI>();
-        ui.Init(module, infos, selectionCb, rerollCb);
+        ui.Init(module, gateDir, infos, selectionCb, rerollCb);
 
         obj.SetActive(true);
+        uiPresent = true;
         return ui;
     }
 
-    private void Init(BugPrinceModule module, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
+    private void OnDestroy() => uiPresent = false;
+
+    private void Init(BugPrinceModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
     {
         this.module = module;
         choiceInfos = [.. infos];
+        hiddenPin = module.PinnedScene != null && !choiceInfos.Any(i => i.Pinned);
         this.selectionCb = selectionCb;
         this.rerollCb = rerollCb;
 
         layout = new(infos.Count);
+
+        // Lock player so they don't fall off screen.
+        gameObject.AddComponent<PlayerLocker>().SetDirection(gateDir);
     }
 
     private void Awake() => StartCoroutine(LoadIn());
-
-    private const float SCENE_STAGGER = 0.15f;
-    private const float FADE_OUT_DURATION = 0.65f;
-    private const float FINAL_SCENE_STAGGER = 0.5f;
-    private const float FINAL_DELAY = 0.5f;
 
     private readonly List<SceneChoice> choiceObjects = [];
 
@@ -63,16 +73,16 @@ internal class RoomSelectionUI : MonoBehaviour
     {
         for (int i = 0; i < choiceInfos.Count; i++)
         {
-            var choice = SceneChoice.Create(choiceInfos[i], layout![i].Pos);
+            var choice = SceneChoice.Create(gameObject.transform, choiceInfos[i], layout![i].Pos);
             choiceObjects.Add(choice);
-            if (i + 1 < choiceInfos.Count) yield return new WaitForSeconds(SCENE_STAGGER);
+            if (i + 1 < choiceInfos.Count) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
         }
 
         yield return new WaitUntil(() => choiceObjects[choiceObjects.Count - 1].IsReady());
 
         selection = 0;
         newPinSelection = null;
-        selectionCorners ??= SelectionCorners.Create(layout![0].Pos);
+        selectionCorners ??= SelectionCorners.Create(gameObject.transform, layout![0].Pos);
         audioSource ??= gameObject.AddComponent<AudioSource>();
         acceptingInput = true;
     }
@@ -145,12 +155,12 @@ internal class RoomSelectionUI : MonoBehaviour
 
             foreach (int i in fadeOuts)
             {
-                choiceObjects[i].FadeOut(FADE_OUT_DURATION);
-                yield return new WaitForSeconds(SCENE_STAGGER);
+                choiceObjects[i].FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
+                if (i != fadeOuts[fadeOuts.Count - 1]) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
             }
-            yield return new WaitForSeconds(FINAL_SCENE_STAGGER - SCENE_STAGGER);
+            yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_SCENE_STAGGER);
             choiceObjects[selection].FlyUp();
-            yield return new WaitForSeconds(FINAL_DELAY);
+            yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_DELAY);
 
             selectionCb(new()
             {
@@ -163,6 +173,15 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void TryTogglePin(int selection)
     {
+        if (hiddenPin)
+        {
+            // TODO: Show message.
+            selectionCorners?.Shake();
+            // TODO: Shake push pins.
+            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            return;
+        }
+
         var info = choiceInfos[selection];
         if (info.Pinned)
         {
@@ -204,15 +223,14 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void TryReroll()
     {
-        if (module!.DiceTotems == 0)
+        if (rerolled || module!.DiceTotems == 0)
         {
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
             // TODO: Shake totems
+            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            return;
         }
-        else
-        {
-            // FIXME
-        }
+
+        // TODO: Reroll
     }
 
     private void Update()

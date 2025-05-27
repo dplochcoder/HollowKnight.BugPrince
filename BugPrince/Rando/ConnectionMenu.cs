@@ -48,7 +48,7 @@ internal class ConnectionMenu
         factory = new(bugPrincePage, BugPrinceMod.GS.RandoSettings);
         foreach (var e in factory.ElementLookup)
         {
-            if (e.Value is not ILockable l) continue;
+            if (e.Key == nameof(Settings.Enabled) || e.Value is not ILockable l) continue;
                 
             if (typeof(RandomizationSettings).GetField(e.Key).GetCustomAttribute<CostFieldAttribute>() != null) costLockables.Add(l);
             else coreLockables.Add(l);
@@ -67,10 +67,15 @@ internal class ConnectionMenu
         GridItemPanel costSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostFieldAttribute>(factory)]);
         GridItemPanel locationSettings = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationFieldAttribute>(factory)]);
 
-        List<IMenuElement> order = [enabled, mainSettings, costSettings, costSettingsHeader, locationSettings];
-        VerticalItemPanel main = new(bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, SpaceParameters.VSPACE_MEDIUM, true, [.. order]);
+        List<GridItemPanel> order = [mainSettings, costSettingsHeader, costSettings, locationSettings];
+        VerticalItemPanel main = new(bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, SpaceParameters.VSPACE_MEDIUM, true, [enabled, .. order]);
         main.Reposition();
-        for (int i = 0; i < order.Count; i++) if (i > 1) order[i].Translate(new(0, -SpaceParameters.VSPACE_MEDIUM));
+        for (int i = 1; i < order.Count; i++)
+        {
+            // Give more space for the 2-row grid.
+            order[i].Translate(new(0, -SpaceParameters.VSPACE_MEDIUM));
+            order[i].Reposition();
+        }
 
         SetLocksAndColors();
     }

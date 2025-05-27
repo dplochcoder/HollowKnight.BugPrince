@@ -16,7 +16,6 @@ internal class LocationFieldAttribute : Attribute { }
 
 public record RandomizationSettings
 {
-    [MenuLabel("Crown the Prince")]
     public bool Enabled = false;
 
     [MainSetting]

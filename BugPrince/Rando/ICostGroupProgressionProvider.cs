@@ -11,7 +11,7 @@ internal interface ICostGroupProgressionProvider
 {
     IReadOnlyDictionary<string, CostGroup> CostGroups();
     IReadOnlyDictionary<string, string> CostGroupsByScene();
-    IReadOnlyCollection<string> RandomizedTransitions();
+    bool IsRandomizedTransition(string transition);
     IReadOnlyList<string> CostGroupProgression();
 }
 
@@ -30,7 +30,7 @@ internal class OverlaidCostGroupProgressionProvider : ICostGroupProgressionProvi
 
     public IReadOnlyDictionary<string, string> CostGroupsByScene() => impl.CostGroupsByScene();
 
-    public IReadOnlyCollection<string> RandomizedTransitions() => impl.RandomizedTransitions();
+    public bool IsRandomizedTransition(string transition) => impl.IsRandomizedTransition(transition);
 
     public IReadOnlyList<string> CostGroupProgression() => progressionOverride;
 }

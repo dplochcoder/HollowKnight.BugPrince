@@ -1,5 +1,6 @@
 ﻿using ItemChanger;
 using ItemChanger.UIDefs;
+using RandomizerCore.StringItems;
 
 namespace BugPrince.IC;
 
@@ -9,6 +10,8 @@ public class CoinItem : AbstractItem
     internal const string TERM_NAME = "BUG_PRINCE_COINS";
 
     internal static readonly EmbeddedSprite sprite = new("Items.coin");
+
+    internal static StringItemTemplate LogicItem() => new(ITEM_NAME, $"{TERM_NAME}++");
 
     public CoinItem()
     {

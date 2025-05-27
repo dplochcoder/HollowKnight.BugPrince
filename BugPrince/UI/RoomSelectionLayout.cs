@@ -22,12 +22,9 @@ internal class RoomSelectionLayout
         Bottom,
     }
 
-    private const float X_SPACE = 8;
-    private const float Y_SPACE = 6;
+    private static float XPos(int i, int size) => (i - (size - 1f) / 2) * UIConstants.SCENE_X_SPACE;
 
-    private static float XPos(int i, int size) => (i - (size - 1f) / 2) * X_SPACE;
-
-    private static float YPos(RowType rowType) => rowType switch { RowType.Mid => 0, RowType.Top => -Y_SPACE / 2, RowType.Bottom => Y_SPACE / 2, _ => throw new System.ArgumentException($"Invalid rowType: {rowType}") };
+    private static float YPos(RowType rowType) => rowType switch { RowType.Mid => 0, RowType.Top => -UIConstants.SCENE_Y_SPACE / 2, RowType.Bottom => UIConstants.SCENE_Y_SPACE / 2, _ => throw new System.ArgumentException($"Invalid rowType: {rowType}") };
 
     private readonly List<RoomSelectionLayoutPosition> positions = [];
 

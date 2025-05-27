@@ -1,6 +1,7 @@
 using BugPrince.Data;
 using BugPrince.Rando;
 using Modding;
+using RandomizerMod.Logging;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,14 +27,23 @@ public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>
 
     public override List<(string, string)> GetPreloadNames() => BugPrincePreloader.Instance.GetPreloadNames();
 
-    private static void HookRandoSettingsManager() => SettingsProxy.Hook();
+    private static void SetupDebug() => DebugInterop.DebugInterop.Setup();
+
+    private static void SetupRandoSettingsManager() => SettingsProxy.Setup();
 
     public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
     {
         BugPrincePreloader.Instance.Initialize(preloadedObjects);
 
-        if (ModHooks.GetMod("RandoSettingsManager") is Mod) HookRandoSettingsManager();
+        RandoInterop.Setup();
+        if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
+        if (ModHooks.GetMod("RandoSettingsManager") is Mod) SetupRandoSettingsManager();
     }
+
+    private const string DEBUG_LOG_FILENAME = "BugPrinceDebug.txt";
+
+    internal static void StartDebugLog() => LogManager.Write("--- BugPrinceDebugLog ---\n", DEBUG_LOG_FILENAME);
+    internal static void DebugLog(string message) => LogManager.Append($"{message}\n", DEBUG_LOG_FILENAME);
 
     // Public API
     public static void AddCostGroupProducer(Mod source, string name, ICostGroupProducer producer) => CostGroup.AddProducer($"{source.Name}-{name}", producer);

@@ -19,7 +19,7 @@ internal record LocalSettings : ICostGroupProgressionProvider
 
     IReadOnlyDictionary<string, string> ICostGroupProgressionProvider.CostGroupsByScene() => CostGroupsByScene;
 
-    IReadOnlyCollection<string> ICostGroupProgressionProvider.RandomizedTransitions() => RandomizedTransitions;
+    public bool IsRandomizedTransition(string transition) => RandomizedTransitions.Contains(transition);
 
     IReadOnlyList<string> ICostGroupProgressionProvider.CostGroupProgression() => CostGroupProgression;
 }
@@ -37,12 +37,14 @@ internal static class RandoInterop
     internal static void Setup()
     {
         ConnectionMenu.Setup();
+        LogicPatcher.Setup();
         RequestModifier.Setup();
 
         DefineCustomItems();
 
         RandoController.OnExportCompleted += OnExportCompleted;
         RandomizerMod.Logging.SettingsLog.AfterLogSettings += LogSettings;
+        RandomizerMod.Logging.LogManager.AddLogger(new BugPrinceLogger());
     }
 
     private static void DefineCustomItems()
@@ -57,13 +59,11 @@ internal static class RandoInterop
     {
         if (!IsEnabled) return;
 
-        var module = ItemChangerMod.Modules.GetOrAdd<BugPrinceModule>();
+        var module = ItemChangerMod.Modules.Add<BugPrinceModule>();
         module.CostGroups = LS!.CostGroups;
         module.CostGroupsByScene = LS.CostGroupsByScene;
         module.RandomizedTransitions = LS.RandomizedTransitions;
         module.CostGroupProgression = LS.CostGroupProgression;
-
-        LS = null;
     }
 
     private static void LogSettings(RandomizerMod.Logging.LogArguments args, TextWriter tw)

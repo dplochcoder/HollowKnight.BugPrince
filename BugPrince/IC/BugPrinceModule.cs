@@ -2,6 +2,7 @@
 using BugPrince.Rando;
 using BugPrince.UI;
 using BugPrince.Util;
+using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
@@ -39,7 +40,12 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     public static BugPrinceModule Get() => ItemChangerMod.Modules.Get<BugPrinceModule>()!;
 
-    public override void Initialize() => Events.OnEnterGame += DoLateInitialization;
+    public override void Initialize()
+    {
+        Events.OnEnterGame += DoLateInitialization;
+
+        BugPrinceMod.StartDebugLog();
+    }
 
     public override void Unload()
     {
@@ -62,6 +68,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     private void DoLateInitialization()
     {
+        RandoInterop.LS = null;
+
         // Must hook after ItemChanger.
         On.GameManager.BeginSceneTransition += SelectRandomizedTransition;
 
@@ -178,14 +186,19 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             mu.AddPlacements(ctx.Vanilla);
 
             List<UpdateEntry> updates = [];
-            foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides)
+            var coupled = TransitionSettings().Coupled;
+            foreach (var e in TransitionOverrides())
             {
                 var src = e.Key;
+                var dst = e.Value.ToStruct();
 
-                Transition dst;
                 if (src == src1) dst = dst2;
                 else if (src == src2) dst = dst1;
-                else dst = e.Value.ToStruct();
+                else if (coupled)
+                {
+                    if (src == dst1) dst = src2;
+                    else if (src == dst2) dst = src1;
+                }
 
                 TransitionPlacement t = new()
                 {
@@ -279,7 +292,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     private void SwapTransitions(Transition src1, Transition src2)
     {
-        var overrides = ItemChanger.Internal.Ref.Settings.TransitionOverrides;
+        var overrides = TransitionOverrides();
         var dst1 = overrides[src1].ToStruct();
         var dst2 = overrides[src2].ToStruct();
         RecordEnterExit(src1, dst2);
@@ -304,6 +317,21 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         UpdateTransitionPlacements(toUpdate);
     }
 
+    private bool FindTarget(string scene, string gate, out (Transition, Transition) pair)
+    {
+        Transition target = new(scene, gate);
+
+        foreach (var e in TransitionOverrides())
+        {
+            if (e.Value.ToStruct() == target)
+            {
+                pair = (e.Key, target);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private List<SceneChoiceInfo>? CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
     {
         // Decrement refresh counters
@@ -316,7 +344,12 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         {
             var cSrc = e.Key;
             Transition cDst = e.Value.ToStruct();
-            if (!ResolvedEnteredTransitions.Contains(cSrc) && !ResolvedExitedTransitions.Contains(cDst)) potentialTargets.Add((cSrc, cDst));
+
+            if (ResolvedEnteredTransitions.Contains(cSrc)) continue;
+            if (ResolvedExitedTransitions.Contains(cDst)) continue;
+            if (!IsValidSwap(src, target, cSrc, cDst)) continue;
+
+            potentialTargets.Add((cSrc, cDst));
         }
 
         potentialTargets.Shuffle(new());  // FIXME: Seed
@@ -330,6 +363,12 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
         IEnumerator<(Transition, Transition)> EnumerateCandidates()
         {
+#if DEBUG
+            if (FindTarget(SceneNames.Room_shop, "left1", out var pair)) yield return pair;
+            if (FindTarget(SceneNames.Room_Bretta, "right1", out pair)) yield return pair;
+            if (FindTarget(SceneNames.Room_Charm_Shop, "left1", out pair)) yield return pair;
+            if (FindTarget(SceneNames.Room_mapper, "left1", out pair)) yield return pair;
+#endif
             foreach (var p in potentialTargets) yield return p;
             startedBackfill.Value = true;
             foreach (var list in backfillDict.Values) foreach (var p in list) yield return p;
@@ -341,9 +380,10 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         List<SceneChoiceInfo> choices = [];
         HashSet<string> chosenScenes = [];
         // FIXME: Handle previous for rerolls
+        Wrapped<int> illogicalSwaps = new(0);
         bool MaybeAdd(Transition newSrc, Transition newTarget)
         {
-            if (!CanSwapTransitions(src, target, newSrc, newTarget)) return false;
+            if (!CanSwapTransitions(src, target, newSrc, newTarget)) { illogicalSwaps.Value++; return false; }
 
             SceneChoiceInfo info = new()
             {
@@ -358,23 +398,23 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             return true;
         }
 
+        int dupeScenes = 0;
+        int backfills = 0;
+        int firstPassRemaining = potentialTargets.Count;
         while (choices.Count < Settings.NumChoices && iter.MoveNext())
         {
+            if (firstPassRemaining > 0) --firstPassRemaining;
             var (newSrc, newTarget) = iter.Current;
-            if (chosenScenes.Contains(newTarget.SceneName)) continue;
+
+            if (newTarget.SceneName == PinnedScene)
+            {
+                pinBackfill.Add((newSrc, newTarget));
+                continue;
+            }
+            if (chosenScenes.Contains(newTarget.SceneName)) { ++dupeScenes; continue; }
 
             bool isShop = GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName);
             if (!RefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
-
-            if (!startedBackfill.Value)
-            {
-                if (!IsValidSwap(src, target, newSrc, newTarget)) continue;
-                if (newTarget.SceneName == PinnedScene)
-                {
-                    pinBackfill.Add((newSrc, newTarget));
-                    continue;
-                }
-            }
 
             bool isRedundantShop = haveShop && isShop;
             if ((refreshCount == 0 || startedBackfill.Value) && (!isRedundantShop || startedShopBackfill.Value))
@@ -383,6 +423,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             }
             else
             {
+                ++backfills;
                 var backfill = startedBackfill.Value ? backfillDict : shopBackfillDict;
                 backfill.GetOrAddNew(refreshCount).Add((newSrc, newTarget));
             }
@@ -403,6 +444,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         // Add the pinned scene if we can.
         foreach (var (newSrc, newTarget) in pinBackfill) if (MaybeAdd(newSrc, newTarget)) break;
 
+        BugPrinceMod.DebugLog($"CALCULATE_SCENE_CHOICES: (illogicalSwaps={illogicalSwaps.Value}, dupeScenes={dupeScenes}, backfills={backfills}, remaining={firstPassRemaining})");
+
         // TODO: Compare to previous.
         if (choices.Count == 0) throw new ArgumentException($"BugPrince mod found no viable choices for {src} -> {target}");
         return choices;
@@ -418,6 +461,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     private void SelectRandomizedTransition(On.GameManager.orig_BeginSceneTransition orig, GameManager self, GameManager.SceneLoadInfo info)
     {
+        if (RoomSelectionUI.uiPresent) return;
+
         if (!TransitionInferenceUtil.GetSrcTarget(self, info, out var src, out var target) || ResolvedEnteredTransitions.Contains(src))
         {
             orig(self, info);
@@ -425,14 +470,17 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         }
 
         var choices = CalculateSceneChoices(src, target)!;
-        RoomSelectionUI.Create(
+        Wrapped<RoomSelectionUI?> wrapped = new(null);
+        wrapped.Value = RoomSelectionUI.Create(
             this,
+            src.GetDirection(),
             choices,
             decision =>
             {
                 if (decision.chosen is not SceneChoiceInfo choice)
                 {
                     // FIXME: Rejection.
+                    UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
                     return;
                 }
 
@@ -440,6 +488,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 PayCosts(choice.Target.SceneName);
                 SwapTransitions(src, choice.OrigSrc);
 
+                UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
                 orig(self, info);
             },
             decision =>
@@ -460,7 +509,7 @@ internal class ModuleCostGroupProgressionProvider : ICostGroupProgressionProvide
 
     public IReadOnlyDictionary<string, string> CostGroupsByScene() => module.CostGroupsByScene;
 
-    public IReadOnlyCollection<string> RandomizedTransitions() => module.RandomizedTransitions;
+    public bool IsRandomizedTransition(string transition) => module.RandomizedTransitions.Contains(transition);
 
     public IReadOnlyList<string> CostGroupProgression() => module.CostGroupProgression;
 }

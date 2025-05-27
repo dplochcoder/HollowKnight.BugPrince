@@ -41,7 +41,6 @@ internal class RequestModifier
 
     private static void GenerateCostGroups(RequestBuilder rb)
     {
-        RandoInterop.LS = new();
         if (!RandoInterop.AreCostsEnabled) return;
 
         Dictionary<string, HashSet<string>> randomizedGates = [];
@@ -75,11 +74,11 @@ internal class RequestModifier
         {
             var scene = e.Key;
             var (name, group) = e.Value;
-            RandoInterop.LS.CostGroups[name] = group;
+            RandoInterop.LS!.CostGroups[name] = group;
             RandoInterop.LS.CostGroupsByScene[scene] = name;
         }
 
-        List<(string, CostGroup)> ordered = [.. RandoInterop.LS.CostGroups.Select(e => (e.Key, e.Value)).OrderBy(p => p.Key)];
+        List<(string, CostGroup)> ordered = [.. RandoInterop.LS!.CostGroups.Select(e => (e.Key, e.Value)).OrderBy(p => p.Key)];
 
         System.Random r = new(rb.gs.Seed + 17);
         WeightedRandomSort(ordered, r);
@@ -101,8 +100,8 @@ internal class RequestModifier
     {
         if (!RandoInterop.AreCostsEnabled) return;
 
-        pi.Setters.Add(new(lm.GetTerm(CostType.Coins), -RandoInterop.RS.CoinTolerance));
-        pi.Setters.Add(new(lm.GetTerm(CostType.Gems), -RandoInterop.RS.GemTolerance));
+        pi.Setters.Add(new(CostType.Coins.GetTerm(lm), -RandoInterop.RS.CoinTolerance));
+        pi.Setters.Add(new(CostType.Gems.GetTerm(lm), -RandoInterop.RS.GemTolerance));
     }
 
     private static void WeightedRandomSort(List<(string, CostGroup)> list, System.Random r)

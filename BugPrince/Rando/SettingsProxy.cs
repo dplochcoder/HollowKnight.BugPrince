@@ -6,7 +6,7 @@ namespace BugPrince.Rando;
 
 internal class SettingsProxy : RandoSettingsProxy<RandomizationSettings, string>
 {
-    public static void Hook() => RandoSettingsManagerMod.Instance.RegisterConnection(new SettingsProxy());
+    public static void Setup() => RandoSettingsManagerMod.Instance.RegisterConnection(new SettingsProxy());
 
     public override string ModKey => nameof(BugPrinceMod);
 

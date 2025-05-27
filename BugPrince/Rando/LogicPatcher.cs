@@ -1,4 +1,5 @@
-﻿using RandomizerCore.Logic;
+﻿using BugPrince.IC;
+using RandomizerCore.Logic;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
 
@@ -10,9 +11,14 @@ internal static class LogicPatcher
 
     private static void ModifyLogic(GenerationSettings gs, LogicManagerBuilder lmb)
     {
-        Data.CostType.Coins.GetTerm(lmb);
-        Data.CostType.Gems.GetTerm(lmb);
+        if (!RandoInterop.IsEnabled) return;
 
+        RandoInterop.LS = new();
         lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
+        lmb.AddCostTypeTerms();
+        lmb.AddItem(CoinItem.LogicItem());
+        lmb.AddItem(DiceTotemItem.LogicItem());
+        lmb.AddItem(GemItem.LogicItem());
+        lmb.AddItem(PushPinItem.LogicItem());
     }
 }

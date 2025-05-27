@@ -6,23 +6,18 @@ namespace BugPrince.UI;
 
 internal class SelectionCorners : MonoBehaviour
 {
-    private const float WIDTH = 4;
-    private const float HEIGHT = 2.5f;
-    private const float SHAKE_TIME = 0.3f;
-    private const float SHAKE_SPAN = 0.2f;
-    private const float VELOCITY = 30;
-
-    internal static SelectionCorners Create(Vector2 pos)
+    internal static SelectionCorners Create(Transform parent, Vector2 pos)
     {
         GameObject obj = new("SelectionCorners");
-        obj.transform.position = pos;
+        obj.transform.SetParent(parent);
+        obj.transform.localPosition = pos;
 
-        var shaker = obj.AddShakerChild(SHAKE_SPAN, SHAKE_SPAN, SHAKE_TIME);
+        var shaker = obj.AddShakerChild(UIConstants.SELECTION_SHAKE_SPAN, UIConstants.SELECTION_SHAKE_SPAN, UIConstants.SHAKE_TIME);
 
-        SelectionCorner.Create(shaker.gameObject, new(-WIDTH / 2, HEIGHT / 2), 0);
-        SelectionCorner.Create(shaker.gameObject, new(-WIDTH / 2, -HEIGHT / 2), 90);
-        SelectionCorner.Create(shaker.gameObject, new(WIDTH / 2, -HEIGHT / 2), 180);
-        SelectionCorner.Create(shaker.gameObject, new(WIDTH / 2, HEIGHT / 2), 270);
+        SelectionCorner.Create(shaker.transform, new(-UIConstants.SELECTION_WIDTH / 2, UIConstants.SELECTION_HEIGHT / 2), 0);
+        SelectionCorner.Create(shaker.transform, new(-UIConstants.SELECTION_WIDTH / 2, -UIConstants.SELECTION_HEIGHT / 2), 90);
+        SelectionCorner.Create(shaker.transform, new(UIConstants.SELECTION_WIDTH / 2, -UIConstants.SELECTION_HEIGHT / 2), 180);
+        SelectionCorner.Create(shaker.transform, new(UIConstants.SELECTION_WIDTH / 2, UIConstants.SELECTION_HEIGHT / 2), 270);
 
         var corners = obj.AddComponent<SelectionCorners>();
         corners.shaker = shaker;
@@ -42,7 +37,7 @@ internal class SelectionCorners : MonoBehaviour
     private void Update()
     {
         var dist = target - transform.localPosition;
-        var move = Time.deltaTime * VELOCITY;
+        var move = Time.deltaTime * UIConstants.SELECTION_VELOCITY;
 
         if (move >= dist.magnitude) transform.localPosition = target;
         else transform.Translate(move * dist.normalized);
@@ -51,20 +46,17 @@ internal class SelectionCorners : MonoBehaviour
 
 internal class SelectionCorner : MonoBehaviour
 {
-    private static EmbeddedSprite sprite = new("UI.corner");
+    private static readonly EmbeddedSprite sprite = new("UI.corner");
 
-    private const float OSCILLATION_DIST = 0.25f;
-    private const float OSCILLATION_TIME = 2.5f;
-
-    private const float FADE_IN_TIME = 0.5f;
-
-    internal static void Create(GameObject parent, Vector2 pos, float rotation)
+    internal static void Create(Transform parent, Vector2 pos, float rotation)
     {
         GameObject obj = new("Corner");
+        obj.AddComponent<SelectionCorner>();
 
         var renderer = obj.AddComponent<SpriteRenderer>();
         renderer.sprite = sprite.Value;
-        obj.FadeColor(new(1, 1, 1, 0), Color.white, FADE_IN_TIME);
+        renderer.SetUILayer(UISortingOrder.SelectionCorners);
+        obj.FadeColor(new(1, 1, 1, 0), Color.white, UIConstants.SELECTION_FADE_IN_TIME);
 
         GameObject localParent = new("CornerParent");
         obj.transform.SetParent(localParent.transform);
@@ -82,8 +74,8 @@ internal class SelectionCorner : MonoBehaviour
 
     private void Update()
     {
-        timer = (timer + Time.deltaTime) % OSCILLATION_TIME;
-        var sine = Mathf.Sin(timer * Mathf.PI / (2 * OSCILLATION_TIME));
-        transform.localPosition = new(OSCILLATION_DIST * sine, -OSCILLATION_DIST * sine);
+        timer = (timer + Time.deltaTime) % UIConstants.SELECTION_OSCILLATION_TIME;
+        var sine = Mathf.Sin(timer * 2 * Mathf.PI / UIConstants.SELECTION_OSCILLATION_TIME);
+        transform.localPosition = new(UIConstants.SELECTION_OSCILLATION_DIST * sine, -UIConstants.SELECTION_OSCILLATION_DIST * sine);
     }
 }
