@@ -1,5 +1,4 @@
-﻿using BugPrince.Data;
-using BugPrince.IC;
+﻿using BugPrince.IC;
 using ItemChanger;
 using Newtonsoft.Json;
 using RandomizerCore.Logic;

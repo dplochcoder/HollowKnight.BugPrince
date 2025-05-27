@@ -5,11 +5,13 @@ namespace BugPrince.IC;
 
 public class DiceTotemItem : AbstractItem
 {
+    internal const string ITEM_NAME = "BugPrince-DiceTotem";
+
     internal static readonly EmbeddedSprite sprite = new("Items.dice_totem");
 
     public DiceTotemItem()
     {
-        name = "BugPrince-DiceTotem";
+        name = ITEM_NAME;
         UIDef = new MsgUIDef()
         {
             name = new BoxedString("Dice Totem"),

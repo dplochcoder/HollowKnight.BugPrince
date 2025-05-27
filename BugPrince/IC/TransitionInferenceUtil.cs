@@ -1,10 +1,18 @@
 ﻿using ItemChanger;
 using RandomizerMod.RC;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace BugPrince.IC;
+
+internal enum GateDirection
+{
+    Left,
+    Right,
+    Top,
+    Bot,
+    Door
+}
 
 internal static class TransitionInferenceUtil
 {
@@ -96,4 +104,22 @@ internal static class TransitionInferenceUtil
         transition = new(split[0], split[1]);
         return true;
     }
+
+    internal static GateDirection GetDirection(this Transition self)
+    {
+        if (self.GateName.StartsWith("l")) return GateDirection.Left;
+        else if (self.GateName.StartsWith("r")) return GateDirection.Right;
+        else if (self.GateName.StartsWith("t")) return GateDirection.Top;
+        else if (self.GateName.StartsWith("b")) return GateDirection.Bot;
+        else return GateDirection.Door;
+    }
+
+    internal static GateDirection Opposite(this GateDirection self) => self switch
+    {
+        GateDirection.Left => GateDirection.Right,
+        GateDirection.Right => GateDirection.Left,
+        GateDirection.Bot => GateDirection.Top,
+        GateDirection.Top => GateDirection.Bot,
+        GateDirection.Door => GateDirection.Door
+    };
 }

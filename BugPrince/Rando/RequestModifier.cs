@@ -86,6 +86,8 @@ internal class RequestModifier
         RandoInterop.LS.CostGroupProgression = [.. ordered.Select(p => p.Item1)];
 
         // TODO: Handle vanilla placement.
+        for (int i = 0; i < RandoInterop.RS.NumDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
+
         var coins = RandoInterop.LS.GetItemCount(CostType.Coins) + RandoInterop.RS.CoinTolerance;
         for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);
         for (int i = 0; i < RandoInterop.RS.CoinDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}");

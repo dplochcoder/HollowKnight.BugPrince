@@ -92,9 +92,30 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         PaidCostGroups.Add(groupName);
     }
 
+    private bool IsExitOnly(Transition transition) => !TransitionOverrides().ContainsKey(transition);
+
+    private static bool IsMatchingPair(Transition src, Transition dst, bool doorToDoor)
+    {
+        var a = src.GetDirection();
+        var b = dst.GetDirection();
+        if (a == GateDirection.Door && b == GateDirection.Door) return doorToDoor;
+        else if (b == GateDirection.Door) return a == GateDirection.Left || b == GateDirection.Right;
+        else if (a == GateDirection.Door) return b == GateDirection.Left || b == GateDirection.Right;
+        else return a == b.Opposite();
+    }
+
     private bool IsValidSwap(Transition src1, Transition dst1, Transition src2, Transition dst2)
     {
-        // FIXME
+        if (src1 == src2 && dst1 == dst2) return true;
+        if (IsExitOnly(dst1) != IsExitOnly(dst2)) return false;
+
+        var matchingMode = TransitionSettings().TransitionMatching;
+        bool matching = matchingMode != RandomizerMod.Settings.TransitionSettings.TransitionMatchingSetting.NonmatchingDirections;
+        bool doorToDoor = matchingMode != RandomizerMod.Settings.TransitionSettings.TransitionMatchingSetting.MatchingDirectionsAndNoDoorToDoor;
+
+        if (!matching) return true;
+        if (!IsMatchingPair(src1, dst2, doorToDoor)) return false;
+        if (!IsMatchingPair(src2, dst1, doorToDoor)) return false;
         return true;
     }
 
