@@ -2,56 +2,55 @@
   "420 Geo Rock": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "DiveFloors",
-    "Name": "420 Geo Rock",
     "SceneNames": [
       "Deepnest_East_17"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Abyss": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "TitledAreaRando",
-    "Name": "Abyss",
     "SceneNames": [
       "Abyss_06_Core"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Ancient Basin": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "MapOrTitledAreaRando",
-    "Name": "Ancient Basin",
     "SceneNames": [
       "Abyss_03",
       "Abyss_04"
     ],
     "Type": "Gems",
-    "Cost": 2
+    "Cost": 2,
+    "SkewedAverage": 0.5
   },
   "Black Egg Temple": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Black Egg Temple",
     "SceneNames": [
       "Room_temple"
     ],
     "Type": "Gems",
-    "Cost": 4
+    "Cost": 4,
+    "SkewedAverage": 0.5
   },
   "Catacombs": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "RockWalls",
-    "Name": "Catacombs",
     "SceneNames": [
       "RestingGrounds_10"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Colosseum": {
     "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
-    "Name": "Colosseum",
     "SceneNames": [
       "Room_Colosseum_01"
     ],
@@ -65,109 +64,109 @@
         "Constraint": "None",
         "Cost": 1
       }
-    ]
+    ],
+    "SkewedAverage": 0.5
   },
   "Crystal Peaks": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "MapOrTitledAreaRando",
-    "Name": "Crystal Peaks",
     "SceneNames": [
       "Mines_01",
       "Mines_02",
       "Mines_10"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Divine": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Divine",
     "SceneNames": [
       "Grimm_Divine"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Grubfather": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Grubfather",
     "SceneNames": [
       "Crossroads_38"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Herrah": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Herrah",
     "SceneNames": [
       "Deepnest_Spider_Town"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Iselda": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Iselda",
     "SceneNames": [
       "Room_mapper"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Jiji": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "EggShop",
-    "Name": "Jiji",
     "SceneNames": [
       "Room_Ouiji"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Junk Shop": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "JunkShop",
-    "Name": "Junk Shop",
     "SceneNames": [
       "Room_GG_Shortcut"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "King Fragment": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "King Fragment",
     "SceneNames": [
       "White_Palace_09"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "King's Station'": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "TitledAreaRando",
-    "Name": "King's Station'",
     "SceneNames": [
       "Ruins2_05",
       "Ruins2_06",
       "Ruins2_10b"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Leg Eater": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Leg Eater",
     "SceneNames": [
       "Fungus2_26"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Lemm": {
     "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
-    "Name": "Lemm",
     "SceneNames": [
       "Ruins1_05b"
     ],
@@ -181,39 +180,39 @@
         "Constraint": "None",
         "Cost": 1
       }
-    ]
+    ],
+    "SkewedAverage": 0.5
   },
   "Lurien": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Lurien",
     "SceneNames": [
       "Ruins2_Watcher_Room"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Mantis Lords": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "Levers",
-    "Name": "Mantis Lords",
     "SceneNames": [
       "Fungus2_15"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Monomon": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Monomon",
     "SceneNames": [
       "Fungus3_archive_02"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Nailsmith": {
     "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
-    "Name": "Nailsmith",
     "SceneNames": [
       "Room_nailsmith"
     ],
@@ -227,62 +226,62 @@
         "Constraint": "None",
         "Cost": 1
       }
-    ]
+    ],
+    "SkewedAverage": 0.5
   },
   "Queen Fragment": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Queen Fragment",
     "SceneNames": [
       "Room_Queen"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Queen's Gardens": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "MapOrTitledAreaRando",
-    "Name": "Queen's Gardens",
     "SceneNames": [
       "Fungus3_22",
       "Fungus3_34",
       "Fungus3_39"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Queen's Station'": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "TitledAreaRando",
-    "Name": "Queen's Station'",
     "SceneNames": [
       "Fungus2_01"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Resting Grounds": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "MapOrTitledAreaRando",
-    "Name": "Resting Grounds",
     "SceneNames": [
       "Crossroads_50",
       "RestingGrounds_02"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Salubra": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Salubra",
     "SceneNames": [
       "Room_Charm_Shop"
     ],
     "Type": "Coins",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Seer": {
     "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
-    "Name": "Seer",
     "SceneNames": [
       "RestingGrounds_07"
     ],
@@ -296,53 +295,54 @@
         "Constraint": "None",
         "Cost": 1
       }
-    ]
+    ],
+    "SkewedAverage": 0.5
   },
   "Sly": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Sly",
     "SceneNames": [
       "Room_shop"
     ],
     "Type": "Coins",
-    "Cost": 2
+    "Cost": 2,
+    "SkewedAverage": 0.5
   },
   "Spirit's Glade": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "GhostEssence",
-    "Name": "Spirit's Glade",
     "SceneNames": [
       "RestingGrounds_08"
     ],
     "Type": "Gems",
-    "Cost": 2
+    "Cost": 2,
+    "SkewedAverage": 0.5
   },
   "Teacher's Archives": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "TitledAreaRando",
-    "Name": "Teacher's Archives",
     "SceneNames": [
       "Fungus3_archive"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   },
   "Vault": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Vault",
     "SceneNames": [
       "BugPrince_Vault"
     ],
     "Type": "Coins",
-    "Cost": 2
+    "Cost": 2,
+    "SkewedAverage": 0.5
   },
   "Void Heart": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
-    "Name": "Void Heart",
     "SceneNames": [
       "Abyss_15"
     ],
     "Type": "Gems",
-    "Cost": 1
+    "Cost": 1,
+    "SkewedAverage": 0.5
   }
 }

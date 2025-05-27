@@ -7,6 +7,8 @@ public class CoinItem : AbstractItem
 {
     internal static readonly EmbeddedSprite sprite = new("Items.coin");
 
+    internal const string TERM_NAME = "BUG_PRINCE_COINS";
+
     public CoinItem()
     {
         name = "BugPrince-Coin";

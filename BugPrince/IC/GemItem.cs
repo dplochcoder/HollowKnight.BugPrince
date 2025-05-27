@@ -7,6 +7,8 @@ public class GemItem : AbstractItem
 {
     internal static readonly EmbeddedSprite sprite = new("Items.gem");
 
+    internal const string TERM_NAME = "BUG_PRINCE_COINS";
+
     public GemItem()
     {
         name = "BugPrince-Gem";

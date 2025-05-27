@@ -82,4 +82,18 @@ internal static class TransitionInferenceUtil
     internal static Transition ToStruct(this ITransition self) => new(self.SceneName, self.GateName);
 
     internal static Transition ToStruct(this RandoModTransition self) => new(self.TransitionDef.SceneName, self.TransitionDef.DoorName);
+
+    internal static bool ToTransition(this string self, out Transition transition)
+    {
+        transition = default;
+        if (!self.EndsWith("]")) return false;
+
+        var split = self.Split('[');
+        if (split.Length != 2) return false;
+        if (split[0].Length == 0) return false;
+        if (split[1].Length == 0) return false;
+
+        transition = new(split[0], split[1]);
+        return true;
+    }
 }

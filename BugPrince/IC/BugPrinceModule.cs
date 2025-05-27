@@ -1,8 +1,8 @@
 ﻿using BugPrince.Data;
+using BugPrince.Rando;
 using BugPrince.UI;
 using BugPrince.Util;
 using ItemChanger;
-using Modding;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
@@ -11,7 +11,6 @@ using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace BugPrince.IC;
@@ -20,7 +19,9 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 {
     // Setup
     public RandomizationSettings Settings = new();
-    public List<CostGroup> CostGroups = [];
+    public Dictionary<string, CostGroup> CostGroups = [];
+    public Dictionary<string, string> CostGroupsByScene = [];
+    public HashSet<string> RandomizedTransitions = [];
 
     // Inventory
     public int Coins = 0;
@@ -34,37 +35,13 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     // Progression
     public HashSet<Transition> ResolvedEnteredTransitions = [];
     public HashSet<Transition> ResolvedExitedTransitions = [];
-    public HashSet<string> PaidCostGroups = [];
-    public Dictionary<string, int> ProgressiveCostGroupCosts = [];
+    public HashSet<string> PaidCostGroups = [];  // Cost groups already purchased. This set forms an unordered prefix of CostGroupProgression.
+    public List<string> CostGroupProgression = [];  // List of all cost groups, in progression order.
     public Dictionary<string, int> RefreshCounters = [];  // Scene -> num picks until refresh
-
-    // Internal
-    private readonly Dictionary<string, CostGroup> costGroupByScene = [];
 
     public static BugPrinceModule Get() => ItemChangerMod.Modules.Get<BugPrinceModule>()!;
 
-    public override void Initialize()
-    {
-        Index();
-
-        Events.OnEnterGame += DoLateInitialization;
-    }
-
-    internal void Index()
-    {
-        foreach (var costGroup in CostGroups)
-        {
-            foreach (var scene in costGroup.SceneNames)
-            {
-                if (costGroupByScene.TryGetValue(scene, out var existingGroup))
-                {
-                    if (existingGroup.Priority == costGroup.Priority) throw new ArgumentException($"Conflicting cost-groups for scene {scene}, Priority={existingGroup.Priority}");
-                    if (existingGroup.Priority < costGroup.Priority) costGroupByScene[scene] = costGroup;
-                }
-                else costGroupByScene.Add(scene, costGroup);
-            }
-        }
-    }
+    public override void Initialize() => Events.OnEnterGame += DoLateInitialization;
 
     public override void Unload()
     {
@@ -80,6 +57,11 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     private static Dictionary<Transition, ITransition> TransitionOverrides() => ItemChanger.Internal.Ref.Settings.TransitionOverrides;
 
+    private ICostGroupProgressionProvider? cachedProvider;
+    internal ICostGroupProgressionProvider AsProgressionProvider() => cachedProvider ??= new ModuleCostGroupProgressionProvider(this);
+
+    private bool GetCostGroupByScene(string scene, out string groupName, out CostGroup costGroup) => AsProgressionProvider().GetCostGroupByScene(scene, out groupName, out costGroup);
+
     private void DoLateInitialization()
     {
         // Must hook after ItemChanger.
@@ -90,20 +72,26 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         RandomizerMod.RandomizerMod.RS.TrackerDataWithoutSequenceBreaks.Reset();
     }
 
-    private bool IsEligibleGroup(CostGroup group)
-    {
-        int total = group.Type == CostType.Coins ? TotalCoins : TotalGems;
-        return !ProgressiveCostGroupCosts.TryGetValue(group.Name, out int required) || total >= required;
-    }
-
     private void PayCosts(string scene)
     {
-        if (!costGroupByScene.TryGetValue(scene, out var group)) return;
-        if (PaidCostGroups.Contains(group.Name)) return;
+        if (!GetCostGroupByScene(scene, out var groupName, out var group)) return;
+        if (PaidCostGroups.Contains(groupName)) return;
+
+        if (CostGroupProgression[PaidCostGroups.Count] != groupName)
+        {
+            // Reorder progression.
+            CostGroupProgression.Remove(groupName);
+            CostGroupProgression.Insert(PaidCostGroups.Count, groupName);
+
+            // This technically speaking can break logic because a shop previously accessible can become inaccessible after progression order changes.
+            // However this should be invisible to the player (and tracker in general) because it only affects shops the player hasn't yet visited, which are hidden behind unexplored transitions.
+            // However however it does mean that a shop previously available in the purchase pool may disappear from it for some time, until the player buys other shops necessary to pay the newly increased progression cost.
+            cachedProvider = null;  // Reset logic variable caches.
+        }
 
         if (group.Type == CostType.Coins) Coins -= group.Cost;
         else Gems -= group.Cost;
-        PaidCostGroups.Add(group.Name);
+        PaidCostGroups.Add(groupName);
     }
 
     private bool IsValidSwap(Transition src1, Transition dst1, Transition src2, Transition dst2)
@@ -145,36 +133,56 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
         var ctx = RandoCtx();
         var lm = ctx.LM;
-        ProgressionManager pm = new(lm, ctx);
-        var mu = pm.mu;
 
-        mu.AddWaypoints(lm.Waypoints);
-        mu.AddTransitions(lm.TransitionLookup.Values);
-        mu.AddPlacements(ctx.Vanilla);
-
-        List<UpdateEntry> updates = [];
-        foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides)
+        Action? onDone = null;
+        if (GetCostGroupByScene(dst1.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName) && CostGroupProgression[PaidCostGroups.Count] != groupName)
         {
-            var src = e.Key;
+            // Check that we can bump this shop forward in progression order.
+            if (!lm.VariableResolver.TryGetInner<BugPrinceVariableResolver>(out var inner)) throw new ArgumentException("Missing CostGroupVariableResolver");
 
-            Transition dst;
-            if (src == src1) dst = dst2;
-            else if (src == src2) dst = dst1;
-            else dst = e.Value.ToStruct();
+            List<string> reordered = [.. CostGroupProgression];
+            reordered.Remove(groupName);
+            reordered.Insert(PaidCostGroups.Count, groupName);
 
-            TransitionPlacement t = new()
-            {
-                Source = RandoTransition(src),
-                Target = RandoTransition(dst),
-            };
-            updates.Add(new PrePlacedItemUpdateEntry(t));
+            OverlaidCostGroupProgressionProvider provider = new(AsProgressionProvider(), reordered);
+            inner.OverrideProgressionProvider(provider);
+            onDone = () => inner.OverrideProgressionProvider(null);
         }
-        mu.AddEntries(updates);
 
-        mu.StartUpdating();
-        mu.SetLongTermRevertPoint();
+        try
+        {
+            ProgressionManager pm = new(lm, ctx);
+            var mu = pm.mu;
 
-        return IsCompletable(pm);
+            mu.AddWaypoints(lm.Waypoints);
+            mu.AddTransitions(lm.TransitionLookup.Values);
+            mu.AddPlacements(ctx.Vanilla);
+
+            List<UpdateEntry> updates = [];
+            foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides)
+            {
+                var src = e.Key;
+
+                Transition dst;
+                if (src == src1) dst = dst2;
+                else if (src == src2) dst = dst1;
+                else dst = e.Value.ToStruct();
+
+                TransitionPlacement t = new()
+                {
+                    Source = RandoTransition(src),
+                    Target = RandoTransition(dst),
+                };
+                updates.Add(new PrePlacedItemUpdateEntry(t));
+            }
+            mu.AddEntries(updates);
+
+            mu.StartUpdating();
+            mu.SetLongTermRevertPoint();
+
+            return IsCompletable(pm);
+        }
+        finally { onDone?.Invoke(); }
     }
 
 
@@ -296,12 +304,10 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
         SortedDictionary<int, List<(Transition, Transition)>> backfillDict = [];
         SortedDictionary<int, List<(Transition, Transition)>> shopBackfillDict = [];
-        SortedDictionary<int, List<(Transition, Transition)>> ineligibleShopBackfillDict = [];
         List<(Transition, Transition)> pinBackfill = [];
         bool haveShop = false;
         Wrapped<bool> startedBackfill = new(false);
         Wrapped<bool> startedShopBackfill = new(false);
-        Wrapped<bool> startedIneligibleShopBackfill = new(false);
 
         IEnumerator<(Transition, Transition)> EnumerateCandidates()
         {
@@ -310,8 +316,6 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             foreach (var list in backfillDict.Values) foreach (var p in list) yield return p;
             startedShopBackfill.Value = true;
             foreach (var list in shopBackfillDict.Values) foreach (var p in list) yield return p;
-            startedIneligibleShopBackfill.Value = true;
-            foreach (var list in ineligibleShopBackfillDict.Values) foreach (var p in list) yield return p;
         };
         var iter = EnumerateCandidates();
 
@@ -328,19 +332,19 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 Pinned = newTarget.SceneName == PinnedScene,
                 Target = newTarget
             };
-            if (costGroupByScene.TryGetValue(newTarget.SceneName, out var group) && !PaidCostGroups.Contains(group.Name)) info.Cost = (group.Type, group.Cost);
+            if (GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName)) info.Cost = (group.Type, group.Cost);
 
             choices.Add(info);
             chosenScenes.Add(newTarget.SceneName);
             return true;
         }
 
-        while (choices.Count < Settings.Choices && iter.MoveNext())
+        while (choices.Count < Settings.NumChoices && iter.MoveNext())
         {
             var (newSrc, newTarget) = iter.Current;
             if (chosenScenes.Contains(newTarget.SceneName)) continue;
 
-            bool isShop = costGroupByScene.TryGetValue(newTarget.SceneName, out var group) && !PaidCostGroups.Contains(group.Name);
+            bool isShop = GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName);
             if (!RefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
 
             if (!startedBackfill.Value)
@@ -351,15 +355,10 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                     pinBackfill.Add((newSrc, newTarget));
                     continue;
                 }
-                if (isShop && !IsEligibleGroup(group))
-                {
-                    ineligibleShopBackfillDict.GetOrAddNew(refreshCount).Add((newSrc, newTarget));
-                    continue;
-                }
             }
 
             bool isRedundantShop = haveShop && isShop;
-            if ((refreshCount == 0 || startedBackfill.Value) && (!isRedundantShop || startedIneligibleShopBackfill.Value))
+            if ((refreshCount == 0 || startedBackfill.Value) && (!isRedundantShop || startedShopBackfill.Value))
             {
                 if (MaybeAdd(newSrc, newTarget) && isShop) haveShop = true;
             }
@@ -430,4 +429,19 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 return CalculateSceneChoices(src, target, choices);
             });
     }
+}
+
+internal class ModuleCostGroupProgressionProvider : ICostGroupProgressionProvider
+{
+    private readonly BugPrinceModule module;
+
+    internal ModuleCostGroupProgressionProvider(BugPrinceModule module) => this.module = module;
+
+    public IReadOnlyDictionary<string, CostGroup> CostGroups() => module.CostGroups;
+
+    public IReadOnlyDictionary<string, string> CostGroupsByScene() => module.CostGroupsByScene;
+
+    public IReadOnlyCollection<string> RandomizedTransitions() => module.RandomizedTransitions;
+
+    public IReadOnlyList<string> CostGroupProgression() => module.CostGroupProgression;
 }
