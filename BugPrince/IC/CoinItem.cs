@@ -5,13 +5,14 @@ namespace BugPrince.IC;
 
 public class CoinItem : AbstractItem
 {
-    internal static readonly EmbeddedSprite sprite = new("Items.coin");
-
+    internal const string ITEM_NAME = "BugPrince-Coin";
     internal const string TERM_NAME = "BUG_PRINCE_COINS";
+
+    internal static readonly EmbeddedSprite sprite = new("Items.coin");
 
     public CoinItem()
     {
-        name = "BugPrince-Coin";
+        name = ITEM_NAME;
         UIDef = new MsgUIDef()
         {
             name = new BoxedString("Coin"),
@@ -20,12 +21,7 @@ public class CoinItem : AbstractItem
         };
     }
 
-    public override void GiveImmediate(GiveInfo info)
-    {
-        var module = BugPrinceModule.Get();
-        module.Coins++;
-        module.TotalCoins++;
-    }
+    public override void GiveImmediate(GiveInfo info) => BugPrinceModule.Get().Coins++;
 
     public override AbstractItem Clone() => new CoinItem();
 }

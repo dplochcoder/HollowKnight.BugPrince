@@ -5,13 +5,14 @@ namespace BugPrince.IC;
 
 public class GemItem : AbstractItem
 {
-    internal static readonly EmbeddedSprite sprite = new("Items.gem");
+    internal const string ITEM_NAME = "BugPrince-Gem";
+    internal const string TERM_NAME = "BUG_PRINCE_GEMS";
 
-    internal const string TERM_NAME = "BUG_PRINCE_COINS";
+    internal static readonly EmbeddedSprite sprite = new("Items.gem");
 
     public GemItem()
     {
-        name = "BugPrince-Gem";
+        name = ITEM_NAME;
         UIDef = new MsgUIDef()
         {
             name = new BoxedString("Gem"),
@@ -20,12 +21,7 @@ public class GemItem : AbstractItem
         };
     }
 
-    public override void GiveImmediate(GiveInfo info)
-    {
-        var module = BugPrinceModule.Get();
-        module.Gems++;
-        module.TotalGems++;
-    }
+    public override void GiveImmediate(GiveInfo info) => BugPrinceModule.Get().Gems++;
 
     public override AbstractItem Clone() => new GemItem();
 }

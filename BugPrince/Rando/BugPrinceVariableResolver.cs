@@ -34,11 +34,9 @@ internal class BugPrinceVariableResolver : VariableResolver
         if (!provider.RandomizedTransitions().Contains(term)) return false;
         if (!term.ToTransition(out var transition)) return false;
         if (!provider.GetCostGroupByScene(transition.SceneName, out var groupName, out var group)) return false;
-        if (!Inner!.TryMatch(lm, term, out LogicVariable? inner)) return false;
+        if (Inner == null || !Inner.TryMatch(lm, term, out LogicVariable? inner)) return false;
 
-        Term logicTerm = lm.GetTermStrict(group.Type == CostType.Coins ? CoinItem.TERM_NAME : GemItem.TERM_NAME);
-        BugPrinceLogicVariableBase varBase = new(this, term, groupName, logicTerm);
-
+        BugPrinceLogicVariableBase varBase = new(this, term, groupName, lm.GetTerm(group.Type));
         if (inner is StateModifier stateModifier) variable = new BugPrinceStateModifier(varBase, stateModifier);
         else if (inner is LogicInt logicInt) variable = new BugPrinceLogicInt(varBase, logicInt);
         return true;
@@ -69,7 +67,7 @@ internal class BugPrinceLogicVariableBase
 
     internal bool CanPayCost(ProgressionManager pm)
     {
-        var provider = resolver.GetProgressionProvider()!;
+        var provider = resolver.GetProgressionProvider() ?? throw new ArgumentException("ProgressionProvider disappeared");
         if (provider != cachedProvider)
         {
             cachedProvider = provider;
@@ -103,10 +101,10 @@ internal class BugPrinceLogicInt : LogicInt
     private readonly BugPrinceLogicVariableBase varBase;
     private readonly LogicInt inner;
 
-    internal BugPrinceLogicInt(BugPrinceLogicVariableBase varBase, LogicInt innner)
+    internal BugPrinceLogicInt(BugPrinceLogicVariableBase varBase, LogicInt inner)
     {
         this.varBase = varBase;
-        this.inner = innner;
+        this.inner = inner;
     }
 
     public override string Name => varBase.Name();
@@ -114,25 +112,4 @@ internal class BugPrinceLogicInt : LogicInt
     public override IEnumerable<Term> GetTerms() => inner.GetTerms().Concat([varBase.Term()]);
 
     public override int GetValue(object? sender, ProgressionManager pm) => varBase.CanPayCost(pm) ? inner.GetValue(sender, pm) : FALSE;
-}
-
-internal static class VariableResolverExtensions
-{
-    internal static bool TryGetInner<T>(this VariableResolver self, out T inner)
-    {
-        VariableResolver? v = self;
-        while (self != null)
-        {
-            if (v is T t)
-            {
-                inner = t;
-                return true;
-            }
-
-            v = self.Inner;
-        }
-
-        inner = default;
-        return false;
-    }
 }

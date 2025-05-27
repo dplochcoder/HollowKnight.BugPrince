@@ -1,7 +1,10 @@
 ﻿using BugPrince.Data;
+using BugPrince.IC;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
+using RandomizerCore.Logic;
 using RandomizerMod.RC;
+using RandomizerMod.Settings;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +12,11 @@ namespace BugPrince.Rando;
 
 internal class RequestModifier
 {
-    internal static void Setup() => RequestBuilder.OnUpdate.Subscribe(1000f, SelectCostGroups);
+    internal static void Setup()
+    {
+        RequestBuilder.OnUpdate.Subscribe(1000f, GenerateCostGroups);
+        ProgressionInitializer.OnCreateProgressionInitializer += AddTolerances;
+    }
 
     private static IEnumerable<string> GetRandomizedTransitions(RequestBuilder rb)
     {
@@ -32,7 +39,7 @@ internal class RequestModifier
         }
     }
 
-    private static void SelectCostGroups(RequestBuilder rb)
+    private static void GenerateCostGroups(RequestBuilder rb)
     {
         RandoInterop.LS = new();
         if (!RandoInterop.AreCostsEnabled) return;
@@ -77,6 +84,23 @@ internal class RequestModifier
         System.Random r = new(rb.gs.Seed + 17);
         WeightedRandomSort(ordered, r);
         RandoInterop.LS.CostGroupProgression = [.. ordered.Select(p => p.Item1)];
+
+        // TODO: Handle vanilla placement.
+        var coins = RandoInterop.LS.GetItemCount(CostType.Coins) + RandoInterop.RS.CoinTolerance;
+        for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);
+        for (int i = 0; i < RandoInterop.RS.CoinDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}");
+
+        var gems = RandoInterop.LS.GetItemCount(CostType.Gems) + RandoInterop.RS.GemTolerance;
+        for (int i = 0; i < gems; i++) rb.AddItemByName(GemItem.ITEM_NAME);
+        for (int i = 0; i < RandoInterop.RS.GemDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}");
+    }
+
+    private static void AddTolerances(LogicManager lm, GenerationSettings gs, ProgressionInitializer pi)
+    {
+        if (!RandoInterop.AreCostsEnabled) return;
+
+        pi.Setters.Add(new(lm.GetTerm(CostType.Coins), -RandoInterop.RS.CoinTolerance));
+        pi.Setters.Add(new(lm.GetTerm(CostType.Gems), -RandoInterop.RS.GemTolerance));
     }
 
     private static void WeightedRandomSort(List<(string, CostGroup)> list, System.Random r)

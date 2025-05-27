@@ -25,10 +25,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     // Inventory
     public int Coins = 0;
-    public int TotalCoins = 0;
     public int DiceTotems = 0;
     public int Gems = 0;
-    public int TotalGems = 0;
     public int PushPins = 0;
     public string? PinnedScene;
 

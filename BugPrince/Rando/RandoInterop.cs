@@ -28,7 +28,7 @@ internal static class RandoInterop
 {
     internal static LocalSettings? LS;
 
-    private static RandomizationSettings RS => BugPrinceMod.GS.RandoSettings;
+    internal static RandomizationSettings RS => BugPrinceMod.GS.RandoSettings;
 
     internal static bool IsEnabled => RS.Enabled;
 

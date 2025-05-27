@@ -10,6 +10,9 @@ internal static class LogicPatcher
 
     private static void ModifyLogic(GenerationSettings gs, LogicManagerBuilder lmb)
     {
+        Data.CostType.Coins.GetTerm(lmb);
+        Data.CostType.Gems.GetTerm(lmb);
+
         lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
     }
 }

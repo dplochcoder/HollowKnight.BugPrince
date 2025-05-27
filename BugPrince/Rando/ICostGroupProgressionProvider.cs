@@ -1,5 +1,7 @@
 ﻿using BugPrince.Data;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BugPrince.Rando;
 
@@ -35,11 +37,15 @@ internal class OverlaidCostGroupProgressionProvider : ICostGroupProgressionProvi
 
 internal static class ICostGroupProgressionProviderExtensions
 {
+    internal static int GetItemCount(this ICostGroupProgressionProvider self, CostType costType) => self.CostGroups().Values.Where(g => g.Type == costType).Select(g => g.Cost).Sum();
+
     internal static bool GetCostGroupByScene(this ICostGroupProgressionProvider self, string scene, out string groupName, out CostGroup costGroup)
     {
-        groupName = default;
-        costGroup = default;
-        if (!self.CostGroupsByScene().TryGetValue(scene, out groupName)) return false;
+        if (!self.CostGroupsByScene().TryGetValue(scene, out groupName))
+        {
+            costGroup = default;
+            return false;
+        }
         return self.CostGroups().TryGetValue(groupName, out costGroup);
     }
 
@@ -54,12 +60,12 @@ internal static class ICostGroupProgressionProviderExtensions
         // Add progressive costs
         foreach (var previousName in self.CostGroupProgression())
         {
-            if (!self.CostGroups().TryGetValue(previousName, out var previousGroup)) throw new System.ArgumentException("Bad cost group progression data");
+            if (!self.CostGroups().TryGetValue(previousName, out var previousGroup)) throw new ArgumentException("Bad cost group progression data");
 
             if (previousGroup.Type == group.Type) cost += previousGroup.Cost;
             if (previousName == groupName) return true;
         }
 
-        throw new System.ArgumentException("Bad cost group progression data");
+        throw new ArgumentException("Bad cost group progression data");
     }
 }
