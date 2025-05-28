@@ -8,7 +8,8 @@ public class PushPinItem : AbstractItem
 {
     internal const string ITEM_NAME = "BugPrince-PushPin";
 
-    internal static readonly EmbeddedSprite sprite = new("Items.push_pin");
+    internal static readonly EmbeddedSprite Sprite = new("Items.push_pin");
+    internal static readonly EmbeddedSprite LargeSprite = new("Items.push_pin_large");
 
     internal static EmptyItem LogicItem() => new(ITEM_NAME);
 
@@ -19,7 +20,7 @@ public class PushPinItem : AbstractItem
         {
             name = new BoxedString("Push Pin"),
             shopDesc = new BoxedString("I could really use a dozen more of these to organize all the clutter."),
-            sprite = sprite,
+            sprite = Sprite,
         };
     }
 

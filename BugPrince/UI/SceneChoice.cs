@@ -41,7 +41,7 @@ internal class SceneChoice : MonoBehaviour
         var pinIco = pinShaker.gameObject.AddNewChild("Pin");
         pinIco.transform.localPosition = UIConstants.PIN_POS;
         var pinRenderer = pinIco.AddComponent<SpriteRenderer>();
-        pinRenderer.sprite = PushPinItem.sprite.Value;
+        pinRenderer.sprite = PushPinItem.LargeSprite.Value;
         pinRenderer.SetUILayer(UISortingOrder.CostIcons);
         var pinTracker = pinIco.AddComponent<PinAnimator>();
 

@@ -109,12 +109,12 @@ internal class RoomSelectionUI : MonoBehaviour
 
         if (first)
         {
-            diceTotemSlot ??= InventorySlot.Create(gameObject, InvPos(0), module!.DiceTotems, DiceTotemItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-            coinSlot ??= InventorySlot.Create(gameObject, InvPos(1), module!.Coins, CoinItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-            gemSlot ??= InventorySlot.Create(gameObject, InvPos(2), module!.Gems, GemItem.sprite.Value, UIConstants.INV_SLOT_GEM_ITEM_SCALE);
-            pushPinSlot ??= InventorySlot.Create(gameObject, InvPos(3), module!.PushPins, PushPinItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-            dashIco ??= MakeSprite(gameObject, InvPos(0) - new Vector2(3.75f, 0), dash_ico.Value);
-            spellIco ??= MakeSprite(gameObject, InvPos(3) + new Vector2(4f, 0), spell_ico.Value);
+            diceTotemSlot ??= InventorySlot.Create(gameObject, InvPos(0), module!.DiceTotems, DiceTotemItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
+            coinSlot ??= InventorySlot.Create(gameObject, InvPos(1), module!.Coins, CoinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
+            gemSlot ??= InventorySlot.Create(gameObject, InvPos(2), module!.Gems, GemItem.LargeSprite.Value, UIConstants.INV_SLOT_GEM_ITEM_SCALE);
+            pushPinSlot ??= InventorySlot.Create(gameObject, InvPos(3), module!.PushPins, PushPinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
+            dashIco ??= MakeSprite(gameObject, InvPos(0) + new Vector2(0, 2f), dash_ico.Value);
+            spellIco ??= MakeSprite(gameObject, InvPos(3) + new Vector2(0, 2f), spell_ico.Value);
 
             diceTotemSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
             coinSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);

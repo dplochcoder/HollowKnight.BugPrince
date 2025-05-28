@@ -8,7 +8,8 @@ public class DiceTotemItem : AbstractItem
 {
     internal const string ITEM_NAME = "BugPrince-DiceTotem";
 
-    internal static readonly EmbeddedSprite sprite = new("Items.dice_totem");
+    internal static readonly EmbeddedSprite Sprite = new("Items.dice_totem");
+    internal static readonly EmbeddedSprite LargeSprite = new("Items.dice_totem_large");
 
     internal static EmptyItem LogicItem() => new(ITEM_NAME);
 
@@ -19,7 +20,7 @@ public class DiceTotemItem : AbstractItem
         {
             name = new BoxedString("Dice Totem"),
             shopDesc = new BoxedString("A monument to chance, to persistence! Just one more, surely."),
-            sprite = sprite,
+            sprite = Sprite,
         };
     }
 

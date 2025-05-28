@@ -9,7 +9,8 @@ public class GemItem : AbstractItem
     internal const string ITEM_NAME = "BugPrince-Gem";
     internal const string TERM_NAME = "BUG_PRINCE_GEMS";
 
-    internal static readonly EmbeddedSprite sprite = new("Items.gem");
+    internal static readonly EmbeddedSprite Sprite = new("Items.gem");
+    internal static readonly EmbeddedSprite LargeSprite = new("Items.gem_large");
 
     internal static StringItemTemplate LogicItem() => new(ITEM_NAME, $"{TERM_NAME}++");
 
@@ -20,7 +21,7 @@ public class GemItem : AbstractItem
         {
             name = new BoxedString("Gem"),
             shopDesc = new BoxedString("Sparkling, bright, beautifully cut... I should charge at least five times more for this."),
-            sprite = sprite,
+            sprite = Sprite,
         };
     }
 
