@@ -2,8 +2,8 @@
 using BugPrince.Rando;
 using BugPrince.UI;
 using BugPrince.Util;
-using HutongGames.PlayMaker.Actions;
 using ItemChanger;
+using Newtonsoft.Json;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
@@ -12,6 +12,7 @@ using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace BugPrince.IC;
@@ -38,6 +39,13 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     public List<string> CostGroupProgression = [];  // List of all cost groups, in progression order.
     public Dictionary<string, int> RefreshCounters = [];  // Scene -> num picks until refresh
 
+    // Interop.
+    [JsonConverter(typeof(Transition.TransitionDictConverter<Transition>))]
+    public Dictionary<Transition, Transition> UnsyncedRandoPlacements = [];
+
+    private Dictionary<Transition, RandoModTransition> randoSourceTransitions = [];
+    private Dictionary<Transition, RandoModTransition> randoTargetTransitions = [];
+
     public static BugPrinceModule Get() => ItemChangerMod.Modules.Get<BugPrinceModule>()!;
 
     public override void Initialize()
@@ -57,9 +65,9 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     private static RandoModContext RandoCtx() => RS().Context;
 
-    private static TransitionSettings TransitionSettings() => RandomizerMod.RandomizerMod.RS.GenerationSettings.TransitionSettings;
+    private static List<TransitionPlacement> RandoTransitionPlacements() => RandoCtx().transitionPlacements;
 
-    private static Dictionary<Transition, ITransition> TransitionOverrides() => ItemChanger.Internal.Ref.Settings.TransitionOverrides;
+    private static TransitionSettings TransitionSettings() => RandomizerMod.RandomizerMod.RS.GenerationSettings.TransitionSettings;
 
     private ICostGroupProgressionProvider? cachedProvider;
     internal ICostGroupProgressionProvider AsProgressionProvider() => cachedProvider ??= new ModuleCostGroupProgressionProvider(this);
@@ -73,7 +81,14 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         // Must hook after ItemChanger.
         On.GameManager.BeginSceneTransition += SelectRandomizedTransition;
 
-        UpdateTransitionPlacements();
+        foreach (var p in RandoTransitionPlacements())
+        {
+            randoSourceTransitions[p.Source.ToStruct()] = p.Source;
+            randoSourceTransitions[p.Target.ToStruct()] = p.Target;
+        }
+        if (UnsyncedRandoPlacements.Count == 0) UnsyncedRandoPlacements = RandoTransitionPlacements().ToDictionary(p => p.Source.ToStruct(), p => p.Target.ToStruct());
+        SyncTransitionPlacements();
+
         RandomizerMod.RandomizerMod.RS.TrackerData.Reset();
         RandomizerMod.RandomizerMod.RS.TrackerDataWithoutSequenceBreaks.Reset();
     }
@@ -100,7 +115,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         PaidCostGroups.Add(groupName);
     }
 
-    private bool IsExitOnly(Transition transition) => !TransitionOverrides().ContainsKey(transition);
+    private bool IsExitOnly(Transition transition) => !UnsyncedRandoPlacements.ContainsKey(transition);
 
     private static bool IsMatchingPair(Transition src, Transition dst, bool doorToDoor)
     {
@@ -187,23 +202,23 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
             List<UpdateEntry> updates = [];
             var coupled = TransitionSettings().Coupled;
-            foreach (var e in TransitionOverrides())
+            foreach (var p in RandoTransitionPlacements())
             {
-                var src = e.Key;
-                var dst = e.Value.ToStruct();
+                var source = p.Source.ToStruct();
+                var target = p.Target.ToStruct();
 
-                if (src == src1) dst = dst2;
-                else if (src == src2) dst = dst1;
+                if (source == src1) target = dst2;
+                else if (source == src2) target = dst1;
                 else if (coupled)
                 {
-                    if (src == dst1) dst = src2;
-                    else if (src == dst2) dst = src1;
+                    if (source == dst1) target = src2;
+                    else if (source == dst2) target = src1;
                 }
 
                 TransitionPlacement t = new()
                 {
-                    Source = RandoTransition(src),
-                    Target = RandoTransition(dst),
+                    Source = randoSourceTransitions[source],
+                    Target = randoTargetTransitions[target],
                 };
                 updates.Add(new PrePlacedItemUpdateEntry(t));
             }
@@ -226,110 +241,62 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
     private static readonly FieldInfo trackerUpdateTransitionLookupField = typeof(TrackerUpdate).GetField("transitionLookup", BindingFlags.NonPublic | BindingFlags.Instance);
 
-    private Dictionary<Transition, int>? srcTransitionIndices;
-    private int SrcTransitionIndex(Transition transition)
+    private void SyncTransitionPlacements()
     {
-        if (srcTransitionIndices == null)
-        {
-            srcTransitionIndices = [];
-            var ctx = RandoCtx();
-            for (int i = 0; i < ctx.transitionPlacements.Count; i++) srcTransitionIndices[ctx.transitionPlacements[i].Source.ToStruct()] = i;
-        }
-
-        return srcTransitionIndices[transition];
-    }
-
-    private Dictionary<Transition, RandoModTransition>? randoTransitions;
-    private RandoModTransition RandoTransition(Transition transition)
-    {
-        if (randoTransitions == null)
-        {
-            randoTransitions = [];
-            var ctx = RandoCtx();
-
-            // Targets take priority.
-            foreach (var p in ctx.transitionPlacements) randoTransitions[p.Source.ToStruct()] = p.Source;
-            foreach (var p in ctx.transitionPlacements) randoTransitions[p.Target.ToStruct()] = p.Target;
-        }
-
-        return randoTransitions[transition];
-    }
-
-    private void UpdateTransitionPlacements(List<Transition>? srcs = null)
-    {
-        var overrides = TransitionOverrides();
-        var ctx = RandoCtx();
-
+        var placements = RandoTransitionPlacements();
         var trackerUpdate = ItemChangerMod.Modules.Get<TrackerUpdate>();
         var transitionLookup = (Dictionary<string, string>)trackerUpdateTransitionLookupField.GetValue(trackerUpdate);
 
-        if (srcs != null)
+        // Update tracker and rando context.
+        for (int i = 0; i < placements.Count; i++)
         {
-            foreach (var src in srcs)
+            var p = placements[i];
+            if (UnsyncedRandoPlacements.TryGetValue(p.Source.ToStruct(), out var newTarget) && p.Target.ToStruct() != newTarget)
             {
-                var idx = SrcTransitionIndex(src);
-                var dst = overrides[src].ToStruct();
-
-                ctx.transitionPlacements[idx] = new(RandoTransition(dst), RandoTransition(src));
-                transitionLookup[src.ToString()] = dst.ToString();
+                placements[i] = new(p.Source, randoTargetTransitions[newTarget]);
+                transitionLookup[p.Source.ToString()] = newTarget.ToString();
             }
-        }
-        else
-        {
-            List<TransitionPlacement> updatedPlacements = [];
-            transitionLookup.Clear();
-            foreach (var p in ctx.transitionPlacements)
-            {
-                var src = p.Source;
-                var target = RandoTransition(overrides[p.Source.ToStruct()].ToStruct());
-                updatedPlacements.Add(new(target, p.Source));
-                transitionLookup[src.Name] = target.Name;
-            }
-            ctx.transitionPlacements.Clear();
-            ctx.transitionPlacements.AddRange(updatedPlacements);
         }
     }
 
     private void SwapTransitions(Transition src1, Transition src2)
     {
-        var overrides = TransitionOverrides();
-        var dst1 = overrides[src1].ToStruct();
-        var dst2 = overrides[src2].ToStruct();
+        var dst1 = UnsyncedRandoPlacements[src1];
+        var dst2 = UnsyncedRandoPlacements[src2];
+        UnsyncedRandoPlacements[src1] = dst2;
+        UnsyncedRandoPlacements[src2] = dst1;
         RecordEnterExit(src1, dst2);
-        (overrides[src1], overrides[src2]) = (overrides[src2], overrides[src1]);
 
-        List<Transition> toUpdate = [src1, src2];
+        // ItemChanger gets updated differently due to things like JijiJinnPassage.
+        Dictionary<Transition, Transition> icUpdates = new();
+        icUpdates[dst1] = dst2;
+        icUpdates[dst2] = dst1;
+
         if (TransitionSettings().Coupled)
         {
-            if (overrides.ContainsKey(dst1))
+            if (UnsyncedRandoPlacements.ContainsKey(dst1))
             {
-                overrides[dst1] = src2;
-                toUpdate.Add(dst1);
+                UnsyncedRandoPlacements[dst1] = src2;
+                icUpdates[src1] = src2;
             }
-            if (overrides.ContainsKey(dst2))
+            if (UnsyncedRandoPlacements.ContainsKey(dst2))
             {
-                overrides[dst2] = src1;
+                UnsyncedRandoPlacements[dst2] = src1;
                 RecordEnterExit(dst2, src1);
-                toUpdate.Add(dst2);
+                icUpdates[src2] = src1;
             }
         }
+        SyncTransitionPlacements();
 
-        UpdateTransitionPlacements(toUpdate);
-    }
-
-    private bool FindTarget(string scene, string gate, out (Transition, Transition) pair)
-    {
-        Transition target = new(scene, gate);
-
-        foreach (var e in TransitionOverrides())
+        // Update ItemChanger targets. Map targets specifically to work with JijiJinnPassage.
+        List<(Transition, Transition)> newKVs = [];
+        var icOverrides = ItemChanger.Internal.Ref.Settings.TransitionOverrides;
+        foreach (var e in icOverrides)
         {
-            if (e.Value.ToStruct() == target)
-            {
-                pair = (e.Key, target);
-                return true;
-            }
+            var orig = e.Value.ToStruct();
+            if (icUpdates.TryGetValue(orig, out var newTarget) && orig != newTarget) newKVs.Add((e.Key, newTarget));
         }
-        return false;
+        foreach (var (k, v) in newKVs) icOverrides[k] = v;
     }
 
     private List<SceneChoiceInfo>? CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
@@ -363,11 +330,6 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
         IEnumerator<(Transition, Transition)> EnumerateCandidates()
         {
-#if DEBUG
-            if (FindTarget(SceneNames.Room_shop, "left1", out var pair)) yield return pair;
-            if (FindTarget(SceneNames.Room_temple, "left1", out pair)) yield return pair;
-            if (FindTarget(SceneNames.Deepnest_Spider_Town, "left1", out pair)) yield return pair;
-#endif
             foreach (var p in potentialTargets) yield return p;
             startedBackfill.Value = true;
             foreach (var list in backfillDict.Values) foreach (var p in list) yield return p;
