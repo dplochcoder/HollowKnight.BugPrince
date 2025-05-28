@@ -1,6 +1,7 @@
 ﻿using ItemChanger;
 using ItemChanger.UIDefs;
 using RandomizerCore.StringItems;
+using RandomizerMod.RandomizerData;
 
 namespace BugPrince.IC;
 
@@ -13,6 +14,14 @@ public class CoinItem : AbstractItem
     internal static readonly EmbeddedSprite LargeSprite = new("Items.coin_large");
 
     internal static StringItemTemplate LogicItem() => new(ITEM_NAME, $"{TERM_NAME}++");
+
+    internal static ItemDef ItemDef() => new()
+    {
+        Name = ITEM_NAME,
+        Pool = PoolNames.Key,
+        MajorItem = true,
+        PriceCap = 500,
+    };
 
     public CoinItem()
     {

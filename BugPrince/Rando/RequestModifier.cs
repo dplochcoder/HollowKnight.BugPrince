@@ -3,6 +3,7 @@ using BugPrince.IC;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
+using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System.Collections.Generic;
@@ -89,6 +90,11 @@ internal class RequestModifier
         System.Random r = new(rb.gs.Seed + 17);
         WeightedRandomSort(ordered, r);
         RandoInterop.LS.CostGroupProgression = [.. ordered.Select(p => p.Item1)];
+
+        rb.EditItemRequest(CoinItem.ITEM_NAME, info => info.getItemDef = CoinItem.ItemDef);
+        rb.EditItemRequest(DiceTotemItem.ITEM_NAME, info => info.getItemDef = DiceTotemItem.ItemDef);
+        rb.EditItemRequest(GemItem.ITEM_NAME, info => info.getItemDef = GemItem.ItemDef);
+        rb.EditItemRequest(PushPinItem.ITEM_NAME, info => info.getItemDef = PushPinItem.ItemDef);
 
         // TODO: Handle vanilla placement.
         for (int i = 0; i < RandoInterop.RS.NumDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);

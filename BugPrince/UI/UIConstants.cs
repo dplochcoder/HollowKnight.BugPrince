@@ -5,7 +5,7 @@ namespace BugPrince.UI;
 internal static class UIConstants
 {
     internal const float INV_SLOT_BAR_X_SPACE = 6.25f;
-    internal const float INV_SLOT_BAR_Y_SPACE = 4.5f;
+    internal const float INV_SLOT_BAR_Y_SPACE = 4.25f;
     internal const float INV_SLOT_ITEM_SCALE = 0.55f;
     internal const float INV_SLOT_GEM_ITEM_SCALE = 0.6f;
     internal const float INV_SLOT_SHAKE_SPAN = 0.2f;

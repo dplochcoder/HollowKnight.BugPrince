@@ -1,6 +1,7 @@
 ﻿using ItemChanger;
 using ItemChanger.UIDefs;
 using RandomizerCore.LogicItems;
+using RandomizerMod.RandomizerData;
 
 namespace BugPrince.IC;
 
@@ -12,6 +13,14 @@ public class PushPinItem : AbstractItem
     internal static readonly EmbeddedSprite LargeSprite = new("Items.push_pin_large");
 
     internal static EmptyItem LogicItem() => new(ITEM_NAME);
+
+    internal static ItemDef ItemDef() => new()
+    {
+        Name = ITEM_NAME,
+        Pool = PoolNames.Relic,
+        MajorItem = false,
+        PriceCap = 1250,
+    };
 
     public PushPinItem()
     {

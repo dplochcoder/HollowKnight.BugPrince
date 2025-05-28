@@ -1,6 +1,7 @@
 ﻿using ItemChanger;
 using ItemChanger.UIDefs;
 using RandomizerCore.LogicItems;
+using RandomizerMod.RandomizerData;
 
 namespace BugPrince.IC;
 
@@ -12,6 +13,14 @@ public class DiceTotemItem : AbstractItem
     internal static readonly EmbeddedSprite LargeSprite = new("Items.dice_totem_large");
 
     internal static EmptyItem LogicItem() => new(ITEM_NAME);
+
+    internal static ItemDef ItemDef() => new()
+    {
+        Name = ITEM_NAME,
+        Pool = PoolNames.Relic,
+        MajorItem = false,
+        PriceCap = 800,
+    };
 
     public DiceTotemItem()
     {
