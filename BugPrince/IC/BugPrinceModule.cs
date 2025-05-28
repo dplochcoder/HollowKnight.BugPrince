@@ -146,7 +146,6 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     {
         List<ItemPlacement> unclaimed = [.. RandoCtx().itemPlacements];
 
-        // TODO: Ensure all transitions are reachable as well.
         while (unclaimed.Count > 0)
         {
             List<ItemPlacement> reachable = [];
@@ -164,6 +163,10 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
             unclaimed = newUnclaimed;
         }
+
+        // Verify all vanilla and all transitions are reachable.
+        foreach (var placement in RandoCtx().Vanilla) if (!placement.Location.CanGet(pm)) return false;
+        foreach (var transition in RandoCtx().transitionPlacements) if (!transition.Source.CanGet(pm)) return false;
 
         return true;
     }
