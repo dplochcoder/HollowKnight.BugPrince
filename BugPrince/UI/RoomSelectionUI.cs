@@ -113,15 +113,15 @@ internal class RoomSelectionUI : MonoBehaviour
             coinSlot ??= InventorySlot.Create(gameObject, InvPos(1), module!.Coins, CoinItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
             gemSlot ??= InventorySlot.Create(gameObject, InvPos(2), module!.Gems, GemItem.sprite.Value, UIConstants.INV_SLOT_GEM_ITEM_SCALE);
             pushPinSlot ??= InventorySlot.Create(gameObject, InvPos(3), module!.PushPins, PushPinItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-            dashIco ??= MakeSprite(gameObject, InvPos(0) - new Vector2(4f, 0), dash_ico.Value);
+            dashIco ??= MakeSprite(gameObject, InvPos(0) - new Vector2(3.75f, 0), dash_ico.Value);
             spellIco ??= MakeSprite(gameObject, InvPos(3) + new Vector2(4f, 0), spell_ico.Value);
 
-            diceTotemSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
-            coinSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
-            gemSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
-            pushPinSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
-            dashIco?.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
-            spellIco?.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+            diceTotemSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            coinSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            gemSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            pushPinSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            dashIco.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+            spellIco.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
         }
 
         for (int i = 0; i < choiceInfos.Count; i++)
