@@ -92,6 +92,7 @@ internal class RequestModifier
 
         // TODO: Handle vanilla placement.
         for (int i = 0; i < RandoInterop.RS.NumDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
+        for (int i = 0; i < RandoInterop.RS.NumPushPins; i++) rb.AddItemByName(PushPinItem.ITEM_NAME);
 
         var coins = RandoInterop.LS.GetItemCount(CostType.Coins) + RandoInterop.RS.CoinTolerance;
         for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);

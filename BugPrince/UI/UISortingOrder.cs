@@ -5,13 +5,15 @@ namespace BugPrince.UI;
 
 internal static class UISortingOrder
 {
-    internal const int SceneText = 1;
-    internal const int ScenePicture = 2;
-    internal const int SceneFrame = 3;
-    internal const int CostIcons = 3;
-    internal const int SelectionCorners = 4;
-    internal const int InventoryIcons = 5;
-    internal const int InventoryText = 5;
+    internal const int Background = 1;
+    internal const int SceneText = 2;
+    internal const int ScenePicture = 3;
+    internal const int SceneFrame = 4;
+    internal const int CostIcons = 4;
+    internal const int SelectionCorners = 5;
+    internal const int InventoryLossText = 6;
+    internal const int InventoryIcons = 7;
+    internal const int InventoryText = 7;
 
     internal static void SetUILayer(this Renderer self, int order)
     {

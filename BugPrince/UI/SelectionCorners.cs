@@ -1,5 +1,6 @@
 ﻿using BugPrince.IC;
 using BugPrince.Util;
+using PurenailCore.GOUtil;
 using UnityEngine;
 
 namespace BugPrince.UI;
@@ -32,6 +33,8 @@ internal class SelectionCorners : MonoBehaviour
     internal void UpdateTarget(Vector2 target) => this.target = target;
 
     internal void Shake() => shaker?.Shake();
+
+    internal void FadeOut(float duration) => gameObject.Recursively(go => go.FadeColor(Color.white.WithAlpha(0), duration));
 
     private void Update()
     {

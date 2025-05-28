@@ -1,5 +1,7 @@
-﻿using BugPrince.IC;
+﻿using BugPrince.Data;
+using BugPrince.IC;
 using BugPrince.Util;
+using PurenailCore.GOUtil;
 using PurenailCore.SystemUtil;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,6 +25,10 @@ internal class RoomSelectionUI : MonoBehaviour
 {
     internal delegate void SelectionCb(RoomSelectionDecision decision);
     internal delegate List<SceneChoiceInfo>? RerollCb(RoomSelectionRerollDecision decision);
+
+    private static readonly EmbeddedSprite fullwhite = new("UI.fullwhite");
+    private static readonly EmbeddedSprite dash_ico = new("UI.dash_ico");
+    private static readonly EmbeddedSprite spell_ico = new("UI.spell_ico");
 
     internal static bool uiPresent = false;
 
@@ -69,11 +75,58 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private readonly List<SceneChoice> choiceObjects = [];
 
+    private static GameObject MakeSprite(GameObject parent, Vector2 pos, Sprite sprite)
+    {
+        var obj = parent.AddNewChild("Sprite");
+        obj.transform.localPosition = pos;
+        obj.transform.localScale = new(0.55f, 0.55f, 0.55f);
+
+        var render = obj.AddComponent<SpriteRenderer>();
+        render.sprite = sprite;
+        render.SetUILayer(UISortingOrder.InventoryIcons);
+
+        return obj;
+    }
+
     private IEnumerator LoadIn()
     {
+        bool first = backgroundFade == null;
+        if (first)
+        {
+            backgroundFade = gameObject.AddNewChild("BGFade");
+            backgroundFade.transform.localScale = new(50, 50, 50);
+            backgroundFade.SetActive(false);
+            var bgRender = backgroundFade.AddComponent<SpriteRenderer>();
+            bgRender.sprite = fullwhite.Value;
+            bgRender.SetUILayer(UISortingOrder.Background);
+            backgroundFade.FadeColor(Color.black.WithAlpha(0), Color.black.WithAlpha(0.5f), 1.5f);
+            backgroundFade.SetActive(true);
+        }
+
+        float bottom = layout![choiceInfos.Count - 1].Pos.y;
+        float invY = bottom - UIConstants.INV_SLOT_BAR_Y_SPACE;
+        Vector2 InvPos(int idx) => new((idx * 2 - 3) * UIConstants.INV_SLOT_BAR_X_SPACE / 2, invY);
+
+        if (first)
+        {
+            diceTotemSlot ??= InventorySlot.Create(gameObject, InvPos(0), module!.DiceTotems, DiceTotemItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
+            coinSlot ??= InventorySlot.Create(gameObject, InvPos(1), module!.Coins, CoinItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
+            gemSlot ??= InventorySlot.Create(gameObject, InvPos(2), module!.Gems, GemItem.sprite.Value, UIConstants.INV_SLOT_GEM_ITEM_SCALE);
+            pushPinSlot ??= InventorySlot.Create(gameObject, InvPos(3), module!.PushPins, PushPinItem.sprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
+            dashIco ??= MakeSprite(gameObject, InvPos(0) - new Vector2(4f, 0), dash_ico.Value);
+            spellIco ??= MakeSprite(gameObject, InvPos(3) + new Vector2(4f, 0), spell_ico.Value);
+
+            diceTotemSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            coinSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            gemSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            pushPinSlot?.FadeIn(UIConstants.SCENE_ASCEND_TIME);
+            dashIco?.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+            spellIco?.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+        }
+
         for (int i = 0; i < choiceInfos.Count; i++)
         {
-            var choice = SceneChoice.Create(gameObject, choiceInfos[i], layout![i].Pos);
+            var choice = SceneChoice.Create(gameObject, choiceInfos[i], layout[i].Pos);
             choiceObjects.Add(choice);
             if (i + 1 < choiceInfos.Count) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
         }
@@ -92,8 +145,15 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private int selection = 0;
     private int? newPinSelection;
+    private GameObject? backgroundFade;
     private SelectionCorners? selectionCorners;
     private AudioSource? audioSource;
+    private InventorySlot? diceTotemSlot;
+    private InventorySlot? coinSlot;
+    private InventorySlot? gemSlot;
+    private InventorySlot? pushPinSlot;
+    private GameObject? dashIco;
+    private GameObject? spellIco;
     private bool acceptingInput = false;
 
     private void TryMoveToIndex(int? target)
@@ -111,6 +171,17 @@ internal class RoomSelectionUI : MonoBehaviour
         }
     }
 
+    private InventorySlot? GetInvSlot(SceneChoiceInfo info)
+    {
+        if (!info.Cost.HasValue) return null;
+
+        return info.Cost.Value.Item1 switch
+        {
+            CostType.Coins => coinSlot,
+            CostType.Gems => gemSlot,
+        };
+    }
+
     private void TrySelectIndex(int selection)
     {
         var info = choiceInfos[selection];
@@ -126,7 +197,7 @@ internal class RoomSelectionUI : MonoBehaviour
         if (!info.CanAfford(module!))
         {
             choiceObjects[selection].ShakeCosts();
-            // TODO: Shake relevant inventory.
+            GetInvSlot(info)?.Shake();
             audioSource!.PlayOneShot(SoundCache.failed_menu);
             return;
         }
@@ -137,11 +208,17 @@ internal class RoomSelectionUI : MonoBehaviour
             // Return the pin if immediately selected.
             choiceObjects[selection].SetPinned(false);
             newPinSelection = null;
+            pushPinSlot?.Give(1);
         }
 
         IEnumerator LockIn()
         {
             audioSource!.PlayOneShot(SoundCache.confirm);
+            if (info.Cost.HasValue)
+            {
+                audioSource!.PlayOneShot(SoundCache.spend_resources);
+                GetInvSlot(info)?.Take(info.Cost.Value.Item2);
+            }
 
             List<int> fadeOuts = [];
             for (int i = 0; i < choiceObjects.Count; i++) if (i != selection) fadeOuts.Add(i);
@@ -154,13 +231,16 @@ internal class RoomSelectionUI : MonoBehaviour
             }
             yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_SCENE_STAGGER);
             choiceObjects[selection].FlyUp();
+            selectionCorners?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
+            dashIco?.FadeColor(Color.white.WithAlpha(0), UIConstants.SCENE_FADE_OUT_DURATION);
+            diceTotemSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
+            coinSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
+            gemSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
+            pushPinSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
+            spellIco?.FadeColor(Color.white.WithAlpha(0), UIConstants.SCENE_FADE_OUT_DURATION);
 
-            if (info.Cost.HasValue)
-            {
-                audioSource!.PlayOneShot(SoundCache.spend_resources);
-                // TODO: Cost anim
-            }
             yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_DELAY);
+            choiceObjects[selection].FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
 
             selectionCb(new()
             {
@@ -175,7 +255,7 @@ internal class RoomSelectionUI : MonoBehaviour
     {
         if (hiddenPin)
         {
-            // TODO: Shake push pins.
+            pushPinSlot?.Shake();
             audioSource!.PlayOneShot(SoundCache.failed_menu);
             return;
         }
@@ -192,6 +272,7 @@ internal class RoomSelectionUI : MonoBehaviour
             if (newPinSelection.Value == selection)
             {
                 newPinSelection = null;
+                pushPinSlot?.Give(1);
                 choiceObjects[selection].SetPinned(false);
                 // TODO: Maybe undim eligible.
                 audioSource!.PlayOneShot(SoundCache.confirm);
@@ -205,13 +286,13 @@ internal class RoomSelectionUI : MonoBehaviour
         }
         else if (module!.PushPins == 0)
         {
-            // TODO: Shake push pins.
+            pushPinSlot?.Shake();
             selectionCorners?.Shake();
             audioSource!.PlayOneShot(SoundCache.failed_menu);
         }
         else
         {
-            // TODO: Update push pin UI.
+            pushPinSlot?.Take(1);
             newPinSelection = selection;
             choiceObjects[selection].SetPinned(true);
             audioSource!.PlayOneShot(SoundCache.confirm);
@@ -223,7 +304,7 @@ internal class RoomSelectionUI : MonoBehaviour
     {
         if (rerolled || module!.DiceTotems == 0)
         {
-            // TODO: Shake totems
+            diceTotemSlot?.Shake();
             audioSource!.PlayOneShot(SoundCache.failed_menu);
             return;
         }
@@ -242,7 +323,7 @@ internal class RoomSelectionUI : MonoBehaviour
         else if (actions.up.WasPressed) TryMoveToIndex(current.UpIndex);
         else if (actions.down.WasPressed) TryMoveToIndex(current.DownIndex);
         else if (actions.attack.WasPressed) TrySelectIndex(selection);
-        else if (actions.cast.WasPressed) TryTogglePin(selection);
+        else if (actions.cast.WasPressed) TryTogglePin(selection);  // FIXME???
         else if (actions.dash.WasPressed) TryReroll();
     }
 }

@@ -1,11 +1,20 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace BugPrince.UI;
 
 internal static class UIConstants
 {
-    internal const float ASPECT_RATIO = 1920f / 1080f;
+    internal const float INV_SLOT_BAR_X_SPACE = 6.25f;
+    internal const float INV_SLOT_BAR_Y_SPACE = 4.5f;
+    internal const float INV_SLOT_ITEM_SCALE = 0.55f;
+    internal const float INV_SLOT_GEM_ITEM_SCALE = 0.6f;
+    internal const float INV_SLOT_SHAKE_SPAN = 0.2f;
+    internal const float INV_SLOT_TEXT_SCALE = 0.3f;
+    internal const float INV_SLOT_TICK_INTERVAL = 0.15f;
+    internal const float INV_SLOT_TICK_DURATION = 0.5f;
+    internal const float INV_SLOT_TICK_SPEED = 6f;
+    internal const int INV_SLOT_TEXT_SIZE = 48;
+    internal const float INV_SLOT_X_SPACE = 1.75f;
     internal const float PIN_ANIMATION_SCALE = 3f;
     internal const float PIN_ANIMATION_TIME = 0.6f;
     internal const float PIN_ICON_SCALE = 0.2f;
@@ -28,10 +37,10 @@ internal static class UIConstants
     internal const float SHAKE_SPAN = 0.15f;
     internal const float SHAKE_TIME = 0.3f;
     internal const float SELECTION_FADE_IN_TIME = 0.5f;
-    internal const float SELECTION_HEIGHT = 3.9f;
+    internal const float SELECTION_HEIGHT = 4.1f;
     internal const float SELECTION_OSCILLATION_DIST = 0.125f;
     internal const float SELECTION_OSCILLATION_TIME = 2.4f;
-    internal const float SELECTION_WIDTH = SELECTION_HEIGHT * ASPECT_RATIO;
+    internal const float SELECTION_WIDTH = 7.4f;
     internal const float SELECTION_VELOCITY = 60f;
     internal const float TEXT_SCALE = 0.25f;
     internal const int TEXT_SIZE = 24;
