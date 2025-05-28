@@ -7,6 +7,16 @@ namespace BugPrince.Util;
 
 internal static class GameObjectUtil
 {
+    internal static GameObject AddNewChild(this GameObject self, string name)
+    {
+        GameObject child = new(name);
+        child.transform.SetParent(self.transform);
+        child.transform.localPosition = Vector3.zero;
+        child.transform.localRotation = Quaternion.identity;
+        child.transform.localScale = Vector3.one;
+        return child;
+    }
+
     internal static void Recursively(this GameObject self, Action<GameObject> action)
     {
         Queue<GameObject> queue = new([self]);

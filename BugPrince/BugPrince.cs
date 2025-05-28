@@ -42,7 +42,8 @@ public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>
 
     private const string DEBUG_LOG_FILENAME = "BugPrinceDebug.txt";
 
-    internal static void StartDebugLog() => LogManager.Write("--- BugPrinceDebugLog ---\n", DEBUG_LOG_FILENAME);
+    internal static void StartDebugLog() { }
+    // internal static void StartDebugLog() => LogManager.Write("--- BugPrinceDebugLog ---\n", DEBUG_LOG_FILENAME);
     internal static void DebugLog(string message) => LogManager.Append($"{message}\n", DEBUG_LOG_FILENAME);
 
     // Public API

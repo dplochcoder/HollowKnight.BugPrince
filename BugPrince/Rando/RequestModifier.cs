@@ -50,6 +50,12 @@ internal class RequestModifier
             randomizedGates.GetOrAddNew(parts[0]).Add(parts[1]);
         }
 
+        foreach (var scene in randomizedGates.Keys)
+        {
+            var stream = typeof(BugPrinceMod).Assembly.GetManifestResourceStream($"BugPrince.Resources.Sprites.Scenes.{scene}.png");
+            if (stream == null) BugPrinceMod.Instance?.LogError($"Missing scene: {scene}");
+        }
+
         Dictionary<string, (string, CostGroup)> groups = [];
         foreach (var e in CostGroup.GetProducers())
         {

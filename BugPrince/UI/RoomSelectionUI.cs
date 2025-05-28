@@ -73,7 +73,7 @@ internal class RoomSelectionUI : MonoBehaviour
     {
         for (int i = 0; i < choiceInfos.Count; i++)
         {
-            var choice = SceneChoice.Create(gameObject.transform, choiceInfos[i], layout![i].Pos);
+            var choice = SceneChoice.Create(gameObject, choiceInfos[i], layout![i].Pos);
             choiceObjects.Add(choice);
             if (i + 1 < choiceInfos.Count) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
         }
@@ -82,7 +82,7 @@ internal class RoomSelectionUI : MonoBehaviour
 
         selection = 0;
         newPinSelection = null;
-        selectionCorners ??= SelectionCorners.Create(gameObject.transform, layout![0].Pos);
+        selectionCorners ??= SelectionCorners.Create(gameObject, layout![0].Pos);
         audioSource ??= gameObject.AddComponent<AudioSource>();
         acceptingInput = true;
     }
@@ -117,17 +117,15 @@ internal class RoomSelectionUI : MonoBehaviour
         if (newPinSelection.HasValue && HavePinned && selection != newPinSelection.Value && selection != choiceInfos.Count - 1)
         {
             // Can't make 2 pins.
-            selectionCorners?.Shake();
-            choiceObjects[newPinSelection.Value].Shake();
-            choiceObjects[choiceInfos.Count - 1].Shake();
+            choiceObjects[newPinSelection.Value].ShakePin();
+            choiceObjects[choiceInfos.Count - 1].ShakePin();
             audioSource!.PlayOneShot(SoundCache.failed_menu);
             return;
         }
 
         if (!info.CanAfford(module!))
         {
-            selectionCorners?.Shake();
-            choiceObjects[selection].Shake();
+            choiceObjects[selection].ShakeCosts();
             // TODO: Shake relevant inventory.
             audioSource!.PlayOneShot(SoundCache.failed_menu);
             return;
@@ -137,17 +135,13 @@ internal class RoomSelectionUI : MonoBehaviour
         if (newPinSelection == selection)
         {
             // Return the pin if immediately selected.
-            choiceObjects[selection].Pin(false);
+            choiceObjects[selection].SetPinned(false);
             newPinSelection = null;
         }
 
         IEnumerator LockIn()
         {
-            if (info.Cost.HasValue)
-            {
-                audioSource!.PlayOneShot(SoundCache.spend_resources);
-                // TODO: Cost anim
-            }
+            audioSource!.PlayOneShot(SoundCache.confirm);
 
             List<int> fadeOuts = [];
             for (int i = 0; i < choiceObjects.Count; i++) if (i != selection) fadeOuts.Add(i);
@@ -160,6 +154,12 @@ internal class RoomSelectionUI : MonoBehaviour
             }
             yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_SCENE_STAGGER);
             choiceObjects[selection].FlyUp();
+
+            if (info.Cost.HasValue)
+            {
+                audioSource!.PlayOneShot(SoundCache.spend_resources);
+                // TODO: Cost anim
+            }
             yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_DELAY);
 
             selectionCb(new()
@@ -175,8 +175,6 @@ internal class RoomSelectionUI : MonoBehaviour
     {
         if (hiddenPin)
         {
-            // TODO: Show message.
-            selectionCorners?.Shake();
             // TODO: Shake push pins.
             audioSource!.PlayOneShot(SoundCache.failed_menu);
             return;
@@ -186,7 +184,7 @@ internal class RoomSelectionUI : MonoBehaviour
         if (info.Pinned)
         {
             selectionCorners?.Shake();
-            choiceObjects[selection].Shake();
+            choiceObjects[selection].ShakePin();
             audioSource!.PlayOneShot(SoundCache.failed_menu);
         }
         else if (newPinSelection.HasValue)
@@ -194,14 +192,14 @@ internal class RoomSelectionUI : MonoBehaviour
             if (newPinSelection.Value == selection)
             {
                 newPinSelection = null;
-                choiceObjects[selection].Pin(false);
+                choiceObjects[selection].SetPinned(false);
                 // TODO: Maybe undim eligible.
                 audioSource!.PlayOneShot(SoundCache.confirm);
             }
             else
             {
                 selectionCorners?.Shake();
-                choiceObjects[newPinSelection.Value].Shake();
+                choiceObjects[newPinSelection.Value].ShakePin();
                 audioSource!.PlayOneShot(SoundCache.failed_menu);
             }
         }
@@ -215,7 +213,7 @@ internal class RoomSelectionUI : MonoBehaviour
         {
             // TODO: Update push pin UI.
             newPinSelection = selection;
-            choiceObjects[selection].Pin(true);
+            choiceObjects[selection].SetPinned(true);
             audioSource!.PlayOneShot(SoundCache.confirm);
             // TODO: Maybe dim ineligible.
         }

@@ -1,5 +1,6 @@
 ﻿using BugPrince.IC;
 using DebugMod;
+using UnityEngine;
 
 namespace BugPrince.DebugInterop;
 
@@ -46,4 +47,15 @@ public static class DebugInterop
         if (!BugPrinceEnabled(out var mod)) return;
         mod.PushPins++;
     }
+
+#if DEBUG
+    [BindableMethod(name = "Take Screenshot", category = "Bug Prince")]
+    public static void TakeScreenshot()
+    {
+        var name = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        var file = $"C:/Users/danie/Documents/Scenes/{name}.png";
+
+        ScreenCapture.CaptureScreenshot(file);
+    }
+#endif
 }

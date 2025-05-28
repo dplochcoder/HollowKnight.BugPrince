@@ -1,23 +1,16 @@
-﻿using UnityEngine;
+﻿using BugPrince.UI;
+using UnityEngine;
 
 namespace BugPrince.Util;
 
 internal class Shaker : MonoBehaviour
 {
-    private float xRange;
-    private float yRange;
-    private float duration;
-
+    private float span = UIConstants.SHAKE_SPAN;
     private float timer;
 
-    internal void Init(float xRange, float yRange, float duration)
-    {
-        this.xRange = xRange;
-        this.yRange = yRange;
-        this.duration = duration;
-    }
+    internal void SetSpan(float span) => this.span = span;
 
-    internal void Shake() => timer = duration;
+    internal void Shake() => timer = UIConstants.SHAKE_TIME;
 
     private void Update()
     {
@@ -25,22 +18,16 @@ internal class Shaker : MonoBehaviour
 
         timer -= Time.deltaTime;
         if (timer <= 0) transform.localPosition = Vector3.zero;
-        else transform.localPosition = new(Random.Range(-xRange, xRange), Random.Range(-yRange, yRange));
+        else transform.localPosition = new(Random.Range(-span, span), Random.Range(-span, span));
     }
 }
 
 internal static class ShakerExtensions
 {
-    internal static Shaker AddShakerChild(this GameObject self, float xRange, float yRange, float duration)
+    internal static Shaker AddNewChildShaker(this GameObject self, float span = UIConstants.SHAKE_SPAN)
     {
-        GameObject child = new("Shaker");
-        child.transform.SetParent(self.transform);
-        child.transform.localPosition = Vector3.zero;
-
-        var shaker = child.AddComponent<Shaker>();
-        shaker.Init(xRange, yRange, duration);
-        child.SetActive(true);
+        var shaker = self.AddNewChild("Shaker").AddComponent<Shaker>();
+        shaker.SetSpan(span);
         return shaker;
     }
-    internal static Shaker AddShakerChild(this GameObject self, float range, float duration) => self.AddShakerChild(range, range, duration);
 }

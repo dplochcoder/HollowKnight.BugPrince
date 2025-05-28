@@ -365,9 +365,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         {
 #if DEBUG
             if (FindTarget(SceneNames.Room_shop, "left1", out var pair)) yield return pair;
-            if (FindTarget(SceneNames.Room_Bretta, "right1", out pair)) yield return pair;
-            if (FindTarget(SceneNames.Room_Charm_Shop, "left1", out pair)) yield return pair;
-            if (FindTarget(SceneNames.Room_mapper, "left1", out pair)) yield return pair;
+            if (FindTarget(SceneNames.Room_temple, "left1", out pair)) yield return pair;
+            if (FindTarget(SceneNames.Deepnest_Spider_Town, "left1", out pair)) yield return pair;
 #endif
             foreach (var p in potentialTargets) yield return p;
             startedBackfill.Value = true;

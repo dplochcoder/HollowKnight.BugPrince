@@ -7,26 +7,25 @@ namespace BugPrince.UI;
 
 internal class SceneChoice : MonoBehaviour
 {
-    internal static SceneChoice Create(Transform parent, SceneChoiceInfo info, Vector2 targetPos)
+    internal static SceneChoice Create(GameObject parent, SceneChoiceInfo info, Vector2 targetPos)
     {
-        GameObject obj = new("SceneChoice");
-        obj.transform.SetParent(parent);
-
+        var obj = parent.AddNewChild("SceneChoice");
         var choice = obj.AddComponent<SceneChoice>();
 
-        var shaker = obj.AddShakerChild(UIConstants.SCENE_SHAKE_X_RANGE, UIConstants.SCENE_SHAKE_Y_RANGE, UIConstants.SHAKE_TIME);
-        var shakerObj = shaker.gameObject;
-        var renderer = shakerObj.AddComponent<SpriteRenderer>();
+        var costsShaker = obj.AddNewChildShaker(UIConstants.SCENE_COST_SHAKE_SPAN);
+        var pinShaker = obj.AddNewChildShaker();
+
+        var sceneSprite = obj.AddNewChild("Scene");
+        sceneSprite.transform.SetParent(obj.transform);
+        sceneSprite.transform.localScale = new(UIConstants.SCENE_SCALE, UIConstants.SCENE_SCALE, UIConstants.SCENE_SCALE);
+        var renderer = sceneSprite.AddComponent<SpriteRenderer>();
         renderer.sprite = info.GetSceneSprite();
         renderer.SetUILayer(UISortingOrder.ScenePicture);
-        shakerObj.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+        sceneSprite.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
 
-        // TODO: Remove
         if (renderer.sprite.bounds.size.x < 1)
         {
-            GameObject textObj = new("Text");
-            textObj.transform.SetParent(shakerObj.transform);
-            textObj.transform.localPosition = Vector3.zero;
+            var textObj = obj.AddNewChild("Text");
             textObj.transform.localScale = new(UIConstants.TEXT_SCALE, UIConstants.TEXT_SCALE, UIConstants.TEXT_SCALE);
 
             var text = textObj.AddComponent<TextMesh>();
@@ -34,17 +33,16 @@ internal class SceneChoice : MonoBehaviour
             text.alignment = TextAlignment.Center;
             text.anchor = TextAnchor.MiddleCenter;
             text.fontSize = UIConstants.TEXT_SIZE;
-            text.text = info.Target.ToString();
+            text.text = info.Target.SceneName;
 
             text.GetComponent<MeshRenderer>().SetUILayer(UISortingOrder.SceneText);
         }
 
-        GameObject pinIco = new("Pin");
+        var pinIco = pinShaker.gameObject.AddNewChild("Pin");
+        pinIco.transform.localPosition = UIConstants.PIN_POS;
         var pinRenderer = pinIco.AddComponent<SpriteRenderer>();
         pinRenderer.sprite = PushPinItem.sprite.Value;
         pinRenderer.SetUILayer(UISortingOrder.CostIcons);
-        pinRenderer.transform.SetParent(shakerObj.transform);
-        pinRenderer.transform.localPosition = UIConstants.PIN_POS;
         var pinTracker = pinIco.AddComponent<PinAnimator>();
 
         if (info.Cost.HasValue)
@@ -52,8 +50,7 @@ internal class SceneChoice : MonoBehaviour
             var (costType, cost) = info.Cost.Value;
             for (int i = 0; i < cost; i++)
             {
-                GameObject costIco = new("Cost");
-                costIco.transform.SetParent(shakerObj.transform);
+                var costIco = costsShaker.gameObject.AddNewChild("Cost");
                 costIco.transform.localPosition = new(i * UIConstants.SCENE_COST_X_SPACE - (cost - 1) * UIConstants.SCENE_COST_X_SPACE / 2, UIConstants.SCENE_COST_Y);
                 var scale = costType == Data.CostType.Coins ? UIConstants.SCENE_COST_COIN_SCALE : UIConstants.SCENE_COST_GEM_SCALE;
                 costIco.transform.localScale = new(scale, scale, scale);
@@ -65,22 +62,26 @@ internal class SceneChoice : MonoBehaviour
             }
         }
 
-        choice.shaker = shaker;
+        choice.pinShaker = pinShaker;
+        choice.costsShaker = costsShaker;
         choice.pinAnimator = pinTracker;
         choice.targetPos = targetPos;
         return choice;
     }
 
-    private Shaker? shaker;
+    private Shaker? pinShaker;
+    private Shaker? costsShaker;
     private PinAnimator? pinAnimator;
     private Vector2 targetPos;
     private float ascendTime;
 
     internal bool IsReady() => ascendTime >= UIConstants.SCENE_ASCEND_TIME;
 
-    internal void Shake() => shaker?.Shake();
+    internal void SetPinned(bool value) => pinAnimator?.Pin(value);
 
-    internal void Pin(bool show) => pinAnimator?.Pin(show);
+    internal void ShakePin() => pinShaker?.Shake();
+
+    internal void ShakeCosts() => costsShaker?.Shake();
 
     internal void FadeOut(float duration) => gameObject.Recursively(go => go.FadeColor(Color.white.WithAlpha(0), duration));
 
