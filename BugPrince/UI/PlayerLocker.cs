@@ -1,5 +1,4 @@
 ﻿using BugPrince.IC;
-using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
 namespace BugPrince.UI;
@@ -22,9 +21,23 @@ internal class PlayerLocker : MonoBehaviour
         rb2d.simulated = false;
 
         HeroController.instance.RelinquishControl();
+
+        On.CameraController.LateUpdate += LockCamera;
     }
 
-    private void OnDestroy() => knight!.GetComponent<Rigidbody2D>().simulated = true;
+    private void OnDestroy()
+    {
+        On.CameraController.LateUpdate -= LockCamera;
+
+        knight!.GetComponent<Rigidbody2D>().simulated = true;
+    }
+
+    private Vector3? origCameraPos;
+    private void LockCamera(On.CameraController.orig_LateUpdate orig, CameraController self)
+    {
+        origCameraPos ??= self.transform.position;
+        self.transform.position = origCameraPos.Value;
+    }
 
     internal void SetDirection(GateDirection gateDir) => this.gateDir = gateDir;
 
