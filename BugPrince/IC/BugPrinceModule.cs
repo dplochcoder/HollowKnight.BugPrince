@@ -300,7 +300,13 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             if (icUpdates.TryGetValue(orig, out var newTarget) && orig != newTarget) newKVs.Add((e.Key, newTarget));
         }
         foreach (var (k, v) in newKVs) icOverrides[k] = v;
+
+        // Update seed.
+        Seed += dst1.ToString().GetStableHashCode() ^ 0x5CCBB22C;
+        Seed += dst2.ToString().GetStableHashCode() ^ 0x2FDBD6F4;
     }
+
+    public int Seed = 0;
 
     private List<SceneChoiceInfo>? CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
     {
@@ -310,19 +316,20 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         RefreshCounters = newDict;
 
         List<(Transition, Transition)> potentialTargets = [];
-        foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides)
+        foreach (var p in RandoTransitionPlacements())
         {
-            var cSrc = e.Key;
-            Transition cDst = e.Value.ToStruct();
+            var cSource = p.Source.ToStruct();
+            var cTarget = p.Target.ToStruct();
+            if (cSource == src && cTarget == target) continue;
 
-            if (ResolvedEnteredTransitions.Contains(cSrc)) continue;
-            if (ResolvedExitedTransitions.Contains(cDst)) continue;
-            if (!IsValidSwap(src, target, cSrc, cDst)) continue;
+            if (ResolvedEnteredTransitions.Contains(cSource)) continue;
+            if (ResolvedExitedTransitions.Contains(cTarget)) continue;
+            if (!IsValidSwap(src, target, cSource, cTarget)) continue;
 
-            potentialTargets.Add((cSrc, cDst));
+            potentialTargets.Add((cSource, cTarget));
         }
 
-        potentialTargets.Shuffle(new());  // FIXME: Seed
+        potentialTargets.Shuffle(new(Seed + 17));
 
         SortedDictionary<int, List<(Transition, Transition)>> backfillDict = [];
         SortedDictionary<int, List<(Transition, Transition)>> shopBackfillDict = [];
@@ -333,6 +340,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
         IEnumerator<(Transition, Transition)> EnumerateCandidates()
         {
+            yield return (src, target);
             foreach (var p in potentialTargets) yield return p;
             startedBackfill.Value = true;
             foreach (var list in backfillDict.Values) foreach (var p in list) yield return p;
@@ -393,14 +401,25 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             }
         }
 
+        // Shuffle to hide the default transition.
+        choices.Shuffle(new(Seed + 23));
+
         // Sort the shops last.
         choices.StableSort((c1, c2) =>
         {
             var shop1 = c1.Cost.HasValue;
             var shop2 = c2.Cost.HasValue;
 
-            if (shop1 == shop2) return 0;
-            else return shop2 ? -1 : 1;
+            if (c1.Cost.HasValue && c2.Cost.HasValue)
+            {
+                var (t1, v1) = c1.Cost.Value;
+                var (t2, v2) = c2.Cost.Value;
+
+                if (v1 != v2) return v1 - v2;
+                else return t1.CompareTo(t2);
+            }
+            else if (!c1.Cost.HasValue && !c2.Cost.HasValue) return 0;
+            else return c2.Cost.HasValue ? -1 : 1;
         });
 
         // Reset refresh count for all selected choices.
@@ -421,6 +440,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
         PinnedScene = scene;
         PushPins--;
+
+        Seed += scene.GetStableHashCode() ^ 0x37270AFE;
     }
 
     private void SelectRandomizedTransition(On.GameManager.orig_BeginSceneTransition orig, GameManager self, GameManager.SceneLoadInfo info)

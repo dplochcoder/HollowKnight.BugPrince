@@ -64,6 +64,7 @@ internal static class RandoInterop
         module.CostGroupsByScene = LS.CostGroupsByScene;
         module.RandomizedTransitions = LS.RandomizedTransitions;
         module.CostGroupProgression = LS.CostGroupProgression;
+        module.Seed = rc.gs.Seed;
     }
 
     private static void LogSettings(RandomizerMod.Logging.LogArguments args, TextWriter tw)
