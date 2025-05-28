@@ -43,8 +43,9 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     [JsonConverter(typeof(Transition.TransitionDictConverter<Transition>))]
     public Dictionary<Transition, Transition> UnsyncedRandoPlacements = [];
 
-    private Dictionary<Transition, RandoModTransition> randoSourceTransitions = [];
-    private Dictionary<Transition, RandoModTransition> randoTargetTransitions = [];
+    // Caches.
+    private readonly Dictionary<Transition, RandoModTransition> randoSourceTransitions = [];
+    private readonly Dictionary<Transition, RandoModTransition> randoTargetTransitions = [];
 
     public static BugPrinceModule Get() => ItemChangerMod.Modules.Get<BugPrinceModule>()!;
 
@@ -84,7 +85,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         foreach (var p in RandoTransitionPlacements())
         {
             randoSourceTransitions[p.Source.ToStruct()] = p.Source;
-            randoSourceTransitions[p.Target.ToStruct()] = p.Target;
+            randoTargetTransitions[p.Target.ToStruct()] = p.Target;
         }
         if (UnsyncedRandoPlacements.Count == 0) UnsyncedRandoPlacements = RandoTransitionPlacements().ToDictionary(p => p.Source.ToStruct(), p => p.Target.ToStruct());
         SyncTransitionPlacements();
@@ -271,7 +272,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         RecordEnterExit(src1, dst2);
 
         // ItemChanger gets updated differently due to things like JijiJinnPassage.
-        Dictionary<Transition, Transition> icUpdates = new();
+        Dictionary<Transition, Transition> icUpdates = [];
         icUpdates[dst1] = dst2;
         icUpdates[dst2] = dst1;
 
