@@ -79,7 +79,7 @@ internal class RoomSelectionUI : MonoBehaviour
         backgroundFade.FadeColor(Color.black.WithAlpha(0), Color.black.WithAlpha(0.5f), 1.5f);
         backgroundFade.SetActive(true);
 
-        float invY = -UIConstants.SCENE_Y_SPACE / 2 - UIConstants.INV_SLOT_BAR_Y_SPACE;
+        float invY = UIConstants.Y_MAIN - UIConstants.SCENE_Y_SPACE / 2 - UIConstants.INV_SLOT_BAR_Y_SPACE;
         Vector2 InvPos(int idx) => new((idx * 2 - 3) * UIConstants.INV_SLOT_BAR_X_SPACE / 2, invY);
 
         diceTotemSlot = InventorySlot.Create(gameObject, InvPos(0), module!.DiceTotems, DiceTotemItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);

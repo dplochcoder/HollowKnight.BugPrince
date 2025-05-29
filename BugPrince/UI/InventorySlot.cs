@@ -35,10 +35,10 @@ internal class InventorySlot : MonoBehaviour
         if (hiddenPin)
         {
             var hiddenTextObj = shaker.gameObject.AddNewChild("Text");
-            hiddenTextObj.transform.localPosition = new(UIConstants.INV_SLOT_X_SPACE * 3 / 2, 0);
-            hiddenTextObj.transform.localScale = new(UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE);
-            var hiddenText = textObj.AddComponent<TextMesh>();
-            hiddenText.fontSize = UIConstants.INV_SLOT_TEXT_SIZE;
+            hiddenTextObj.transform.localPosition = new(UIConstants.INV_SLOT_TEXT_USED_X_POS, 0);
+            hiddenTextObj.transform.localScale = new(UIConstants.INV_SLOT_TEXT_USED_SCALE, UIConstants.INV_SLOT_TEXT_USED_SCALE, UIConstants.INV_SLOT_TEXT_USED_SCALE);
+            var hiddenText = hiddenTextObj.AddComponent<TextMesh>();
+            hiddenText.fontSize = UIConstants.INV_SLOT_TEXT_USED_SIZE;
             hiddenText.alignment = TextAlignment.Center;
             hiddenText.anchor = TextAnchor.MiddleCenter;
             hiddenText.color = new(1, 0.2f, 0.2f);
@@ -87,7 +87,8 @@ internal class InventorySlot : MonoBehaviour
             if (displayAmount == targetAmount) ticker = 0;
 
             var change = gameObject.AddNewChild("Change");
-            change.transform.localScale = new(UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE);
+            change.transform.position = text!.transform.position;
+            change.transform.localScale = new(UIConstants.INV_SLOT_TEXT_CHANGE_SCALE, UIConstants.INV_SLOT_TEXT_CHANGE_SCALE, UIConstants.INV_SLOT_TEXT_CHANGE_SCALE);
             var changeText = change.AddComponent<TextMesh>();
             changeText.color = positive ? lossColor : gainColor;
             changeText.fontSize = UIConstants.INV_SLOT_TEXT_SIZE;
@@ -96,9 +97,9 @@ internal class InventorySlot : MonoBehaviour
             changeText.text = positive ? "+1" : "-1";
             change.GetOrAddComponent<MeshRenderer>().SetUILayer(UISortingOrder.InventoryLossText);
             change.FadeColor(changeText.color.WithAlpha(0), UIConstants.INV_SLOT_TICK_DURATION);
-            change.AddComponent<Mover>().SetVelocity(new(0, -UIConstants.INV_SLOT_TICK_SPEED));
+            change.AddComponent<Mover>().SetVelocity(new(0, UIConstants.INV_SLOT_TICK_SPEED));
 
-            text!.text = $"{displayAmount}";
+            text.text = $"{displayAmount}";
         }
     }
 }

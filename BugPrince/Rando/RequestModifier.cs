@@ -5,6 +5,7 @@ using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,14 +44,16 @@ internal class RequestModifier
     {
         if (!RandoInterop.AreCostsEnabled) return;
 
-        Dictionary<string, HashSet<string>> randomizedGates = [];
+        HashSet<string> randomizedScenes = [];
         foreach (var transition in GetRandomizedTransitions(rb))
         {
-            var parts = transition.Split('[', ']');
-            randomizedGates.GetOrAddNew(parts[0]).Add(parts[1]);
+            if (!transition.ToTransition(out var t)) throw new ArgumentException($"Invalid transition: '{t}'");
+
+            RandoInterop.LS!.RandomizedTransitions.Add(transition);
+            randomizedScenes.Add(t.SceneName);
         }
 
-        foreach (var scene in randomizedGates.Keys)
+        foreach (var scene in randomizedScenes)
         {
             var stream = typeof(BugPrinceMod).Assembly.GetManifestResourceStream($"BugPrince.Resources.Sprites.Scenes.{scene}.png");
             if (stream == null) BugPrinceMod.Instance?.LogError($"Missing scene: {scene}");
@@ -60,7 +63,7 @@ internal class RequestModifier
         foreach (var e in CostGroup.GetProducers())
         {
             var groupName = e.Key;
-            if (!e.Value.ProduceCostGroup(rb.gs, randomizedGates.ContainsKey, out var costGroup)) continue;
+            if (!e.Value.ProduceCostGroup(rb.gs, randomizedScenes.Contains, out var costGroup)) continue;
 
             var priority = costGroup.Priority;
             foreach (var scene in costGroup.SceneNames)
@@ -69,7 +72,7 @@ internal class RequestModifier
                 {
                     var (existingName, existingGroup) = pair;
                     var existingPriority = existingGroup.Priority;
-                    if (priority == existingPriority) throw new System.ArgumentException($"Cost groups '{existingName}' and '{groupName}' conflict on scene '{scene}'");
+                    if (priority == existingPriority) throw new ArgumentException($"Cost groups '{existingName}' and '{groupName}' conflict on scene '{scene}'");
                     else if (priority > existingPriority) groups[scene] = (groupName, costGroup);
                 }
                 else groups[scene] = (groupName, costGroup);
@@ -86,7 +89,7 @@ internal class RequestModifier
 
         List<(string, CostGroup)> ordered = [.. RandoInterop.LS!.CostGroups.Select(e => (e.Key, e.Value)).OrderBy(p => p.Key)];
 
-        System.Random r = new(rb.gs.Seed + 17);
+        Random r = new(rb.gs.Seed + 17);
         WeightedRandomSort(ordered, r);
         RandoInterop.LS.CostGroupProgression = [.. ordered.Select(p => p.Item1)];
 
@@ -116,7 +119,7 @@ internal class RequestModifier
         pi.Setters.Add(new(CostType.Gems.GetTerm(lm), -RandoInterop.RS.GemTolerance));
     }
 
-    private static void WeightedRandomSort(List<(string, CostGroup)> list, System.Random r)
+    private static void WeightedRandomSort(List<(string, CostGroup)> list, Random r)
     {
         List<(int, float)> ranks = [];
         for (int i = 0; i < list.Count; i++)

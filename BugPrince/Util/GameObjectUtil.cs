@@ -63,7 +63,9 @@ internal class Fader : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null) spriteRenderer.color = from;
         textMesh = GetComponent<TextMesh>();
+        if (textMesh != null) textMesh.color = from;
     }
 
     private void Update()

@@ -44,8 +44,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     public Dictionary<Transition, Transition> UnsyncedRandoPlacements = [];
 
     // Caches.
-    private readonly Dictionary<Transition, RandoModTransition> randoSourceTransitions = [];
-    private readonly Dictionary<Transition, RandoModTransition> randoTargetTransitions = [];
+    private readonly Dictionary<Transition, RandoModTransition> sourceRandoTransitions = [];
+    private readonly Dictionary<Transition, RandoModTransition> targetRandoTransitions = [];
 
     public static BugPrinceModule Get() => ItemChangerMod.Modules.Get<BugPrinceModule>()!;
 
@@ -84,14 +84,17 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
         foreach (var p in RandoTransitionPlacements())
         {
-            randoSourceTransitions[p.Source.ToStruct()] = p.Source;
-            randoTargetTransitions[p.Target.ToStruct()] = p.Target;
+            sourceRandoTransitions[p.Source.ToStruct()] = p.Source;
+            targetRandoTransitions[p.Target.ToStruct()] = p.Target;
         }
-        if (UnsyncedRandoPlacements.Count == 0) UnsyncedRandoPlacements = RandoTransitionPlacements().ToDictionary(p => p.Source.ToStruct(), p => p.Target.ToStruct());
-        SyncTransitionPlacements();
 
-        RandomizerMod.RandomizerMod.RS.TrackerData.Reset();
-        RandomizerMod.RandomizerMod.RS.TrackerDataWithoutSequenceBreaks.Reset();
+        // Set up rando placement storage.
+        if (UnsyncedRandoPlacements.Count == 0) UnsyncedRandoPlacements = RandoTransitionPlacements().ToDictionary(p => p.Source.ToStruct(), p => p.Target.ToStruct());
+        else
+        {
+            SyncTransitionPlacements();
+            ResetTrackers();
+        }
     }
 
     private void PayCosts(string scene)
@@ -105,9 +108,6 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             CostGroupProgression.Remove(groupName);
             CostGroupProgression.Insert(PaidCostGroups.Count, groupName);
 
-            // This technically speaking can break logic because a shop previously accessible can become inaccessible after progression order changes.
-            // However this should be invisible to the player (and tracker in general) because it only affects shops the player hasn't yet visited, which are hidden behind unexplored transitions.
-            // However however it does mean that a shop previously available in the purchase pool may disappear from it for some time, until the player buys other shops necessary to pay the newly increased progression cost.
             cachedProvider = null;  // Reset logic variable caches.
         }
 
@@ -172,6 +172,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         return true;
     }
 
+    private static V Get<K, V>(IDictionary<K, V> dict, K key) => dict.TryGetValue(key, out V value) ? value : throw new ArgumentException($"Missing key: {key}");
+
     private bool CanSwapTransitions(
         Transition src1, Transition dst1, Transition src2, Transition dst2)
     {
@@ -221,8 +223,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
                 TransitionPlacement t = new()
                 {
-                    Source = randoSourceTransitions[source],
-                    Target = randoTargetTransitions[target],
+                    Source = Get(sourceRandoTransitions, source),
+                    Target = Get(targetRandoTransitions, target)
                 };
                 updates.Add(new PrePlacedItemUpdateEntry(t));
             }
@@ -255,10 +257,12 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         for (int i = 0; i < placements.Count; i++)
         {
             var p = placements[i];
-            if (UnsyncedRandoPlacements.TryGetValue(p.Source.ToStruct(), out var newTarget) && p.Target.ToStruct() != newTarget)
+            var source = p.Source.ToStruct();
+            var target = p.Target.ToStruct();
+            if (UnsyncedRandoPlacements.TryGetValue(source, out var newTarget) && target != newTarget)
             {
-                placements[i] = new(p.Source, randoTargetTransitions[newTarget]);
-                transitionLookup[p.Source.ToString()] = newTarget.ToString();
+                placements[i] = new(p.Source, targetRandoTransitions[newTarget]);
+                transitionLookup[source.ToString()] = newTarget.ToString();
             }
         }
     }
@@ -307,9 +311,32 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         Seed += dst2.ToString().GetStableHashCode() ^ 0x2FDBD6F4;
     }
 
+    private void ResetTracker(TrackerData tracker)
+    {
+        List<int> items = [.. tracker.obtainedItems];
+        List<(string, string)> transitions = [.. tracker.visitedTransitions.Select(e => (e.Key, e.Value))];
+
+        tracker.obtainedItems.Clear();
+        tracker.outOfLogicObtainedItems.Clear();
+        tracker.visitedTransitions.Clear();
+        tracker.outOfLogicVisitedTransitions.Clear();
+        tracker.Reset();
+
+        var itemPlacements = RandoCtx().itemPlacements;
+        foreach (var id in items) tracker.OnItemObtained(id, itemPlacements[id].Item.Name, itemPlacements[id].Location.Name);
+        foreach (var (src, target) in transitions) tracker.OnTransitionVisited(src, target);
+    }
+
+    private void ResetTrackers()
+    {
+        var rs = RandomizerMod.RandomizerMod.RS;
+        ResetTracker(rs.TrackerData);
+        ResetTracker(rs.TrackerDataWithoutSequenceBreaks);
+    }
+
     public int Seed = 0;
 
-    private List<SceneChoiceInfo>? CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
+    private List<SceneChoiceInfo> CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
     {
         // Decrement refresh counters
         Dictionary<string, int> newDict = [];
@@ -482,8 +509,9 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 }
 
                 MaybeSelectNewPin(decision.newPin?.Target.SceneName);
-                PayCosts(choice.Target.SceneName);
+                PayCosts(choice.Target.SceneName, out var changedProgressionOrder);
                 SwapTransitions(src, choice.OrigSrc);
+                ResetTrackers();
 
                 UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
                 orig(self, info);

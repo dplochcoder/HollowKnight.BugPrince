@@ -4,16 +4,21 @@ namespace BugPrince.UI;
 
 internal static class UIConstants
 {
-    internal const float INV_SLOT_BAR_X_SPACE = 6.25f;
+    internal const float Y_MAIN = 1.5f;
+    internal const float INV_SLOT_BAR_X_SPACE = 5.75f;
     internal const float INV_SLOT_BAR_Y_SPACE = 4.25f;
     internal const float INV_SLOT_ITEM_SCALE = 0.55f;
     internal const float INV_SLOT_GEM_ITEM_SCALE = 0.6f;
     internal const float INV_SLOT_SHAKE_SPAN = 0.2f;
+    internal const float INV_SLOT_TEXT_CHANGE_SCALE = 0.2f;
     internal const float INV_SLOT_TEXT_SCALE = 0.3f;
+    internal const int INV_SLOT_TEXT_SIZE = 48;
+    internal const float INV_SLOT_TEXT_USED_SCALE = 0.2f;
+    internal const int INV_SLOT_TEXT_USED_SIZE = 20;
+    internal const float INV_SLOT_TEXT_USED_X_POS = 2.5f;
     internal const float INV_SLOT_TICK_INTERVAL = 0.15f;
     internal const float INV_SLOT_TICK_DURATION = 0.5f;
     internal const float INV_SLOT_TICK_SPEED = 6f;
-    internal const int INV_SLOT_TEXT_SIZE = 48;
     internal const float INV_SLOT_X_SPACE = 1.75f;
     internal const float PIN_ANIMATION_SCALE = 4f;
     internal const float PIN_ANIMATION_TIME = 0.45f;
