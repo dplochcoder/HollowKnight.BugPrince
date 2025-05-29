@@ -1,4 +1,56 @@
 {
+  "Iselda_11_Maps": {
+    "Type": "PushPin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.ShopLocation, ItemChanger",
+      "objectName": "Iselda",
+      "fsmName": "Conversation Control",
+      "defaultShopItems": "None",
+      "costDisplayerSelectionStrategy": {
+        "$type": "ItemChanger.SingleCostDisplayerSelectionStrategy, ItemChanger",
+        "CostDisplayer": {
+          "$type": "ItemChanger.GeoCostDisplayer, ItemChanger",
+          "CustomCostSprite": null,
+          "Cumulative": false
+        }
+      },
+      "requiredPlayerDataBool": "bugPrince_have11Maps",
+      "dungDiscount": false,
+      "name": "Iselda_11_Maps",
+      "sceneName": "Room_mapper",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": true,
+    "Logic": "Room_mapper[left1] + (ANYCLAW | WINGS) + COMBAT[Colosseum_2] + MAPS>12"
+  },
+  "Iselda_5_Maps": {
+    "Type": "PushPin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.ShopLocation, ItemChanger",
+      "objectName": "Iselda",
+      "fsmName": "Conversation Control",
+      "defaultShopItems": "None",
+      "costDisplayerSelectionStrategy": {
+        "$type": "ItemChanger.SingleCostDisplayerSelectionStrategy, ItemChanger",
+        "CostDisplayer": {
+          "$type": "ItemChanger.GeoCostDisplayer, ItemChanger",
+          "CustomCostSprite": null,
+          "Cumulative": false
+        }
+      },
+      "requiredPlayerDataBool": "bugPrince_have5Maps",
+      "dungDiscount": false,
+      "name": "Iselda_5_Maps",
+      "sceneName": "Room_mapper",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": true,
+    "Logic": "Room_mapper[left1] + MAPS>5"
+  },
   "Millibelle-Pleasure_House": {
     "Type": "Coin",
     "Count": 3,
