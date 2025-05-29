@@ -1,0 +1,57 @@
+{
+  "Millibelle-Pleasure_House": {
+    "Type": "Coin",
+    "Count": 3,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.MillibelleLocation, BugPrince",
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "Millibelle-Pleasure_House",
+      "sceneName": "Ruins_Bathhouse",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Ruins_Bathhouse[door1] + Paid_Millibelle"
+  },
+  "Millibelle's_Bank_Stand-Fog_Canyon": {
+    "Type": "Coin",
+    "Count": 2,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.BankStandLocation, BugPrince",
+      "Test": {
+        "$type": "ItemChanger.PDIntBool, ItemChanger",
+        "intName": "bankerTheft",
+        "amount": 2,
+        "op": "Eq"
+      },
+      "falseLocation": {
+        "$type": "BugPrince.IC.Locations.UprightBankStandLocation, BugPrince",
+        "containerType": null,
+        "nonreplaceable": true,
+        "name": "Millibelle's_Bank_Stand-Fog_Canyon",
+        "sceneName": "Fungus3_35",
+        "flingType": "Everywhere",
+        "tags": null
+      },
+      "trueLocation": {
+        "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+        "x": 18.0,
+        "y": 6.5,
+        "elevation": 0.0,
+        "managed": false,
+        "forceShiny": false,
+        "name": "Millibelle's_Bank_Stand-Fog_Canyon",
+        "sceneName": "Fungus3_35",
+        "flingType": "Everywhere",
+        "tags": null
+      },
+      "name": "Millibelle's_Bank_Stand-Fog_Canyon",
+      "sceneName": "Fungus3_35",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": true,
+    "Logic": "Paid_Millibelle"
+  }
+}

@@ -202,6 +202,15 @@
     "Cost": 1,
     "SkewedAverage": 0.5
   },
+  "Millibelle": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Fungus3_35"
+    ],
+    "Type": "Coins",
+    "Cost": 1,
+    "SkewedAverage": 0.5
+  },
   "Monomon": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
     "SceneNames": [
@@ -227,6 +236,15 @@
         "Cost": 1
       }
     ],
+    "SkewedAverage": 0.5
+  },
+  "Pleasure_House": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Ruins_Bathhouse"
+    ],
+    "Type": "Coins",
+    "Cost": 1,
     "SkewedAverage": 0.5
   },
   "Queen Fragment": {

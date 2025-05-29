@@ -7,8 +7,15 @@ public static class DataUpdater
     public static void Run()
     {
         string root = JsonUtil.InferGitRoot();
-        string costGroupsPath = $"{root}/BugPrince/Resources/Data/cost_groups.json";
 
-        JsonUtil.RewriteJsonFile(CostGroup.GetProducers(), costGroupsPath);
+        UpdateJson(CostGroup.GetProducers(), root, "cost_groups");
+        UpdateJson(Locations.GetLocations(), root, "locations");
+        UpdateJson(Waypoints.GetWaypoints(), root, "waypoints");
+    }
+
+    private static void UpdateJson<T>(T obj, string root, string name)
+    {
+        var path = $"{root}/BugPrince/Resources/Data/{name}.json";
+        JsonUtil.RewriteJsonFile(obj, path);
     }
 }
