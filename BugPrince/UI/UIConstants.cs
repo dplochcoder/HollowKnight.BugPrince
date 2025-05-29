@@ -15,10 +15,10 @@ internal static class UIConstants
     internal const float INV_SLOT_TICK_SPEED = 6f;
     internal const int INV_SLOT_TEXT_SIZE = 48;
     internal const float INV_SLOT_X_SPACE = 1.75f;
-    internal const float PIN_ANIMATION_SCALE = 3f;
-    internal const float PIN_ANIMATION_TIME = 0.6f;
-    internal const float PIN_ICON_SCALE = 0.2f;
-    internal static readonly Vector2 PIN_POS = new(-3f, 1.5f);
+    internal const float PIN_ANIMATION_SCALE = 4f;
+    internal const float PIN_ANIMATION_TIME = 0.45f;
+    internal const float PIN_ICON_SCALE = 0.45f;
+    internal static readonly Vector2 PIN_POS = new(-3.3f, 1.6f);
     internal const float PLAYER_LOCK_DELAY = 0.25f;
     internal const float ROOM_SELECTION_FINAL_DELAY = 0.5f;
     internal const float ROOM_SELECTION_FINAL_SCENE_STAGGER = 0.35f;

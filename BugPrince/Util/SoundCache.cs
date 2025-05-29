@@ -43,6 +43,9 @@ internal static class SoundCache
     internal static AudioClip locked_out => GetAudioClip("locked_out");
 
     [SoundCachePreload]
+    internal static AudioClip roll_totem => GetAudioClip("roll_totem");
+
+    [SoundCachePreload]
     internal static AudioClip spend_resources => GetAudioClip("spend_resources");
 
     internal static AudioClip failed_menu => BugPrincePreloader.Instance.TinkEffectClip;

@@ -28,6 +28,6 @@ internal class PinAnimator : MonoBehaviour
         var invPct = 1 - (pinTimer / UIConstants.PIN_ANIMATION_TIME);
         var scale = Mathf.Pow(UIConstants.PIN_ANIMATION_SCALE, invPct) * UIConstants.PIN_ICON_SCALE;
         transform.localScale = new(scale, scale, scale);
-        transform.localRotation = Quaternion.Euler(0, 0, pinTimer * 360f / UIConstants.PIN_ANIMATION_TIME);
+        transform.localRotation = Quaternion.Euler(0, 0, 180f * (1 + pinTimer / UIConstants.PIN_ANIMATION_TIME));
     }
 }

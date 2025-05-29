@@ -7,7 +7,7 @@ namespace BugPrince.UI;
 
 internal class InventorySlot : MonoBehaviour
 {
-    internal static InventorySlot Create(GameObject parent, Vector2 pos, int value, Sprite sprite, float spriteScale)
+    internal static InventorySlot Create(GameObject parent, Vector2 pos, int value, Sprite sprite, float spriteScale, bool hiddenPin = false)
     {
         var localParent = parent.AddNewChild("InvSlot");
         localParent.transform.localPosition = pos;
@@ -32,7 +32,23 @@ internal class InventorySlot : MonoBehaviour
         spriteRenderer.sprite = sprite;
         spriteRenderer.SetUILayer(UISortingOrder.InventoryIcons);
 
+        if (hiddenPin)
+        {
+            var hiddenTextObj = shaker.gameObject.AddNewChild("Text");
+            hiddenTextObj.transform.localPosition = new(UIConstants.INV_SLOT_X_SPACE * 3 / 2, 0);
+            hiddenTextObj.transform.localScale = new(UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE);
+            var hiddenText = textObj.AddComponent<TextMesh>();
+            hiddenText.fontSize = UIConstants.INV_SLOT_TEXT_SIZE;
+            hiddenText.alignment = TextAlignment.Center;
+            hiddenText.anchor = TextAnchor.MiddleCenter;
+            hiddenText.color = new(1, 0.2f, 0.2f);
+            hiddenText.text = "(used)";
+            hiddenTextObj.GetOrAddComponent<MeshRenderer>().SetUILayer(UISortingOrder.InventoryText);
+        }
+
         var slot = localParent.AddComponent<InventorySlot>();
+        slot.displayAmount = value;
+        slot.targetAmount = value;
         slot.shaker = shaker;
         slot.text = text;
         return slot;

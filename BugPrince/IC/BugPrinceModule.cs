@@ -330,6 +330,16 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             potentialTargets.Add((cSource, cTarget));
         }
 
+        HashSet<string> tempChosenScenes = [];
+        List<(Transition, Transition)> rerollBackfill = [];
+        foreach (var info in previous ?? [])
+        {
+            if (info.Pinned) continue;
+            tempChosenScenes.Add(info.Target.SceneName);
+            rerollBackfill.Add((info.OrigSrc, info.Target));
+        }
+
+        rerollBackfill.Shuffle(new(Seed + 93));
         potentialTargets.Shuffle(new(Seed + 17));
 
         SortedDictionary<int, List<(Transition, Transition)>> backfillDict = [];
@@ -347,12 +357,13 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             foreach (var list in backfillDict.Values) foreach (var p in list) yield return p;
             startedShopBackfill.Value = true;
             foreach (var list in shopBackfillDict.Values) foreach (var p in list) yield return p;
+            tempChosenScenes.Clear();
+            foreach (var p in rerollBackfill) yield return p;
         };
         var iter = EnumerateCandidates();
 
         List<SceneChoiceInfo> choices = [];
         HashSet<string> chosenScenes = [];
-        // FIXME: Handle previous for rerolls
         Wrapped<int> illogicalSwaps = new(0);
         bool MaybeAdd(Transition newSrc, Transition newTarget)
         {
@@ -374,9 +385,9 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         int dupeScenes = 0;
         int backfills = 0;
         int firstPassRemaining = potentialTargets.Count;
-        while (choices.Count < Settings.NumChoices && iter.MoveNext())
+        while (iter.MoveNext())
         {
-            if (firstPassRemaining > 0) --firstPassRemaining;
+            if (choices.Count < Settings.NumChoices && firstPassRemaining > 0) --firstPassRemaining;
             var (newSrc, newTarget) = iter.Current;
 
             if (newTarget.SceneName == PinnedScene)
@@ -384,7 +395,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 pinBackfill.Add((newSrc, newTarget));
                 continue;
             }
-            if (chosenScenes.Contains(newTarget.SceneName)) { ++dupeScenes; continue; }
+            else if (choices.Count == Settings.NumChoices) continue;
+            if (chosenScenes.Contains(newTarget.SceneName) || tempChosenScenes.Contains(newTarget.SceneName)) { ++dupeScenes; continue; }
 
             bool isShop = GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName);
             if (!RefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
@@ -429,9 +441,6 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         foreach (var (newSrc, newTarget) in pinBackfill) if (MaybeAdd(newSrc, newTarget)) break;
 
         BugPrinceMod.DebugLog($"CALCULATE_SCENE_CHOICES: (illogicalSwaps={illogicalSwaps.Value}, dupeScenes={dupeScenes}, backfills={backfills}, remaining={firstPassRemaining})");
-
-        // TODO: Compare to previous.
-        if (choices.Count == 0) throw new ArgumentException($"BugPrince mod found no viable choices for {src} -> {target}");
         return choices;
     }
 
@@ -456,6 +465,8 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         }
 
         var choices = CalculateSceneChoices(src, target)!;
+        // FIXME: No choices.
+
         Wrapped<RoomSelectionUI?> wrapped = new(null);
         wrapped.Value = RoomSelectionUI.Create(
             this,
@@ -479,6 +490,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
             },
             decision =>
             {
+                DiceTotems--;
                 MaybeSelectNewPin(decision.newPin?.Target.SceneName);
                 return CalculateSceneChoices(src, target, choices);
             });
