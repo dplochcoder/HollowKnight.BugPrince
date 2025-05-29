@@ -509,7 +509,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 }
 
                 MaybeSelectNewPin(decision.newPin?.Target.SceneName);
-                PayCosts(choice.Target.SceneName, out var changedProgressionOrder);
+                PayCosts(choice.Target.SceneName);
                 SwapTransitions(src, choice.OrigSrc);
                 ResetTrackers();
 

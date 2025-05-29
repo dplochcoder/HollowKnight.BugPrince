@@ -1,4 +1,5 @@
-﻿using BugPrince.Data;
+﻿using bugPrince.Imports;
+using BugPrince.Data;
 using BugPrince.IC;
 using ItemChanger;
 using Newtonsoft.Json;
@@ -43,8 +44,10 @@ internal static class RandoInterop
         DefineCustomItems();
 
         RandoController.OnExportCompleted += OnExportCompleted;
+
         RandomizerMod.Logging.SettingsLog.AfterLogSettings += LogSettings;
         RandomizerMod.Logging.LogManager.AddLogger(new BugPrinceLogger());
+        CondensedSpoilerLogger.AddCategory("BugPrince Currency", _ => IsEnabled, [CoinItem.ITEM_NAME, GemItem.ITEM_NAME]);
     }
 
     private static void DefineCustomItems()
