@@ -8,12 +8,11 @@ namespace BugPrince.IC.Locations;
 
 internal class BankStandLocation : ExistingContainerLocation
 {
-    private const string SCENE_NAME = SceneNames.Fungus3_35;
     private static readonly FsmID FSM_ID = new("Bank Stand", "Stand Control");
 
-    protected override void OnLoad() => Events.AddFsmEdit(SCENE_NAME, FSM_ID, ModifyStandControl);
+    protected override void OnLoad() => Events.AddFsmEdit(UnsafeSceneName, FSM_ID, ModifyStandControl);
 
-    protected override void OnUnload() => Events.RemoveFsmEdit(SCENE_NAME, FSM_ID, ModifyStandControl);
+    protected override void OnUnload() => Events.RemoveFsmEdit(UnsafeSceneName, FSM_ID, ModifyStandControl);
 
     private void ModifyStandControl(PlayMakerFSM fsm)
     {

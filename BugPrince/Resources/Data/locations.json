@@ -82,7 +82,7 @@
       "flingType": "Everywhere",
       "tags": null
     },
-    "FullFlexible": true,
+    "FullFlexible": false,
     "Logic": "Crossroads_ShamanTemple[left1]"
   },
   "BugPrince-Iselda_(11_Maps)": {
@@ -189,8 +189,33 @@
       "flingType": "Everywhere",
       "tags": null
     },
-    "FullFlexible": false,
+    "FullFlexible": true,
     "Logic": "Ruins_Bathhouse[door1] + Paid_Millibelle"
+  },
+  "BugPrince-Outside_Window-Soul_Sanctum": {
+    "Type": "PushPin",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",
+      "x": 24.0,
+      "y": 51.0,
+      "z": 0.2,
+      "direction": "Down",
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "BugPrince-Outside_Window-Soul_Sanctum",
+      "sceneName": null,
+      "flingType": "Everywhere",
+      "tags": [
+        {
+          "$type": "BugPrince.IC.Tags.SoulSanctumEscapeTag, BugPrince",
+          "WindowBroken": false,
+          "Loaded": false
+        }
+      ]
+    },
+    "FullFlexible": false,
+    "Logic": "Ruins1_25[left3] + RIGHTFIREBALL + WINGS + LEFTCLAW"
   },
   "BugPrince-Quirrel-Crystal_Peak": {
     "Type": "Gem",

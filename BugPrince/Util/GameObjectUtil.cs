@@ -1,4 +1,5 @@
-﻿using ItemChanger;
+﻿using GlobalEnums;
+using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Internal;
 using ItemChanger.Util;
@@ -18,6 +19,13 @@ internal static class GameObjectUtil
         child.transform.localRotation = Quaternion.identity;
         child.transform.localScale = Vector3.one;
         return child;
+    }
+
+    internal static List<GameObject> Children(this GameObject self)
+    {
+        List<GameObject> ret = [];
+        foreach (Transform transform in self.transform) ret.Add(transform.gameObject);
+        return ret;
     }
 
     internal static void Recursively(this GameObject self, Action<GameObject> action)
@@ -56,6 +64,29 @@ internal static class GameObjectUtil
         UnityEngine.Object.Destroy(obj.LocateMyFSM("Shiny Control"));
         UnityEngine.Object.Destroy(obj.LocateMyFSM("Generate Wave"));
         ShinyUtility.SetShinyColor(obj, items);
+        return obj;
+    }
+
+    internal static GameObject MakeHazardBox(Vector2 corner1, Vector2 corner2)
+    {
+        GameObject hazard = new("Hazard");
+        hazard.transform.position = (corner1 + corner2) / 2;
+        var box = hazard.AddComponent<BoxCollider2D>();
+        box.size = new(Mathf.Abs(corner2.x - corner1.x), Mathf.Abs(corner2.y - corner1.y));
+        box.isTrigger = true;
+        var damage = hazard.AddComponent<DamageHero>();
+        damage.damageDealt = 1;
+        damage.hazardType = 1 + (int)HazardType.SPIKES;
+        hazard.AddComponent<NonBouncer>();
+
+        return hazard;
+    }
+
+    internal static GameObject FlingGlassDebris(Vector3 pos, Vector3 speed)
+    {
+        var obj = UnityEngine.Object.Instantiate(BugPrincePreloader.Instance.QuakeFloorGlassDebris.Random());
+        obj.transform.position = pos;
+        obj.GetComponent<Rigidbody2D>().velocity = speed;
         return obj;
     }
 }

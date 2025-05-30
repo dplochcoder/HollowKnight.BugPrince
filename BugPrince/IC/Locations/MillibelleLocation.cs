@@ -9,19 +9,11 @@ namespace BugPrince.IC.Locations;
 
 internal class MillibelleLocation : ExistingContainerLocation
 {
-    private const string SCENE_NAME = SceneNames.Ruins_Bathhouse;
     private static readonly FsmID FSM_ID = new("Banker Spa NPC", "tink_effect");
 
-    internal MillibelleLocation()
-    {
-        name = "Millibelle-Pleasure_House";
-        sceneName = SCENE_NAME;
-        nonreplaceable = true;
-    }
+    protected override void OnLoad() => Events.AddFsmEdit(UnsafeSceneName, FSM_ID, ModifyMillibelle);
 
-    protected override void OnLoad() => Events.AddFsmEdit(SCENE_NAME, FSM_ID, ModifyMillibelle);
-
-    protected override void OnUnload() => Events.RemoveFsmEdit(SCENE_NAME, FSM_ID, ModifyMillibelle);
+    protected override void OnUnload() => Events.RemoveFsmEdit(UnsafeSceneName, FSM_ID, ModifyMillibelle);
 
     private const int MIN_HITS = 2;
     private const int MAX_HITS = 4;

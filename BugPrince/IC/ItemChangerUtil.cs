@@ -3,7 +3,6 @@ using ItemChanger;
 using UnityEngine;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
-using System.Collections;
 using ItemChanger.Locations;
 
 namespace BugPrince.IC;
