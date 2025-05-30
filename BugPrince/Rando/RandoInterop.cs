@@ -1,6 +1,7 @@
 ﻿using bugPrince.Imports;
 using BugPrince.Data;
 using BugPrince.IC;
+using BugPrince.IC.Items;
 using ItemChanger;
 using Newtonsoft.Json;
 using RandomizerMod.RC;
@@ -68,6 +69,8 @@ internal static class RandoInterop
         module.RandomizedTransitions = LS.RandomizedTransitions;
         module.CostGroupProgression = LS.CostGroupProgression;
         module.Seed = rc.gs.Seed;
+
+        ItemChangerMod.Modules.Add<BreakablesModule>();
     }
 
     private static void LogSettings(RandomizerMod.Logging.LogArguments args, TextWriter tw)

@@ -1,4 +1,7 @@
-﻿using ItemChanger.Extensions;
+﻿using ItemChanger;
+using ItemChanger.Extensions;
+using ItemChanger.Internal;
+using ItemChanger.Util;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +32,8 @@ internal static class GameObjectUtil
         }
     }
 
+    internal static void DoOnDestroy(this GameObject self, Action action) => self.GetOrAddComponent<OnDestroyHook>().Action += action;
+
     internal static void FadeColor(this GameObject self, Color from, Color to, float duration)
     {
         if (self.GetComponent<SpriteRenderer>() == null && self.GetComponent<TextMesh>() == null) return;
@@ -39,6 +44,19 @@ internal static class GameObjectUtil
     {
         if (self.GetComponent<SpriteRenderer>() is SpriteRenderer sr) self.GetOrAddComponent<Fader>().StartFade(sr.color, to, duration);
         if (self.GetComponent<TextMesh>() is TextMesh tm) self.GetOrAddComponent<Fader>().StartFade(tm.color, to, duration);
+    }
+
+    internal static GameObject MakeShinyDecorator(IEnumerable<AbstractItem> items)
+    {
+        var obj = ObjectCache.ShinyItem;
+        UnityEngine.Object.Destroy(obj.FindChild("Inspect Region")!);
+        UnityEngine.Object.Destroy(obj.FindChild("White Wave Region")!);
+        UnityEngine.Object.Destroy(obj.GetComponent<PersistentBoolItem>());
+        UnityEngine.Object.Destroy(obj.GetComponent<Rigidbody2D>());
+        UnityEngine.Object.Destroy(obj.LocateMyFSM("Shiny Control"));
+        UnityEngine.Object.Destroy(obj.LocateMyFSM("Generate Wave"));
+        ShinyUtility.SetShinyColor(obj, items);
+        return obj;
     }
 }
 
@@ -81,4 +99,11 @@ internal class Fader : MonoBehaviour
         if (spriteRenderer != null) spriteRenderer.color = color;
         if (textMesh != null) textMesh.color = color;
     }
+}
+
+internal class OnDestroyHook : MonoBehaviour
+{
+    internal event Action? Action;
+
+    private void OnDestroy() => Action?.Invoke();
 }

@@ -1,4 +1,4 @@
-﻿using BugPrince.IC;
+﻿using BugPrince.IC.Items;
 using BugPrince.Util;
 using PurenailCore.GOUtil;
 using UnityEngine;

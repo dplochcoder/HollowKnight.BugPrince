@@ -3,7 +3,7 @@ using ItemChanger.UIDefs;
 using RandomizerCore.StringItems;
 using RandomizerMod.RandomizerData;
 
-namespace BugPrince.IC;
+namespace BugPrince.IC.Items;
 
 public class CoinItem : AbstractItem
 {

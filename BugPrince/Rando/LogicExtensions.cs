@@ -1,5 +1,5 @@
 ﻿using BugPrince.Data;
-using BugPrince.IC;
+using BugPrince.IC.Items;
 using RandomizerCore.Logic;
 
 namespace BugPrince.Rando;

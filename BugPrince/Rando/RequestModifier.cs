@@ -1,6 +1,6 @@
 ﻿using BugPrince.Data;
 using BugPrince.IC;
-using PurenailCore.SystemUtil;
+using BugPrince.IC.Items;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
 using RandomizerMod.RC;

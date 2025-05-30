@@ -1,5 +1,6 @@
 ﻿using BugPrince.Data;
 using BugPrince.IC;
+using BugPrince.IC.Items;
 using BugPrince.Util;
 using PurenailCore.GOUtil;
 using PurenailCore.SystemUtil;

@@ -3,7 +3,7 @@ using ItemChanger.UIDefs;
 using RandomizerCore.LogicItems;
 using RandomizerMod.RandomizerData;
 
-namespace BugPrince.IC;
+namespace BugPrince.IC.Items;
 
 public class DiceTotemItem : AbstractItem
 {

@@ -1,5 +1,4 @@
 ﻿using ItemChanger;
-using RandomizerMod.RC;
 using System.Collections.Generic;
 
 namespace BugPrince.Data;

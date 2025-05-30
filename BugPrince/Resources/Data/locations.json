@@ -1,5 +1,59 @@
 {
-  "Iselda_11_Maps": {
+  "BugPrince-Garbage_Bin-Crystal_Peak_Entrance": {
+    "Type": "Gem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 43.0,
+      "y": 5.4,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Garbage_Bin-Crystal_Peak_Entrance",
+      "sceneName": "Mines_02",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Mines_02[top1]"
+  },
+  "BugPrince-Hidden_Alcove_Left-Hallownest_Crown": {
+    "Type": "Gem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 98.0,
+      "y": 23.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Hidden_Alcove_Left-Hallownest_Crown",
+      "sceneName": "Mines_34",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
+  },
+  "BugPrince-Hidden_Alcove_Right-Hallownest_Crown": {
+    "Type": "Gem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 158.5,
+      "y": 24.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Hidden_Alcove_Right-Hallownest_Crown",
+      "sceneName": "Mines_34",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
+  },
+  "BugPrince-Iselda_11_Maps": {
     "Type": "PushPin",
     "Count": 1,
     "Location": {
@@ -17,7 +71,7 @@
       },
       "requiredPlayerDataBool": "bugPrince_have11Maps",
       "dungDiscount": false,
-      "name": "Iselda_11_Maps",
+      "name": "BugPrince-Iselda_11_Maps",
       "sceneName": "Room_mapper",
       "flingType": "Everywhere",
       "tags": null
@@ -25,7 +79,7 @@
     "FullFlexible": true,
     "Logic": "Room_mapper[left1] + (ANYCLAW | WINGS) + COMBAT[Colosseum_2] + MAPS>12"
   },
-  "Iselda_5_Maps": {
+  "BugPrince-Iselda_5_Maps": {
     "Type": "PushPin",
     "Count": 1,
     "Location": {
@@ -43,7 +97,7 @@
       },
       "requiredPlayerDataBool": "bugPrince_have5Maps",
       "dungDiscount": false,
-      "name": "Iselda_5_Maps",
+      "name": "BugPrince-Iselda_5_Maps",
       "sceneName": "Room_mapper",
       "flingType": "Everywhere",
       "tags": null
@@ -51,26 +105,11 @@
     "FullFlexible": true,
     "Logic": "Room_mapper[left1] + MAPS>5"
   },
-  "Millibelle-Pleasure_House": {
-    "Type": "Coin",
-    "Count": 3,
-    "Location": {
-      "$type": "BugPrince.IC.Locations.MillibelleLocation, BugPrince",
-      "containerType": null,
-      "nonreplaceable": true,
-      "name": "Millibelle-Pleasure_House",
-      "sceneName": "Ruins_Bathhouse",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "FullFlexible": false,
-    "Logic": "Ruins_Bathhouse[door1] + Paid_Millibelle"
-  },
-  "Millibelle's_Bank_Stand-Fog_Canyon": {
+  "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
     "Type": "Coin",
     "Count": 2,
     "Location": {
-      "$type": "BugPrince.IC.Locations.BankStandLocation, BugPrince",
+      "$type": "ItemChanger.Locations.DualLocation, ItemChanger",
       "Test": {
         "$type": "ItemChanger.PDIntBool, ItemChanger",
         "intName": "bankerTheft",
@@ -78,10 +117,10 @@
         "op": "Eq"
       },
       "falseLocation": {
-        "$type": "BugPrince.IC.Locations.UprightBankStandLocation, BugPrince",
+        "$type": "BugPrince.IC.Locations.BankStandLocation, BugPrince",
         "containerType": null,
         "nonreplaceable": true,
-        "name": "Millibelle's_Bank_Stand-Fog_Canyon",
+        "name": "BugPrince-Millibelle_Bank_Stand-Fog_Canyon",
         "sceneName": "Fungus3_35",
         "flingType": "Everywhere",
         "tags": null
@@ -93,17 +132,69 @@
         "elevation": 0.0,
         "managed": false,
         "forceShiny": false,
-        "name": "Millibelle's_Bank_Stand-Fog_Canyon",
+        "name": "BugPrince-Millibelle_Bank_Stand-Fog_Canyon",
         "sceneName": "Fungus3_35",
         "flingType": "Everywhere",
         "tags": null
       },
-      "name": "Millibelle's_Bank_Stand-Fog_Canyon",
+      "name": "BugPrince-Millibelle_Bank_Stand-Fog_Canyon",
       "sceneName": "Fungus3_35",
       "flingType": "Everywhere",
       "tags": null
     },
     "FullFlexible": true,
     "Logic": "Paid_Millibelle"
+  },
+  "BugPrince-Millibelle-Pleasure_House": {
+    "Type": "Coin",
+    "Count": 3,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.MillibelleLocation, BugPrince",
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "BugPrince-Millibelle-Pleasure_House",
+      "sceneName": "Ruins_Bathhouse",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Ruins_Bathhouse[door1] + Paid_Millibelle"
+  },
+  "BugPrince-Quirrel-Crystal_Peak": {
+    "Type": "Gem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 21.75,
+      "y": 22.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Quirrel-Crystal_Peak",
+      "sceneName": "Mines_13",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Mines_13[right1]"
+  },
+  "BugPrince-Secret_Lamp-City_Fountain": {
+    "Type": "Gem",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",
+      "x": 17.3,
+      "y": 43.0,
+      "z": 0.4,
+      "direction": "Right",
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "BugPrince-Secret_Lamp-City_Fountain",
+      "sceneName": "Ruins1_27",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Ruins1_27[left1] + RIGHTCLAW + WINGS + LEFTSUPERDASH"
   }
 }

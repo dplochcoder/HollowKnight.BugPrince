@@ -6,41 +6,14 @@ using UnityEngine;
 
 namespace BugPrince.IC.Locations;
 
-internal class BankStandLocation : DualLocation
+internal class BankStandLocation : ExistingContainerLocation
 {
-    internal const string NAME = "Millibelle's_Bank_Stand-Fog_Canyon";
-    internal const string SCENE_NAME = SceneNames.Fungus3_35;
-
-    internal BankStandLocation()
-    {
-        name = NAME;
-        sceneName = SCENE_NAME;
-        Test = new PDIntBool(nameof(PlayerData.bankerTheft), 2, ComparisonOperator.Eq);
-        falseLocation = new UprightBankStandLocation();
-        trueLocation = new CoordinateLocation()
-        {
-            name = NAME,
-            sceneName = SCENE_NAME,
-            x = 18.0f,
-            y = 6.5f
-        };
-    }
-}
-
-internal class UprightBankStandLocation : ExistingContainerLocation
-{
+    private const string SCENE_NAME = SceneNames.Fungus3_35;
     private static readonly FsmID FSM_ID = new("Bank Stand", "Stand Control");
 
-    internal UprightBankStandLocation()
-    {
-        name = BankStandLocation.NAME;
-        sceneName = BankStandLocation.SCENE_NAME;
-        nonreplaceable = true;
-    }
+    protected override void OnLoad() => Events.AddFsmEdit(SCENE_NAME, FSM_ID, ModifyStandControl);
 
-    protected override void OnLoad() => Events.AddFsmEdit(BankStandLocation.SCENE_NAME, FSM_ID, ModifyStandControl);
-
-    protected override void OnUnload() => Events.RemoveFsmEdit(BankStandLocation.SCENE_NAME, FSM_ID, ModifyStandControl);
+    protected override void OnUnload() => Events.RemoveFsmEdit(SCENE_NAME, FSM_ID, ModifyStandControl);
 
     private void ModifyStandControl(PlayMakerFSM fsm)
     {
