@@ -23,7 +23,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     public RandomizationSettings Settings = new();
     public Dictionary<string, CostGroup> CostGroups = [];
     public Dictionary<string, string> CostGroupsByScene = [];
-    public HashSet<string> RandomizedTransitions = [];
+    public HashSet<Transition> RandomizedTransitions = [];
 
     // Inventory
     public int Coins = 0;
@@ -535,7 +535,7 @@ internal class ModuleCostGroupProgressionProvider : ICostGroupProgressionProvide
 
     public IReadOnlyDictionary<string, string> CostGroupsByScene() => module.CostGroupsByScene;
 
-    public bool IsRandomizedTransition(string transition) => module.RandomizedTransitions.Contains(transition);
+    public bool IsRandomizedTransition(Transition transition) => module.RandomizedTransitions.Contains(transition);
 
     public IReadOnlyList<string> CostGroupProgression() => module.CostGroupProgression;
 }

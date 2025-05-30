@@ -1,4 +1,5 @@
 ﻿using BugPrince.Data;
+using ItemChanger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ internal interface ICostGroupProgressionProvider
 {
     IReadOnlyDictionary<string, CostGroup> CostGroups();
     IReadOnlyDictionary<string, string> CostGroupsByScene();
-    bool IsRandomizedTransition(string transition);
+    bool IsRandomizedTransition(Transition transition);
     IReadOnlyList<string> CostGroupProgression();
 }
 
@@ -30,7 +31,7 @@ internal class OverlaidCostGroupProgressionProvider : ICostGroupProgressionProvi
 
     public IReadOnlyDictionary<string, string> CostGroupsByScene() => impl.CostGroupsByScene();
 
-    public bool IsRandomizedTransition(string transition) => impl.IsRandomizedTransition(transition);
+    public bool IsRandomizedTransition(Transition transition) => impl.IsRandomizedTransition(transition);
 
     public IReadOnlyList<string> CostGroupProgression() => progressionOverride;
 }

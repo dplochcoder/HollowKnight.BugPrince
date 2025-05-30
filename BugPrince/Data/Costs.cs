@@ -116,6 +116,8 @@ public record CostGroup
 
 public interface ICostGroupProducer
 {
+    public IReadOnlyCollection<string> RelevantSceneNames();
+
     public bool ProduceCostGroup(GenerationSettings gs, Func<string, bool> sceneFilter, out CostGroup costGroup);
 }
 
@@ -140,6 +142,8 @@ internal class CostGroupProducer : ICostGroupProducer
         };
         return true;
     }
+
+    IReadOnlyCollection<string> ICostGroupProducer.RelevantSceneNames() => SceneNames;
 }
 
 internal class ConstrainedCostGroupProducer : CostGroupProducer
@@ -188,4 +192,6 @@ internal class TieredCostGroupProducer : ICostGroupProducer
         }
         return false;
     }
+
+    IReadOnlyCollection<string> ICostGroupProducer.RelevantSceneNames() => SceneNames;
 }

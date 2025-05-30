@@ -15,7 +15,7 @@ internal class RequestModifier
 {
     internal static void Setup()
     {
-        RequestBuilder.OnUpdate.Subscribe(1000f, GenerateCostGroups);
+        RequestBuilder.OnUpdate.Subscribe(3000f, ModifyRequest);
         ProgressionInitializer.OnCreateProgressionInitializer += AddTolerances;
     }
 
@@ -40,7 +40,7 @@ internal class RequestModifier
         }
     }
 
-    private static void GenerateCostGroups(RequestBuilder rb)
+    private static void ModifyRequest(RequestBuilder rb)
     {
         if (!RandoInterop.AreCostsEnabled) return;
 
@@ -49,7 +49,7 @@ internal class RequestModifier
         {
             if (!transition.ToTransition(out var t)) throw new ArgumentException($"Invalid transition: '{t}'");
 
-            RandoInterop.LS!.RandomizedTransitions.Add(transition);
+            RandoInterop.LS!.RandomizedTransitions.Add(t);
             randomizedScenes.Add(t.SceneName);
         }
 

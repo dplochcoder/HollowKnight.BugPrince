@@ -14,14 +14,14 @@ internal record LocalSettings : ICostGroupProgressionProvider
 {
     public Dictionary<string, CostGroup> CostGroups = [];
     public Dictionary<string, string> CostGroupsByScene = [];
-    public HashSet<string> RandomizedTransitions = [];
+    public HashSet<Transition> RandomizedTransitions = [];
     public List<string> CostGroupProgression = [];
 
     IReadOnlyDictionary<string, CostGroup> ICostGroupProgressionProvider.CostGroups() => CostGroups;
 
     IReadOnlyDictionary<string, string> ICostGroupProgressionProvider.CostGroupsByScene() => CostGroupsByScene;
 
-    public bool IsRandomizedTransition(string transition) => RandomizedTransitions.Contains(transition);
+    public bool IsRandomizedTransition(Transition transition) => RandomizedTransitions.Contains(transition);
 
     IReadOnlyList<string> ICostGroupProgressionProvider.CostGroupProgression() => CostGroupProgression;
 }
