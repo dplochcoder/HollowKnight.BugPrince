@@ -73,8 +73,8 @@ internal static class LogicPatcher
             lmb.DoSubst(new(externalProxy, transitionName, internalProxy));
             lmb.DoSubst(new(externalProxy, $"{transitionName}/", $"{internalProxy}/"));
 
-            // The transition itself becomes purely a term variable, obtained via the source location.
-            lmb.DoLogicEdit(new(transitionName, transitionName));
+            // The transition location is only accessible from the external proxy.
+            lmb.DoLogicEdit(new(transitionName, externalProxy));
             replacer.IgnoredNames.Add(transitionName);
         }
         replacer.Apply(lmb);

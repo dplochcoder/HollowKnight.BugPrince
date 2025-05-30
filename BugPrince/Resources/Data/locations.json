@@ -17,6 +17,24 @@
     "FullFlexible": false,
     "Logic": "Mines_02[top1]"
   },
+  "BugPrince-Guarded_Relic-Resting_Grounds-Catacombs": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 55.0,
+      "y": 2.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": true,
+      "name": "BugPrince-Guarded_Relic-Resting_Grounds-Catacombs",
+      "sceneName": "RestingGrounds_10",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
+  },
   "BugPrince-Hidden_Alcove_Left-Hallownest_Crown": {
     "Type": "Gem",
     "Count": 1,
@@ -53,7 +71,21 @@
     "FullFlexible": false,
     "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
   },
-  "BugPrince-Iselda_11_Maps": {
+  "BugPrince-Hidden-Ancestral_Mound": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.TorchPuzzleLocation, BugPrince",
+      "forceShiny": false,
+      "name": "BugPrince-Hidden-Ancestral_Mound",
+      "sceneName": "Crossroads_ShamanTemple",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": true,
+    "Logic": "Crossroads_ShamanTemple[left1]"
+  },
+  "BugPrince-Iselda_(11_Maps)": {
     "Type": "PushPin",
     "Count": 1,
     "Location": {
@@ -71,7 +103,7 @@
       },
       "requiredPlayerDataBool": "bugPrince_have11Maps",
       "dungDiscount": false,
-      "name": "BugPrince-Iselda_11_Maps",
+      "name": "BugPrince-Iselda_(11_Maps)",
       "sceneName": "Room_mapper",
       "flingType": "Everywhere",
       "tags": null
@@ -79,7 +111,7 @@
     "FullFlexible": true,
     "Logic": "Room_mapper[left1] + (ANYCLAW | WINGS) + COMBAT[Colosseum_2] + MAPS>12"
   },
-  "BugPrince-Iselda_5_Maps": {
+  "BugPrince-Iselda_(5_Maps)": {
     "Type": "PushPin",
     "Count": 1,
     "Location": {
@@ -97,7 +129,7 @@
       },
       "requiredPlayerDataBool": "bugPrince_have5Maps",
       "dungDiscount": false,
-      "name": "BugPrince-Iselda_5_Maps",
+      "name": "BugPrince-Iselda_(5_Maps)",
       "sceneName": "Room_mapper",
       "flingType": "Everywhere",
       "tags": null
