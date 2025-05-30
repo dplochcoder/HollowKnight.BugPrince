@@ -137,6 +137,17 @@
     "FullFlexible": true,
     "Logic": "Room_mapper[left1] + MAPS>5"
   },
+  "BugPrince-Colosseum_Escape": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 22.25,
+      "y": 21.7,
+      "sceneName": "Deepnest_East_09"
+    },
+    "Logic": "Deepnest_East_09[left1]"
+  },
   "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
     "Type": "Coin",
     "Count": 2,
@@ -179,7 +190,7 @@
   },
   "BugPrince-Millibelle-Pleasure_House": {
     "Type": "Coin",
-    "Count": 3,
+    "Count": 2,
     "Location": {
       "$type": "BugPrince.IC.Locations.MillibelleLocation, BugPrince",
       "containerType": null,
@@ -356,6 +367,18 @@
         }
       ]
     }
+  },
+  "BugPrince-Coin_Plateau-Junk_Pit": {
+    "Type": "Coin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "sceneName": "GG_Waterways",
+      "x": 95,
+      "y": 47.5,
+      "flingType": "StraightUp"
+    },
+    "Logic": "GG_Waterways[door1]"
   },
   "BugPrince-Outside_Window-Soul_Sanctum": {
     "Type": "PushPin",
