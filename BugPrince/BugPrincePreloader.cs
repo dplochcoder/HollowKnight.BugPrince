@@ -35,4 +35,7 @@ internal class BugPrincePreloader : Preloader
     public GameObject? ShamanMeeting { get; private set; }
 
     public AudioClip TinkEffectClip => Goam!.GetComponent<TinkEffect>().blockEffect.GetComponent<AudioSource>().clip;
+
+    [Preload(SceneNames.Crossroads_ShamanTemple, "_Props/Torch Breakable (4)")]
+    public GameObject? TorchProp { get; private set; }
 }

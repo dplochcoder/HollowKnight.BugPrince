@@ -14,15 +14,15 @@ using UnityEngine.SceneManagement;
 
 namespace BugPrince.IC.Locations;
 
-internal class TorchPuzzleLocation : ContainerLocation
+internal class AncestralMoundPuzzleLocation : ContainerLocation
 {
-    protected override void OnLoad() => Events.AddSceneChangeEdit(UnsafeSceneName, CreateTorchPuzzle);
+    protected override void OnLoad() => Events.AddSceneChangeEdit(UnsafeSceneName, ModifyScene);
 
-    protected override void OnUnload() => Events.RemoveSceneChangeEdit(UnsafeSceneName, CreateTorchPuzzle);
+    protected override void OnUnload() => Events.RemoveSceneChangeEdit(UnsafeSceneName, ModifyScene);
 
     private static int Seed() => RandomizerMod.RandomizerMod.RS.GenerationSettings.Seed + 47;
 
-    private void CreateTorchPuzzle(Scene scene)
+    private void ModifyScene(Scene scene)
     {
         System.Random rng = new(Seed());
         var numTorches = rng.Next(6, 8);

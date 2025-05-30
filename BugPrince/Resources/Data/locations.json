@@ -1,4 +1,190 @@
 {
+  "BugPrince-Bench_Secret-Queen's_Gardens": {
+    "Type": "PushPin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 3.0,
+      "y": 107.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Bench_Secret-Queen's_Gardens",
+      "sceneName": "Fungus3_50",
+      "flingType": "Everywhere",
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
+          "fling": "Right",
+          "Loaded": false
+        },
+        {
+          "$type": "BugPrince.IC.Tags.WindowBreakTag, BugPrince",
+          "SceneName": "Fungus3_50",
+          "TerrainPath": "Window Collider",
+          "WindowPath": "ruins_mid_window_01_shorter",
+          "DressingObjName": "ruin_layered_0055_w",
+          "ClippedDressingSpriteName": "Game.gardens_clipped_window_dressing",
+          "PaneX": 20.5,
+          "PaneY1": 115.0,
+          "PaneY2": 120.0,
+          "Left": false,
+          "HazardBoxes": [
+            {
+              "p1": {
+                "x": -3.0,
+                "y": 100.0
+              },
+              "p2": {
+                "x": 5.0,
+                "y": 101.0
+              },
+              "Spikes": false
+            },
+            {
+              "p1": {
+                "x": -3.0,
+                "y": 100.0
+              },
+              "p2": {
+                "x": -2.0,
+                "y": 140.0
+              },
+              "Spikes": false
+            },
+            {
+              "p1": {
+                "x": -3.0,
+                "y": 139.0
+              },
+              "p2": {
+                "x": 22.0,
+                "y": 140.0
+              },
+              "Spikes": false
+            },
+            {
+              "p1": {
+                "x": 21.0,
+                "y": 139.0
+              },
+              "p2": {
+                "x": 22.0,
+                "y": 133.0
+              },
+              "Spikes": false
+            },
+            {
+              "p1": {
+                "x": 20.0,
+                "y": 123.0
+              },
+              "p2": {
+                "x": 21.0,
+                "y": 125.0
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 21.0,
+                "y": 124.0
+              },
+              "p2": {
+                "x": 22.0,
+                "y": 126.0
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 22.0,
+                "y": 125.0
+              },
+              "p2": {
+                "x": 23.0,
+                "y": 127.0
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 23.0,
+                "y": 128.0
+              },
+              "p2": {
+                "x": 28.0,
+                "y": 130.0
+              },
+              "Spikes": true
+            }
+          ],
+          "Broken": false,
+          "Loaded": false
+        },
+        {
+          "$type": "BugPrince.IC.Tags.ObjectMoverTag, BugPrince",
+          "SceneName": "Fungus3_50",
+          "ObjectPath": "fung_bush8 (39)",
+          "Move": {
+            "x": 0.0,
+            "y": -1.0,
+            "z": 0.0
+          },
+          "Loaded": false
+        },
+        {
+          "$type": "BugPrince.IC.Tags.ObjectMoverTag, BugPrince",
+          "SceneName": "Fungus3_50",
+          "ObjectPath": "fung_bush8 (38)",
+          "Move": {
+            "x": 0.0,
+            "y": -0.5,
+            "z": 0.0
+          },
+          "Loaded": false
+        }
+      ]
+    },
+    "FullFlexible": false,
+    "Logic": ""
+  },
+  "BugPrince-Coin_Plateau-Junk_Pit": {
+    "Type": "Coin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 95.0,
+      "y": 47.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Coin_Plateau-Junk_Pit",
+      "sceneName": "GG_Waterways",
+      "flingType": "StraightUp",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "GG_Waterways[door1]"
+  },
+  "BugPrince-Colosseum_Escape": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 22.25,
+      "y": 21.7,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Colosseum_Escape",
+      "sceneName": "Deepnest_East_09",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Deepnest_East_09[left1]"
+  },
   "BugPrince-Garbage_Bin-Crystal_Peak_Entrance": {
     "Type": "Gem",
     "Count": 1,
@@ -71,20 +257,6 @@
     "FullFlexible": false,
     "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
   },
-  "BugPrince-Hidden-Ancestral_Mound": {
-    "Type": "DiceTotem",
-    "Count": 1,
-    "Location": {
-      "$type": "BugPrince.IC.Locations.TorchPuzzleLocation, BugPrince",
-      "forceShiny": false,
-      "name": "BugPrince-Hidden-Ancestral_Mound",
-      "sceneName": "Crossroads_ShamanTemple",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "FullFlexible": false,
-    "Logic": "Crossroads_ShamanTemple[left1]"
-  },
   "BugPrince-Iselda_(11_Maps)": {
     "Type": "PushPin",
     "Count": 1,
@@ -136,17 +308,6 @@
     },
     "FullFlexible": true,
     "Logic": "Room_mapper[left1] + MAPS>5"
-  },
-  "BugPrince-Colosseum_Escape": {
-    "Type": "DiceTotem",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
-      "x": 22.25,
-      "y": 21.7,
-      "sceneName": "Deepnest_East_09"
-    },
-    "Logic": "Deepnest_East_09[left1]"
   },
   "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
     "Type": "Coin",
@@ -203,183 +364,6 @@
     "FullFlexible": true,
     "Logic": "Ruins_Bathhouse[door1] + Paid_Millibelle"
   },
-  "BugPrince-Upper_Alcove_Outside_Galien": {
-    "Type": "DiceTotem",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
-      "x": 34.5,
-      "y": 80.5,
-      "sceneName": "Deepnest_35",
-      "tags": [
-        {
-          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
-          "fling": "Left"
-        }
-      ]
-    },
-    "Logic": "(LANTERN | DARKROOMS) + (Deepnest_35[top1] | Deepnest_35[left1] + ANYCLAW)"
-  },
-  "BugPrince-Petra_Overlook-Queen's_Gardens": {
-    "Type": "Coin",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
-      "x": 36,
-      "y": 35,
-      "flingType": "StraightUp",
-      "sceneName": "Fungus3_04"
-    },
-    "Logic": "Fungus3_04[right2]"
-  },
-  "BugPrince-Bench_Secret-Queen's_Gardens": {
-    "Type": "PushPin",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
-      "x": 3,
-      "y": 107.5,
-      "sceneName": "Fungus3_50",
-      "tags": [
-        {
-          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
-          "fling": "Right"
-        },
-        {
-          "$type": "BugPrince.IC.Tags.WindowBreakTag, BugPrince",
-          "SceneName": "Fungus3_50",
-          "TerrainPath": "Window Collider",
-          "WindowPath": "ruins_mid_window_01_shorter",
-          "DressingObjName": "ruin_layered_0055_w",
-          "ClippedDressingSpriteName": "Game.gardens_clipped_window_dressing",
-          "PaneX": 20.5,
-          "PaneY1": 115,
-          "PaneY2": 120,
-          "Left": false,
-          "HazardBoxes": [
-            {
-              "p1": {
-                "x": -3,
-                "y": 100
-              },
-              "p2": {
-                "x": 5,
-                "y": 101
-              }
-            },
-            {
-              "p1": {
-                "x": -3,
-                "y": 100
-              },
-              "p2": {
-                "x": -2,
-                "y": 140
-              }
-            },
-            {
-              "p1": {
-                "x": -3,
-                "y": 139
-              },
-              "p2": {
-                "x": 22,
-                "y": 140
-              }
-            },
-            {
-              "p1": {
-                "x": 21,
-                "y": 139
-              },
-              "p2": {
-                "x": 22,
-                "y": 133
-              }
-            },
-            {
-              "p1": {
-                "x": 20,
-                "y": 123
-              },
-              "p2": {
-                "x": 21,
-                "y": 125
-              },
-              "Spikes": true
-            },
-            {
-              "p1": {
-                "x": 21,
-                "y": 124
-              },
-              "p2": {
-                "x": 22,
-                "y": 126
-              },
-              "Spikes": true
-            },
-            {
-              "p1": {
-                "x": 22,
-                "y": 125
-              },
-              "p2": {
-                "x": 23,
-                "y": 127
-              },
-              "Spikes": true
-            },
-            {
-              "p1": {
-                "x": 23,
-                "y": 128
-              },
-              "p2": {
-                "x": 28,
-                "y": 130
-              },
-              "Spikes": true
-            }
-          ],
-          "Broken": false,
-          "Loaded": false
-        },
-        {
-          "$type": "BugPrince.IC.Tags.ObjectMoverTag, BugPrince",
-          "SceneName": "Fungus3_50",
-          "ObjectPath": "fung_bush8 (39)",
-          "Move": {
-            "x": 0,
-            "y": -1,
-            "z": 0
-          }
-        },
-        {
-          "$type": "BugPrince.IC.Tags.ObjectMoverTag, BugPrince",
-          "SceneName": "Fungus3_50",
-          "ObjectPath": "fung_bush8 (38)",
-          "Move": {
-            "x": 0,
-            "y": -0.5,
-            "z": 0
-          }
-        }
-      ]
-    }
-  },
-  "BugPrince-Coin_Plateau-Junk_Pit": {
-    "Type": "Coin",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
-      "sceneName": "GG_Waterways",
-      "x": 95,
-      "y": 47.5,
-      "flingType": "StraightUp"
-    },
-    "Logic": "GG_Waterways[door1]"
-  },
   "BugPrince-Outside_Window-Soul_Sanctum": {
     "Type": "PushPin",
     "Count": 1,
@@ -404,38 +388,41 @@
           "ClippedDressingSpriteName": "Game.citc_clipped_window_dressing",
           "PaneX": 14.75,
           "PaneY1": 3.5,
-          "PaneY2": 8,
+          "PaneY2": 8.0,
           "Left": false,
           "HazardBoxes": [
             {
               "p1": {
-                "x": 14,
-                "y": 1
+                "x": 14.0,
+                "y": 1.0
               },
               "p2": {
-                "x": 15,
-                "y": -3
-              }
+                "x": 15.0,
+                "y": -3.0
+              },
+              "Spikes": false
             },
             {
               "p1": {
-                "x": 15,
-                "y": -2
+                "x": 15.0,
+                "y": -2.0
               },
               "p2": {
-                "x": 41,
-                "y": -3
-              }
+                "x": 41.0,
+                "y": -3.0
+              },
+              "Spikes": false
             },
             {
               "p1": {
-                "x": 41,
-                "y": -3
+                "x": 41.0,
+                "y": -3.0
               },
               "p2": {
-                "x": 42,
-                "y": 122
-              }
+                "x": 42.0,
+                "y": 122.0
+              },
+              "Spikes": false
             }
           ],
           "Broken": false,
@@ -445,6 +432,52 @@
     },
     "FullFlexible": false,
     "Logic": "Ruins1_25[left3] + RIGHTFIREBALL + WINGS + LEFTCLAW"
+  },
+  "BugPrince-Petra_Overlook-Queen's_Gardens": {
+    "Type": "Coin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 36.0,
+      "y": 35.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Petra_Overlook-Queen's_Gardens",
+      "sceneName": "Fungus3_04",
+      "flingType": "StraightUp",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Fungus3_04[right2]"
+  },
+  "BugPrince-Puzzle-Ancestral_Mound": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.AncestralMoundPuzzleLocation, BugPrince",
+      "forceShiny": false,
+      "name": "BugPrince-Puzzle-Ancestral_Mound",
+      "sceneName": "Crossroads_ShamanTemple",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Crossroads_ShamanTemple[left1]"
+  },
+  "BugPrince-Puzzle-Overgrown_Mound": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.OvergrownMoundPuzzleLocation, BugPrince",
+      "forceShiny": true,
+      "name": "BugPrince-Puzzle-Overgrown_Mound",
+      "sceneName": "Room_Fungus_Shaman",
+      "flingType": "StraightUp",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Room_Fungus_Shaman[left1] + (FULLDASH | WINGS)"
   },
   "BugPrince-Quirrel-Crystal_Peak": {
     "Type": "Gem",
@@ -482,5 +515,29 @@
     },
     "FullFlexible": false,
     "Logic": "Ruins1_27[left1] + RIGHTCLAW + WINGS + LEFTSUPERDASH"
+  },
+  "BugPrince-Upper_Alcove_Outside_Galien": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 34.5,
+      "y": 80.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Upper_Alcove_Outside_Galien",
+      "sceneName": "Deepnest_35",
+      "flingType": "Everywhere",
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
+          "fling": "Left",
+          "Loaded": false
+        }
+      ]
+    },
+    "FullFlexible": false,
+    "Logic": "(LANTERN | DARKROOMS) + (Deepnest_35[top1] | Deepnest_35[left1] + ANYCLAW)"
   }
 }
