@@ -149,6 +149,20 @@
     "FullFlexible": false,
     "Logic": ""
   },
+  "BugPrince-Challenge-Crystallized_Mound": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.CrystallizedMoundChallengeLocation, BugPrince",
+      "forceShiny": false,
+      "name": "BugPrince-Challenge-Crystallized_Mound",
+      "sceneName": "Mines_35",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "*Descending_Dark + LEFTCLAW + RIGHTSUPERDASH + WINGS + LEFTDASH"
+  },
   "BugPrince-Coin_Plateau-Junk_Pit": {
     "Type": "Coin",
     "Count": 1,

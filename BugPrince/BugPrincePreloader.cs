@@ -16,8 +16,14 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.Ruins1_05, "ruind_dressing_light_03 (4)")]
     public GameObject? CityLamp { get; private set; }
 
+    [Preload(SceneNames.Deepnest_40, "Dream Gate (2)")]
+    public GameObject? DreamWall { get; private set; }
+
     [Preload(SceneNames.Crossroads_13, "_Enemies/Worm")]
     public GameObject? Goam { get; private set; }
+
+    [Preload(SceneNames.Cliffs_06, "Nightmare Lantern/lantern_dream")]
+    public GameObject? NightmareLantern { get; private set; }
 
     [Preload(SceneNames.Ruins2_01_b, "Quake Floor Glass")]
     public GameObject? QuakeFloorGlass { get; private set; }
@@ -36,6 +42,6 @@ internal class BugPrincePreloader : Preloader
 
     public AudioClip TinkEffectClip => Goam!.GetComponent<TinkEffect>().blockEffect.GetComponent<AudioSource>().clip;
 
-    [Preload(SceneNames.Crossroads_ShamanTemple, "_Props/Torch Breakable (4)")]
+    [Preload(SceneNames.Crossroads_ShamanTemple, "_Props/Torch Breakable 4")]
     public GameObject? TorchProp { get; private set; }
 }
