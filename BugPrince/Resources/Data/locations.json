@@ -181,7 +181,7 @@
     "FullFlexible": false,
     "Logic": "GG_Waterways[door1]"
   },
-  "BugPrince-Colosseum_Escape": {
+  "BugPrince-Exterior_Belflies-Colosseum": {
     "Type": "DiceTotem",
     "Count": 1,
     "Location": {
