@@ -1,14 +1,11 @@
-﻿using MenuChanger.MenuElements;
+﻿using MenuChanger.MenuPanels;
 
 namespace BugPrince.Util;
 
 internal static class MenuChangerUtil
 {
-    internal static void SetLocked(this ILockable self, bool locked)
+    internal static void SetShown(this GridItemPanel self, bool show)
     {
-        if (locked) self.Lock();
-        else self.Unlock();
+        if (show) self.Show(); else self.Hide();
     }
-
-    internal static void SetUnlocked(this ILockable self, bool unlocked) => self.SetLocked(!unlocked);
 }

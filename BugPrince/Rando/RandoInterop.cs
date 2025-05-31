@@ -4,9 +4,11 @@ using BugPrince.IC;
 using BugPrince.IC.Items;
 using ItemChanger;
 using Newtonsoft.Json;
+using PurenailCore.SystemUtil;
 using RandomizerMod.RC;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace BugPrince.Rando;
 
@@ -32,9 +34,9 @@ internal static class RandoInterop
 
     internal static RandomizationSettings RS => BugPrinceMod.GS.RandoSettings;
 
-    internal static bool IsEnabled => RS.Enabled;
+    internal static bool IsEnabled => RS.EnableTransitionChoices || RS.NewLocations || RS.TheVault || RS.GemstoneCavern;
 
-    internal static bool AreCostsEnabled => RS.Enabled && RS.CostsEnabled;
+    internal static bool AreCostsEnabled => RS.EnableTransitionChoices && RS.CostsEnabled;
 
     internal static void Setup()
     {
@@ -43,6 +45,7 @@ internal static class RandoInterop
         RequestModifier.Setup();
 
         DefineCustomItems();
+        DefineCustomLocations();
 
         RandoController.OnExportCompleted += OnExportCompleted;
 
@@ -59,6 +62,8 @@ internal static class RandoInterop
         Finder.DefineCustomItem(new PushPinItem());
     }
 
+    private static void DefineCustomLocations() => Locations.GetLocations().Values.Select(l => l.Location!).ForEach(Finder.DefineCustomLocation);
+
     private static void OnExportCompleted(RandoController rc)
     {
         if (!IsEnabled) return;
@@ -69,6 +74,10 @@ internal static class RandoInterop
         module.RandomizedTransitions = LS.RandomizedTransitions;
         module.CostGroupProgression = LS.CostGroupProgression;
         module.Seed = rc.gs.Seed;
+        module.DiceTotems = RS.StartingDiceTotems;
+        module.PushPins = RS.StartingPushPins;
+
+        Locations.GetLocations().Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, RS));
 
         ItemChangerMod.Modules.Add<BreakablesModule>();
     }

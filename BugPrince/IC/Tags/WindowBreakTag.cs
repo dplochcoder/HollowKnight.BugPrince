@@ -1,6 +1,5 @@
 ﻿using BugPrince.Util;
 using GlobalEnums;
-using ItemChanger;
 using ItemChanger.Extensions;
 using Modding.Converters;
 using Newtonsoft.Json;

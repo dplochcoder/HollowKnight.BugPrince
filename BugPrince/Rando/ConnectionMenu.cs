@@ -3,7 +3,6 @@ using MenuChanger;
 using MenuChanger.Extensions;
 using MenuChanger.MenuElements;
 using MenuChanger.MenuPanels;
-using PurenailCore.SystemUtil;
 using RandomizerMod.Menu;
 using System;
 using System.Collections.Generic;
@@ -25,8 +24,9 @@ internal class ConnectionMenu
 
     private readonly SmallButton entryButton;
     private readonly MenuElementFactory<RandomizationSettings> factory;
-    private readonly List<ILockable> coreLockables = [];
-    private readonly List<ILockable> costLockables = [];
+    private GridItemPanel relicSettings;
+    private GridItemPanel costSettingsHeader;
+    private GridItemPanel costSettings;
 
     private static List<IValueElement> GetElements<T>(MenuElementFactory<RandomizationSettings> factory) where T : Attribute
     {
@@ -46,26 +46,18 @@ internal class ConnectionMenu
         entryButton.AddHideAndShowEvent(bugPrincePage);
 
         factory = new(bugPrincePage, BugPrinceMod.GS.RandoSettings);
-        foreach (var e in factory.ElementLookup)
-        {
-            if (e.Key == nameof(Settings.Enabled) || e.Value is not ILockable l) continue;
-                
-            if (typeof(RandomizationSettings).GetField(e.Key).GetCustomAttribute<CostFieldAttribute>() != null) costLockables.Add(l);
-            else coreLockables.Add(l);
-        }
 
         var s = Settings;
-        var enabled = (factory.ElementLookup[nameof(s.Enabled)] as MenuItem<bool>)!;
-        enabled.SelfChanged += _ => SetLocksAndColors();
-        MenuLabel coinsLabel = new(bugPrincePage, "Coins", MenuLabel.Style.Body);
+        var enabled = (factory.ElementLookup[nameof(s.EnableTransitionChoices)] as MenuItem<bool>)!;
+        enabled.SelfChanged += _ => UpdateColorsAndVisibility();
         var costsEnabled = (factory.ElementLookup[nameof(s.CostsEnabled)] as MenuItem<bool>)!;
-        costsEnabled.SelfChanged += _ => SetLocksAndColors();
-        MenuLabel gemsLabel = new(bugPrincePage, "Gems", MenuLabel.Style.Body);
+        costsEnabled.SelfChanged += _ => UpdateColorsAndVisibility();
 
-        GridItemPanel mainSettings = new(bugPrincePage, new(), 2, SpaceParameters.VSPACE_MEDIUM, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<MainSettingAttribute>(factory)]);
-        GridItemPanel costSettingsHeader = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [coinsLabel, costsEnabled, gemsLabel]);
-        GridItemPanel costSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostFieldAttribute>(factory)]);
-        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationFieldAttribute>(factory)]);
+        GridItemPanel mainSettings = new(bugPrincePage, new(), 2, SpaceParameters.VSPACE_MEDIUM, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
+        relicSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
+        costSettingsHeader = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [costsEnabled]);
+        costSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
+        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationSettingAttribute>(factory)]);
 
         List<GridItemPanel> order = [mainSettings, costSettingsHeader, costSettings, locationSettings];
         VerticalItemPanel main = new(bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, SpaceParameters.VSPACE_MEDIUM, true, [enabled, .. order]);
@@ -77,7 +69,7 @@ internal class ConnectionMenu
             order[i].Reposition();
         }
 
-        SetLocksAndColors();
+        UpdateColorsAndVisibility();
     }
 
     internal static void OnRandomizerMenuConstruction(MenuPage page) => Instance = new(page);
@@ -88,23 +80,17 @@ internal class ConnectionMenu
         return true;
     }
 
-    private IEnumerable<ILockable> AllLockables()
+    private void UpdateColorsAndVisibility()
     {
-        foreach (var lockable in coreLockables) yield return lockable;
-        foreach (var lockable in costLockables) yield return lockable;
-    }
-
-    private void SetLocksAndColors()
-    {
-        entryButton.Text.color = Settings.Enabled ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
-        coreLockables.ForEach(l => l.SetUnlocked(Settings.Enabled));
-        costLockables.ForEach(l => l.SetUnlocked(Settings.Enabled && Settings.CostsEnabled));
+        entryButton.Text.color = Settings.EnableTransitionChoices ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
+        relicSettings.SetShown(Settings.EnableTransitionChoices);
+        costSettingsHeader.SetShown(Settings.EnableTransitionChoices);
+        costSettings.SetShown(RandoInterop.AreCostsEnabled);
     }
 
     internal void ApplySettings(RandomizationSettings settings)
     {
-        AllLockables().ForEach(l => l.Unlock());
         factory.SetMenuValues(settings);
-        SetLocksAndColors();
+        UpdateColorsAndVisibility();
     }
 }

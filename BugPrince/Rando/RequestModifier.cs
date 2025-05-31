@@ -1,6 +1,7 @@
 ﻿using BugPrince.Data;
 using BugPrince.IC;
 using BugPrince.IC.Items;
+using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
 using RandomizerMod.RC;
@@ -40,9 +41,25 @@ internal class RequestModifier
         }
     }
 
+    private static void ProvideRequestInfo(RequestBuilder rb)
+    {
+
+        rb.EditItemRequest(CoinItem.ITEM_NAME, info => info.getItemDef = CoinItem.ItemDef);
+        rb.EditItemRequest(DiceTotemItem.ITEM_NAME, info => info.getItemDef = DiceTotemItem.ItemDef);
+        rb.EditItemRequest(GemItem.ITEM_NAME, info => info.getItemDef = GemItem.ItemDef);
+        rb.EditItemRequest(PushPinItem.ITEM_NAME, info => info.getItemDef = PushPinItem.ItemDef);
+
+        foreach (var location in Locations.GetLocations())
+        {
+            var (name, loc) = (location.Key, location.Value);
+            rb.EditLocationRequest(name, info => info.getLocationDef = loc.LocationDef);
+        }
+    }
+
     private static void ModifyRequest(RequestBuilder rb)
     {
-        if (!RandoInterop.AreCostsEnabled) return;
+        if (!RandoInterop.IsEnabled) return;
+        ProvideRequestInfo(rb);
 
         HashSet<string> randomizedScenes = [];
         foreach (var transition in GetRandomizedTransitions(rb))
@@ -51,6 +68,17 @@ internal class RequestModifier
 
             RandoInterop.LS!.RandomizedTransitions.Add(t);
             randomizedScenes.Add(t.SceneName);
+        }
+
+        if (randomizedScenes.Count == 0)
+        {
+            // No items.
+            foreach (var location in Locations.GetLocations())
+            {
+                var (name, loc) = (location.Key, location.Value);
+                if (loc.IsEnabled(RandoInterop.RS)) rb.AddLocationByName(location.Key);
+            }
+            return;
         }
 
         foreach (var scene in randomizedScenes)
@@ -93,22 +121,25 @@ internal class RequestModifier
         WeightedRandomSort(ordered, r);
         RandoInterop.LS.CostGroupProgression = [.. ordered.Select(p => p.Item1)];
 
-        rb.EditItemRequest(CoinItem.ITEM_NAME, info => info.getItemDef = CoinItem.ItemDef);
-        rb.EditItemRequest(DiceTotemItem.ITEM_NAME, info => info.getItemDef = DiceTotemItem.ItemDef);
-        rb.EditItemRequest(GemItem.ITEM_NAME, info => info.getItemDef = GemItem.ItemDef);
-        rb.EditItemRequest(PushPinItem.ITEM_NAME, info => info.getItemDef = PushPinItem.ItemDef);
+        Locations.GetLocations().Values.ForEach(loc => loc.AddToRequestBuilder(RandoInterop.RS, rb));
 
-        // TODO: Handle vanilla placement.
-        for (int i = 0; i < RandoInterop.RS.NumDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
-        for (int i = 0; i < RandoInterop.RS.NumPushPins; i++) rb.AddItemByName(PushPinItem.ITEM_NAME);
+        var RS = RandoInterop.RS;
+        if (rb.gs.PoolSettings.Relics)
+        {
+            for (int i = 0; i < RS.NumDiceTotems - RS.StartingDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
+            for (int i = 0; i < RS.NumPushPins - RS.StartingPushPins; i++) rb.AddItemByName(PushPinItem.ITEM_NAME);
+        }
 
-        var coins = RandoInterop.LS.GetItemCount(CostType.Coins) + RandoInterop.RS.CoinTolerance;
-        for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);
-        for (int i = 0; i < RandoInterop.RS.CoinDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}");
+        if (rb.gs.PoolSettings.Keys && RS.CostsEnabled)
+        {
+            var coins = RandoInterop.LS.GetItemCount(CostType.Coins) + RandoInterop.RS.CoinTolerance;
+            for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);
+            for (int i = 0; i < RandoInterop.RS.CoinDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}");
 
-        var gems = RandoInterop.LS.GetItemCount(CostType.Gems) + RandoInterop.RS.GemTolerance;
-        for (int i = 0; i < gems; i++) rb.AddItemByName(GemItem.ITEM_NAME);
-        for (int i = 0; i < RandoInterop.RS.GemDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}");
+            var gems = RandoInterop.LS.GetItemCount(CostType.Gems) + RandoInterop.RS.GemTolerance;
+            for (int i = 0; i < gems; i++) rb.AddItemByName(GemItem.ITEM_NAME);
+            for (int i = 0; i < RandoInterop.RS.GemDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}");
+        }
     }
 
     private static void AddTolerances(LogicManager lm, GenerationSettings gs, ProgressionInitializer pi)

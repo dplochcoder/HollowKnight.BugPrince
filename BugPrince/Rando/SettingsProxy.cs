@@ -15,7 +15,7 @@ internal class SettingsProxy : RandoSettingsProxy<RandomizationSettings, string>
     public override bool TryProvideSettings(out RandomizationSettings? settings)
     {
         settings = BugPrinceMod.GS.RandoSettings;
-        return settings.Enabled;
+        return settings.EnableTransitionChoices;
     }
 
     public override void ReceiveSettings(RandomizationSettings? settings) => ConnectionMenu.Instance!.ApplySettings(settings ?? new());

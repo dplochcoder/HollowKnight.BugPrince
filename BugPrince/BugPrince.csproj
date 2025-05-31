@@ -364,4 +364,7 @@
     <None Include=".gitignore" />
     <None Include="LocalOverrides.targets" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SPOILER\" />
+  </ItemGroup>
 </Project>

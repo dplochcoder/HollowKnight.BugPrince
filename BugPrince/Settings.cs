@@ -8,59 +8,74 @@ public record GlobalSettings
     public RandomizationSettings RandoSettings = new();
 }
 
-internal class MainSettingAttribute : Attribute { }
+internal class TransitionSettingAttribute : Attribute { }
 
-internal class CostFieldAttribute : Attribute { }
+internal class RelicSettingAttribute : Attribute { }
 
-internal class LocationFieldAttribute : Attribute { }
+internal class CostSettingAttribute : Attribute { }
+
+internal class LocationSettingAttribute : Attribute { }
 
 public record RandomizationSettings
 {
-    public bool Enabled = false;
+    public bool EnableTransitionChoices = false;
 
-    [MainSetting]
+    [TransitionSetting]
     [MenuRange(2, 5)]
     [MenuLabel("Number of rooms to draw")]
     public int NumChoices = 3;
-    [MainSetting]
+    [TransitionSetting]
     [MenuRange(0, 20)]
     [MenuLabel("Room refresh time")]
     public int RefreshCycle = 5;
-    [MainSetting]
+
+    [RelicSetting]
+    [MenuRange(0, 3)]
+    [DynamicBound(nameof(NumDiceTotems), true)]
+    [MenuLabel("Starting number of Dice Totems")]
+    public int StartingDiceTotems = 0;
+    [RelicSetting]
     [MenuRange(0, 10)]
-    [MenuLabel("Number of Dice Totems")]
-    public int NumDiceTotems = 5;
-    [MainSetting]
+    [DynamicBound(nameof(StartingDiceTotems), false)]
+    [MenuLabel("Total number of Dice Totems")]
+    public int NumDiceTotems = 7;
+    [RelicSetting]
+    [MenuRange(0, 2)]
+    [DynamicBound(nameof(NumPushPins), true)]
+    [MenuLabel("Starting number of Push Pins")]
+    public int StartingPushPins = 0;
+    [RelicSetting]
     [MenuRange(0, 7)]
-    [MenuLabel("Number of Push Pins")]
-    public int NumPushPins = 3;
+    [DynamicBound(nameof(StartingPushPins), false)]
+    [MenuLabel("Total number of Push Pins")]
+    public int NumPushPins = 5;
 
     [MenuLabel("Enable Coins and Gems")]
     public bool CostsEnabled;
-    [CostField]
+    [CostSetting]
     [MenuRange(0, 5)]
-    [MenuLabel("Tolerance")]
+    [MenuLabel("Coin Tolerance")]
     public int CoinTolerance = 1;
-    [CostField]
+    [CostSetting]
     [MenuRange(0, 10)]
-    [MenuLabel("Duplicates")]
+    [MenuLabel("Coin Duplicates")]
     public int CoinDuplicates = 1;
-    [CostField]
+    [CostSetting]
     [MenuRange(0, 5)]
-    [MenuLabel("Tolerance")]
+    [MenuLabel("Gem Tolerance")]
     public int GemTolerance = 2;
-    [CostField]
+    [CostSetting]
     [MenuRange(0, 10)]
-    [MenuLabel("Duplicates")]
+    [MenuLabel("Gem Duplicates")]
     public int GemDuplicates = 2;
 
-    [LocationField]
+    [LocationSetting]
     [MenuLabel("Custom Locations")]
     public bool NewLocations = true;
-    [LocationField]
+    [LocationSetting]
     [MenuLabel("The Vault")]
     public bool TheVault = true;
-    [LocationField]
+    [LocationSetting]
     [MenuLabel("Gemstone Cavern")]
     public bool GemstoneCavern = true;
 }
