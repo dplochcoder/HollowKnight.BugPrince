@@ -7,25 +7,11 @@ using UnityEngine.SceneManagement;
 
 namespace BugPrince.IC.Tags;
 
-internal abstract class SpriteCopiesTag : Tag
+internal abstract class SpriteCopiesTag : SceneModifierTag
 {
-    protected abstract string SceneName();
-
     protected abstract IEnumerable<SpriteCopy> SpriteCopies();
 
-    public override void Load(object parent)
-    {
-        base.Load(parent);
-        Events.AddSceneChangeEdit(SceneName(), ModifyScene);
-    }
-
-    public override void Unload(object parent)
-    {
-        base.Unload(parent);
-        Events.RemoveSceneChangeEdit(SceneName(), ModifyScene);
-    }
-
-    private void ModifyScene(Scene scene)
+    protected override void ModifyScene(Scene scene)
     {
         Dictionary<string, GameObject?> templates = [];
         foreach (var spriteCopy in SpriteCopies())
@@ -45,7 +31,7 @@ internal abstract class SpriteCopiesTag : Tag
 
 internal class LurienSecretSpriteCopiesTag : SpriteCopiesTag
 {
-    protected override string SceneName() => SceneNames.Ruins2_Watcher_Room;
+    protected override string GetSceneName() => SceneNames.Ruins2_Watcher_Room;
 
     protected override IEnumerable<SpriteCopy> SpriteCopies() => Data.SpriteCopies.GetLurienSecretSpriteCopies();
 }

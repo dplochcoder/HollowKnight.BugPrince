@@ -44,7 +44,7 @@ internal record HazardBox
     }
 }
 
-internal class WindowBreakTag : Tag
+internal class WindowBreakTag : SceneModifierTag
 {
     public string SceneName = "";
     public string TerrainPath = "";
@@ -59,19 +59,9 @@ internal class WindowBreakTag : Tag
 
     public bool Broken;
 
-    public override void Load(object parent)
-    {
-        base.Load(parent);
-        Events.AddSceneChangeEdit(SceneName, ModifyScene);
-    }
+    protected override string GetSceneName() => SceneName;
 
-    public override void Unload(object parent)
-    {
-        base.Unload(parent);
-        Events.RemoveSceneChangeEdit(SceneName, ModifyScene);
-    }
-
-    private void ModifyScene(Scene scene)
+    protected override void ModifyScene(Scene scene)
     {
         foreach (var box in HazardBoxes) GameObjectUtil.MakeHazardBox(box.p1, box.p2);
 
