@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace BugPrince.IC.Tags;
 
@@ -21,8 +20,7 @@ internal record HazardBox
 
     private static FieldInfo blockEffect = typeof(TinkEffect).GetField("blockEffect", BindingFlags.Instance | BindingFlags.NonPublic);
 
-
-    internal GameObject MakeHazardBox()
+    internal GameObject MakeGameObject()
     {
         GameObject hazard = new("Hazard");
         hazard.transform.position = (p1 + p2) / 2;
@@ -77,8 +75,8 @@ internal class WindowBreakTag : Tag
     {
         foreach (var box in HazardBoxes) GameObjectUtil.MakeHazardBox(box.p1, box.p2);
 
-        var terrain = scene.Find(TerrainPath)!;
-        var window = scene.Find(WindowPath)!;
+        var terrain = scene.FindGameObject(TerrainPath)!;
+        var window = scene.FindGameObject(WindowPath)!;
 
         if (Broken) BreakWindow(terrain, window, true);
         else EditWindow(terrain, window);
@@ -119,7 +117,7 @@ internal class WindowBreakTag : Tag
 
         window.GetOrAddComponent<AudioSource>().PlayOneShot(BugPrincePreloader.Instance.QuakeFloorGlassShatterAudio);
 
-        int breakables = Random.Range(8, 13);
+        int breakables = Mathf.CeilToInt(Mathf.Abs(PaneY2 - PaneY1) / 0.4f);
         for (int i = 0; i < breakables; i++)
         {
             var speed = Random.Range(15f, 25f);

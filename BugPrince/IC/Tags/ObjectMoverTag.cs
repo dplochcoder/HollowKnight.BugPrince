@@ -1,7 +1,7 @@
 ﻿using ItemChanger;
+using ItemChanger.Extensions;
 using Modding.Converters;
 using Newtonsoft.Json;
-using SFCore.Utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,5 +25,5 @@ internal class ObjectMoverTag : Tag
         Events.RemoveSceneChangeEdit(SceneName, MoveObject);
     }
 
-    private void MoveObject(Scene scene) => scene.Find(ObjectPath).transform.Translate(Move);
+    private void MoveObject(Scene scene) => scene.FindGameObject(ObjectPath)?.transform.Translate(Move);
 }

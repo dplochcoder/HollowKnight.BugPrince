@@ -1,4 +1,22 @@
 {
+  "BugPrince-Basin_Grub_Nook": {
+    "Type": "DiceTotem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 106.5,
+      "y": 83.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Basin_Grub_Nook",
+      "sceneName": "Abyss_19",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "*Grub-Basin_Requires_Wings"
+  },
   "BugPrince-Bench_Secret-Queen's_Gardens": {
     "Type": "PushPin",
     "Count": 1,
@@ -191,7 +209,7 @@
       "elevation": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": "BugPrince-Colosseum_Escape",
+      "name": "BugPrince-Exterior_Belflies-Colosseum",
       "sceneName": "Deepnest_East_09",
       "flingType": "Everywhere",
       "tags": null
@@ -216,6 +234,24 @@
     },
     "FullFlexible": false,
     "Logic": "Mines_02[top1]"
+  },
+  "BugPrince-Greenpath_Entrance_Nook": {
+    "Type": "Coin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 163.5,
+      "y": 21.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Greenpath_Entrance_Nook",
+      "sceneName": "Fungus1_01",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Fungus1_01[right1]"
   },
   "BugPrince-Guarded_Relic-Resting_Grounds-Catacombs": {
     "Type": "DiceTotem",
@@ -271,6 +307,36 @@
     "FullFlexible": false,
     "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
   },
+  "BugPrince-Hidden_Perch-Lake_of_Unn": {
+    "Type": "PushPin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 30.0,
+      "y": 51.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Hidden_Perch-Lake_of_Unn",
+      "sceneName": null,
+      "flingType": "Everywhere",
+      "tags": [
+        {
+          "$type": "BugPrince.IC.Tags.DeployerTag, BugPrince",
+          "Deployer": {
+            "$type": "ItemChanger.SmallPlatform, ItemChanger",
+            "SceneName": "Fungus1_26",
+            "X": 30.0,
+            "Y": 49.0,
+            "Test": null
+          },
+          "Loaded": false
+        }
+      ]
+    },
+    "FullFlexible": false,
+    "Logic": "Fungus1_26[right1] + FULLSUPERDASH + FULLCLAW + WINGS"
+  },
   "BugPrince-Iselda_(11_Maps)": {
     "Type": "PushPin",
     "Count": 1,
@@ -322,6 +388,155 @@
     },
     "FullFlexible": true,
     "Logic": "Room_mapper[left1] + MAPS>5"
+  },
+  "BugPrince-Lurien's_Secret": {
+    "Type": "Gem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 74.75,
+      "y": 144.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": true,
+      "name": "BugPrince-Lurien's_Secret",
+      "sceneName": null,
+      "flingType": "StraightUp",
+      "tags": [
+        {
+          "$type": "BugPrince.IC.Tags.WindowBreakTag, BugPrince",
+          "SceneName": "Ruins2_Watcher_Room",
+          "TerrainPath": "Window Collider (2)",
+          "WindowPath": "ruins_mid_window_01 (2)",
+          "DressingObjName": "ruin_layered_0054_w",
+          "ClippedDressingSpriteName": "Game.citc_clipped_window_dressing",
+          "PaneX": 68.5,
+          "PaneY1": 2.5,
+          "PaneY2": 11.5,
+          "Left": false,
+          "HazardBoxes": [
+            {
+              "p1": {
+                "x": 69.0,
+                "y": -1.0
+              },
+              "p2": {
+                "x": 83.0,
+                "y": -2.0
+              },
+              "Spikes": false
+            },
+            {
+              "p1": {
+                "x": 82.0,
+                "y": -2.0
+              },
+              "p2": {
+                "x": 83.0,
+                "y": 170.0
+              },
+              "Spikes": false
+            },
+            {
+              "p1": {
+                "x": 68.316,
+                "y": 14.818
+              },
+              "p2": {
+                "x": 68.678,
+                "y": 16.2
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 67.803,
+                "y": 15.568
+              },
+              "p2": {
+                "x": 68.398,
+                "y": 16.95
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 67.233,
+                "y": 16.388
+              },
+              "p2": {
+                "x": 67.828,
+                "y": 17.77
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 66.593,
+                "y": 17.048
+              },
+              "p2": {
+                "x": 67.288,
+                "y": 18.43
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 65.953,
+                "y": 17.538
+              },
+              "p2": {
+                "x": 66.648,
+                "y": 18.92
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 65.383,
+                "y": 17.828
+              },
+              "p2": {
+                "x": 66.078,
+                "y": 19.21
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 63.863,
+                "y": 18.142
+              },
+              "p2": {
+                "x": 65.377,
+                "y": 19.558
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 56.985,
+                "y": 18.542
+              },
+              "p2": {
+                "x": 63.895,
+                "y": 19.958
+              },
+              "Spikes": true
+            }
+          ],
+          "Broken": false,
+          "Loaded": false
+        },
+        {
+          "$type": "BugPrince.IC.Tags.LurienSecretSpriteCopiesTag, BugPrince",
+          "Loaded": false
+        }
+      ]
+    },
+    "FullFlexible": false,
+    "Logic": "Ruins2_Watcher_Room[bot1] + RIGHTFIREBALL + LEFTCLAW + RIGHTDASH + WINGS"
   },
   "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
     "Type": "Coin",
@@ -553,5 +768,23 @@
     },
     "FullFlexible": false,
     "Logic": "(LANTERN | DARKROOMS) + (Deepnest_35[top1] | Deepnest_35[left1] + ANYCLAW)"
+  },
+  "BugPrince-Upper_Crossroads_Platform": {
+    "Type": "Gem",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 68.5,
+      "y": 17.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": true,
+      "name": "BugPrince-Upper_Crossroads_Platform",
+      "sceneName": "Crossroads_39",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Crossroads_39[left1] + (RIGHTSHARPSHADOW | RIGHTDASH + SPELLAIRSTALL + $CASTSPELL[2,before:ROOMSOUL,after:ROOMSOUL] | WINGS | RIGHTCLAW)"
   }
 }
