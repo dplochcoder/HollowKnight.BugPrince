@@ -16,18 +16,10 @@ internal class BankStandLocation : ExistingContainerLocation
 
     private void ModifyStandControl(PlayMakerFSM fsm)
     {
-        fsm.GetState("Land").AddLastAction(new Lambda(() =>
+        fsm.GetState("Land").AddFirstAction(new Lambda(() =>
         {
             GameObject flingSrc = new("FlingSrc");
             flingSrc.transform.position = new(18, 6.5f, 0);
-
-            GiveInfo info = new()
-            {
-                Container = Container.Chest,
-                FlingType = FlingType.Everywhere,
-                Transform = flingSrc.transform,
-                MessageType = MessageType.Corner
-            };
 
             foreach (var item in Placement.Items) item.GiveOrFling(Placement, flingSrc.transform);
         }));

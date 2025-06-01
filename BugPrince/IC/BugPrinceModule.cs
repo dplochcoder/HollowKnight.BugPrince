@@ -414,7 +414,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
         int firstPassRemaining = potentialTargets.Count;
         while (iter.MoveNext())
         {
-            if (choices.Count < Settings.NumChoices && firstPassRemaining > 0) --firstPassRemaining;
+            if (choices.Count < Settings.NumRoomChoices && firstPassRemaining > 0) --firstPassRemaining;
             var (newSrc, newTarget) = iter.Current;
 
             if (newTarget.SceneName == PinnedScene)
@@ -422,7 +422,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
                 pinBackfill.Add((newSrc, newTarget));
                 continue;
             }
-            else if (choices.Count == Settings.NumChoices) continue;
+            else if (choices.Count == Settings.NumRoomChoices) continue;
             if (chosenScenes.Contains(newTarget.SceneName) || tempChosenScenes.Contains(newTarget.SceneName)) { ++dupeScenes; continue; }
 
             bool isShop = GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName);

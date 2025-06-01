@@ -29,13 +29,8 @@
       "forceShiny": false,
       "name": "BugPrince-Bench_Secret-Queen's_Gardens",
       "sceneName": "Fungus3_50",
-      "flingType": "Everywhere",
+      "flingType": "StraightUp",
       "tags": [
-        {
-          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
-          "fling": "Right",
-          "Loaded": false
-        },
         {
           "$type": "BugPrince.IC.Tags.WindowBreakTag, BugPrince",
           "SceneName": "Fungus3_50",
@@ -46,7 +41,7 @@
           "PaneX": 20.5,
           "PaneY1": 115.0,
           "PaneY2": 120.0,
-          "Left": false,
+          "Left": true,
           "HazardBoxes": [
             {
               "p1": {
@@ -95,48 +90,61 @@
             {
               "p1": {
                 "x": 20.0,
-                "y": 123.0
+                "y": 122.0
               },
               "p2": {
                 "x": 21.0,
-                "y": 125.0
+                "y": 124.0
               },
               "Spikes": true
             },
             {
               "p1": {
                 "x": 21.0,
-                "y": 124.0
+                "y": 123.0
               },
               "p2": {
                 "x": 22.0,
+                "y": 125.0
+              },
+              "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 22.0,
+                "y": 124.0
+              },
+              "p2": {
+                "x": 23.0,
                 "y": 126.0
               },
               "Spikes": true
             },
             {
               "p1": {
-                "x": 22.0,
+                "x": 23.0,
                 "y": 125.0
               },
               "p2": {
-                "x": 23.0,
-                "y": 127.0
-              },
-              "Spikes": true
-            },
-            {
-              "p1": {
-                "x": 23.0,
-                "y": 128.0
-              },
-              "p2": {
                 "x": 28.0,
-                "y": 130.0
+                "y": 127.0
               },
               "Spikes": true
             }
           ],
+          "HazardRespawnTriggerPos": {
+            "x": 20.5,
+            "y": 117.5
+          },
+          "HazardRespawnTriggerSize": {
+            "x": 1.0,
+            "y": 7.0
+          },
+          "HazardRespawnMarkerPos": {
+            "x": 23.0,
+            "y": 117.0
+          },
+          "RespawnRight": false,
           "Broken": false,
           "Loaded": false
         },
@@ -165,7 +173,7 @@
       ]
     },
     "FullFlexible": false,
-    "Logic": ""
+    "Logic": "Fungus3_50[right1] + LEFTFIREBALL + $CASTSPELL[1,before:AREASOUL,after:AREASOUL]"
   },
   "BugPrince-Challenge-Crystallized_Mound": {
     "Type": "DiceTotem",
@@ -226,7 +234,7 @@
       "y": 5.4,
       "elevation": 0.0,
       "managed": false,
-      "forceShiny": false,
+      "forceShiny": true,
       "name": "BugPrince-Garbage_Bin-Crystal_Peak_Entrance",
       "sceneName": "Mines_02",
       "flingType": "Everywhere",
@@ -269,7 +277,7 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
+    "Logic": "RestingGrounds_10[left1]"
   },
   "BugPrince-Hidden_Alcove_Left-Hallownest_Crown": {
     "Type": "Gem",
@@ -287,7 +295,7 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
+    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
   },
   "BugPrince-Hidden_Alcove_Right-Hallownest_Crown": {
     "Type": "Gem",
@@ -305,7 +313,7 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $Start_Location[Hallownest's Crown]"
+    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
   },
   "BugPrince-Hidden_Perch-Lake_of_Unn": {
     "Type": "PushPin",
@@ -318,7 +326,7 @@
       "managed": false,
       "forceShiny": false,
       "name": "BugPrince-Hidden_Perch-Lake_of_Unn",
-      "sceneName": null,
+      "sceneName": "Fungus1_26",
       "flingType": "Everywhere",
       "tags": [
         {
@@ -400,16 +408,16 @@
       "managed": false,
       "forceShiny": true,
       "name": "BugPrince-Lurien's_Secret",
-      "sceneName": null,
-      "flingType": "StraightUp",
+      "sceneName": "Ruins2_Watcher_Room",
+      "flingType": "DirectDeposit",
       "tags": [
         {
           "$type": "BugPrince.IC.Tags.WindowBreakTag, BugPrince",
           "SceneName": "Ruins2_Watcher_Room",
           "TerrainPath": "Window Collider (2)",
-          "WindowPath": "ruins_mid_window_01 (2)",
+          "WindowPath": "_Scenery/ruins_mid_window_01 (2)",
           "DressingObjName": "ruin_layered_0054_w",
-          "ClippedDressingSpriteName": "Game.citc_clipped_window_dressing",
+          "ClippedDressingSpriteName": "Game.city_clipped_window_dressing",
           "PaneX": 68.5,
           "PaneY1": 2.5,
           "PaneY2": 11.5,
@@ -526,6 +534,19 @@
               "Spikes": true
             }
           ],
+          "HazardRespawnTriggerPos": {
+            "x": 68.5,
+            "y": 7.0
+          },
+          "HazardRespawnTriggerSize": {
+            "x": 1.0,
+            "y": 11.0
+          },
+          "HazardRespawnMarkerPos": {
+            "x": 62.0,
+            "y": 4.0
+          },
+          "RespawnRight": true,
           "Broken": false,
           "Loaded": false
         },
@@ -598,23 +619,23 @@
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",
-      "x": 24.0,
-      "y": 51.0,
+      "x": 23.0,
+      "y": 54.0,
       "z": 0.2,
       "direction": "Down",
       "containerType": null,
       "nonreplaceable": true,
       "name": "BugPrince-Outside_Window-Soul_Sanctum",
-      "sceneName": null,
+      "sceneName": "Ruins1_25",
       "flingType": "Everywhere",
       "tags": [
         {
           "$type": "BugPrince.IC.Tags.WindowBreakTag, BugPrince",
           "SceneName": "Ruins1_25",
           "TerrainPath": "Window Collider (3)",
-          "WindowPath": "ruins_mid_window_01 (5)",
+          "WindowPath": "_Scenery/ruins_mid_window_01 (5)",
           "DressingObjName": "ruin_layered_0054_w",
-          "ClippedDressingSpriteName": "Game.citc_clipped_window_dressing",
+          "ClippedDressingSpriteName": "Game.city_clipped_window_dressing",
           "PaneX": 14.75,
           "PaneY1": 3.5,
           "PaneY2": 8.0,
@@ -654,6 +675,19 @@
               "Spikes": false
             }
           ],
+          "HazardRespawnTriggerPos": {
+            "x": 13.5,
+            "y": 4.5
+          },
+          "HazardRespawnTriggerSize": {
+            "x": 1.0,
+            "y": 5.0
+          },
+          "HazardRespawnMarkerPos": {
+            "x": 10.0,
+            "y": 4.0
+          },
+          "RespawnRight": true,
           "Broken": false,
           "Loaded": false
         }
@@ -732,7 +766,7 @@
     "Location": {
       "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",
       "x": 17.3,
-      "y": 43.0,
+      "y": 44.0,
       "z": 0.4,
       "direction": "Right",
       "containerType": null,
@@ -744,6 +778,24 @@
     },
     "FullFlexible": false,
     "Logic": "Ruins1_27[left1] + RIGHTCLAW + WINGS + LEFTSUPERDASH"
+  },
+  "BugPrince-Storerooms_Ledge-City": {
+    "Type": "Coin",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 6.3,
+      "y": 107.5,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Storerooms_Ledge-City",
+      "sceneName": "Ruins1_17",
+      "flingType": "StraightUp",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": "Ruins1_17[top1]"
   },
   "BugPrince-Upper_Alcove_Outside_Galien": {
     "Type": "DiceTotem",

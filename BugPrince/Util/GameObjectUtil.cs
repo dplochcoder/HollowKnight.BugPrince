@@ -54,7 +54,7 @@ internal static class GameObjectUtil
         if (self.GetComponent<TextMesh>() is TextMesh tm) self.GetOrAddComponent<Fader>().StartFade(tm.color, to, duration);
     }
 
-    internal static GameObject MakeShinyDecorator(IEnumerable<AbstractItem> items)
+    internal static GameObject MakeShinyDecorator()
     {
         var obj = ObjectCache.ShinyItem;
         UnityEngine.Object.Destroy(obj.FindChild("Inspect Region")!);
@@ -63,23 +63,14 @@ internal static class GameObjectUtil
         UnityEngine.Object.Destroy(obj.GetComponent<Rigidbody2D>());
         UnityEngine.Object.Destroy(obj.LocateMyFSM("Shiny Control"));
         UnityEngine.Object.Destroy(obj.LocateMyFSM("Generate Wave"));
-        ShinyUtility.SetShinyColor(obj, items);
         return obj;
     }
 
-    internal static GameObject MakeHazardBox(Vector2 corner1, Vector2 corner2)
+    internal static GameObject MakeShinyDecorator(IEnumerable<AbstractItem> items)
     {
-        GameObject hazard = new("Hazard");
-        hazard.transform.position = (corner1 + corner2) / 2;
-        var box = hazard.AddComponent<BoxCollider2D>();
-        box.size = new(Mathf.Abs(corner2.x - corner1.x), Mathf.Abs(corner2.y - corner1.y));
-        box.isTrigger = true;
-        var damage = hazard.AddComponent<DamageHero>();
-        damage.damageDealt = 1;
-        damage.hazardType = 1 + (int)HazardType.SPIKES;
-        hazard.AddComponent<NonBouncer>();
-
-        return hazard;
+        var obj = MakeShinyDecorator();
+        ShinyUtility.SetShinyColor(obj, items);
+        return obj;
     }
 
     internal static GameObject FlingGlassDebris(Vector3 pos, Vector3 speed)

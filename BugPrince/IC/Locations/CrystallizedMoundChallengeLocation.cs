@@ -4,6 +4,7 @@ using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Locations;
+using PurenailCore.SystemUtil;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,8 @@ internal class CrystallizedMoundChallengeLocation : ContainerLocation
 
     private void ModifyScene(Scene scene)
     {
+        scene.FindGameObject("mines_fog (4)")?.SetActive(false);
+
         GameObject ctrl = new("LanternControl");
         ctrl.AddComponent<LanternControl>().Location = this;
     }
@@ -27,7 +30,13 @@ internal class CrystallizedMoundChallengeLocation : ContainerLocation
 
 internal class LanternControl : MonoBehaviour
 {
-    private static readonly Vector3 LANTERN_POSITION = new(17.5f, 12f, 1.5f);
+    private static readonly Vector3 LANTERN_POSITION = new(6.8f, 11.1f, 5.6f);
+    private static readonly List<Vector2> SHINY_POSITIONS = [
+        new(104.8f, 10.7f),
+        new(93.3f, 4.8f),
+        new(79.8f, 3.4f),
+        new(86.3f, 17.2f)
+    ];
 
     internal ContainerLocation? Location;
 
@@ -56,8 +65,8 @@ internal class LanternControl : MonoBehaviour
         var dreamEffects = lanternClone.FindChild("dream_area_effect")!;
         dreamParticles = dreamEffects.Children();
         dreamParticles.ForEach(o => o.SetActive(true));
-        Deactivate(dreamParticles);
         dreamEffects.SetActive(true);
+        Deactivate(dreamParticles, true);
 
         var firstLightParent = lanternClone.FindChild("Lantern First Light")!;
         var firstLightObj = firstLightParent.FindChild("particle_flame (1)")!;
@@ -68,11 +77,12 @@ internal class LanternControl : MonoBehaviour
         firstLight.Stop();
 
         var lanternLitObjects = lanternClone.FindChild("Lantern Lit Objects")!;
-        var audioLoop = lanternLitObjects.FindChild("Main Audio Loop")!;
-        audioLoop.SetActive(false);
+        mainAudioLoop = lanternLitObjects.FindChild("Main Audio Loop")!;
+        mainAudioLoop.SetActive(false);
         var grimmFlame = lanternLitObjects.FindChild("Grimm_lantern_flame")!;
         grimmFlameChildren = grimmFlame.Children();
         grimmFlameChildren.ForEach(o => o.SetActive(true));
+        Destroy(lanternLitObjects.LocateMyFSM("Control"));
         lanternLitObjects.SetActive(true);
         Deactivate(grimmFlameChildren, true);
 
@@ -86,6 +96,12 @@ internal class LanternControl : MonoBehaviour
         dreamWalls.Add(SpawnDreamWall(new(43.5f, 49f), false));
 
         platforms = [.. FindObjectsOfType<FlipPlatform>().Select(p => p.gameObject)];
+        enemies = [.. FindObjectsOfType<HealthManager>().Where(hm => hm.name.Contains("Crystal Flyer") || hm.name.Contains("Crawler") || hm.name.Contains("Roller"))];
+        shinies = [.. SHINY_POSITIONS.Select(p => {
+            var obj = GameObjectUtil.MakeShinyDecorator();
+            obj.transform.position = p;
+            return obj;
+        })];
     }
 
     private AudioClip? lightSound;
@@ -95,15 +111,18 @@ internal class LanternControl : MonoBehaviour
     private ParticleSystem? finalFlames;
     private List<GameObject> grimmFlameChildren = [];
     private List<GameObject> dreamParticles = [];
-    private List<PlayMakerFSM> dreamWalls = [];
+    private readonly List<PlayMakerFSM> dreamWalls = [];
     private GameObject? mainAudioLoop;
     private List<GameObject> platforms = [];
+    private List<HealthManager> enemies = [];
+    private List<GameObject> shinies = [];
 
     private PlayMakerFSM SpawnDreamWall(Vector2 pos, bool rightWall)
     {
         var wall = Instantiate(BugPrincePreloader.Instance.DreamWall!);
         wall.transform.position = pos;
         wall.transform.localRotation = Quaternion.Euler(0, 0, rightWall ? 180 : 0);
+        wall.SetActive(true);
         return wall.LocateMyFSM("Control");
     }
 
@@ -116,6 +135,8 @@ internal class LanternControl : MonoBehaviour
         if (!complete) dreamWalls.ForEach(w => w.SendEvent("DREAM GATE CLOSE"));
         gameObject.GetOrAddComponent<AudioSource>().PlayOneShot(lightSound);
         platforms.ForEach(p => p.SetActive(false));
+        enemies.Where(hm => hm.hp > 0).ForEach(hm => hm.gameObject.SetActive(false));
+        shinies.ForEach(p => p.SetActive(true));
 
         IEnumerator Animate()
         {
@@ -138,6 +159,8 @@ internal class LanternControl : MonoBehaviour
         Deactivate(dreamParticles);
         dreamWalls.ForEach(w => w.SendEvent("DREAM GATE OPEN"));
         platforms.ForEach(p => p.SetActive(true));
+        enemies.Where(hm => hm.hp > 0).ForEach(hm => hm.gameObject.SetActive(true));
+        shinies.ForEach(p => p.SetActive(false));
     }
 
     private float hitProgress = 0;
@@ -161,7 +184,7 @@ internal class LanternControl : MonoBehaviour
     private const float Y1 = 47;
     private const float Y2 = 58;
 
-    private const float VICTORY_WAIT = 2;
+    private const float VICTORY_WAIT = 1.5f;
     private float victoryTimer = 0;
     private bool complete = false;
 

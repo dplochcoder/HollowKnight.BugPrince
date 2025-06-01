@@ -9,7 +9,7 @@ namespace BugPrince.Rando;
 
 internal class BugPrinceVariableResolver : VariableResolver
 {
-    internal const string BUG_PRINCE_ACCESS = "$BugPrinceAccess";
+    internal const string BUG_PRINCE_ACCESS_PREFIX = "$BugPrinceAccess";
 
     private ICostGroupProgressionProvider? progressionProviderOverride;
 
@@ -29,7 +29,7 @@ internal class BugPrinceVariableResolver : VariableResolver
 
     public override bool TryMatch(LogicManager lm, string term, out LogicVariable variable)
     {
-        if (TryMatchPrefix(term, BUG_PRINCE_ACCESS, out var args) && args.Length == 2)
+        if (TryMatchPrefix(term, BUG_PRINCE_ACCESS_PREFIX, out var args) && args.Length == 2)
         {
             variable = ParseBugPrinceAccess(lm, term, new(args[0], args[1]));
             return true;

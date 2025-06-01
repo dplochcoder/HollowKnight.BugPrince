@@ -4,6 +4,7 @@ using UnityEngine;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
 using ItemChanger.Locations;
+using BugPrince.Util;
 
 namespace BugPrince.IC;
 
@@ -41,6 +42,7 @@ internal static class ItemChangerUtil
                 case FlingDirection.Down: ShinyUtility.FlingShinyDown(fsm); break;
                 default: ShinyUtility.FlingShinyRandomly(fsm); break;
             }
+            shiny.SetActive(true);
         }
         return true;
     }
@@ -48,22 +50,30 @@ internal static class ItemChangerUtil
     internal static void SummonItems(this ContainerLocation self, Vector2 pos)
     {
         var shaman = BugPrincePreloader.Instance.ShamanMeeting!;
-        var clip = (shaman.LocateMyFSM("Conversation Control").GetState("Summon Anim").GetFirstActionOfType<AudioPlayerOneShotSingle>().audioClip.Value as AudioClip)!;
+        var fsm = shaman.LocateMyFSM("Conversation Control");
+        var summonClip = (fsm.GetState("Summon Anim").GetFirstActionOfType<AudioPlayerOneShotSingle>().audioClip.Value as AudioClip)!;
+        var finalClip = (fsm.GetState("Spell Appear").GetFirstActionOfType<AudioPlayerOneShotSingle>().audioClip.Value as AudioClip)!;
         var particles = Object.Instantiate(shaman.FindChild("Summon 1")!);
 
         particles.transform.position = pos;
-        particles.AddComponent<ItemSummoner>().Init(self);
+        particles.transform.localScale *= 1.1f;
+        particles.AddComponent<ItemSummoner>().Init(self, finalClip);
 
         particles.SetActive(true);
-        particles.AddComponent<AudioSource>().PlayOneShot(clip);
+        particles.AddComponent<AudioSource>().PlayOneShot(summonClip);
     }
 }
 
 internal class ItemSummoner : MonoBehaviour
 {
     private ContainerLocation? location;
+    private AudioClip? finalClip;
 
-    internal void Init(ContainerLocation location) => this.location = location;
+    internal void Init(ContainerLocation location, AudioClip finalClip)
+    {
+        this.location = location;
+        this.finalClip = finalClip;
+    }
 
     private ParticleSystem? particleSystem;
 
@@ -77,6 +87,8 @@ internal class ItemSummoner : MonoBehaviour
     private float ease = EASE_TIME;
     private float post = 0.5f;
 
+    private GameObject? shinyMarker;
+
     private void Update()
     {
         var time = Time.deltaTime;
@@ -88,6 +100,11 @@ internal class ItemSummoner : MonoBehaviour
                 time -= delay;
                 particleSystem!.emissionRate = 0;
                 particleSystem.Play();
+
+                shinyMarker = GameObjectUtil.MakeShinyDecorator();
+                shinyMarker.transform.position = gameObject.transform.position;
+                shinyMarker.transform.localScale = Vector3.zero;
+                shinyMarker.SetActive(true);
             }
             else return;
         }
@@ -101,7 +118,11 @@ internal class ItemSummoner : MonoBehaviour
             }
             else
             {
-                particleSystem!.emissionRate = MIN_PARTICLES + (MAX_PARTICLES - MIN_PARTICLES) * (2f - ease);
+                particleSystem!.emissionRate = MIN_PARTICLES + (MAX_PARTICLES - MIN_PARTICLES) * (EASE_TIME - ease);
+
+                var pct = (EASE_TIME - ease) / EASE_TIME;
+                var scale = (1 - Mathf.Sin((pct + 1) * Mathf.PI / 2)) * 0.75f;
+                shinyMarker!.transform.localScale = new(scale, scale, scale);
                 return;
             }
         }
@@ -110,6 +131,9 @@ internal class ItemSummoner : MonoBehaviour
             post -= time;
             if (post <= 0)
             {
+                shinyMarker?.SetActive(false);
+                gameObject.GetComponent<AudioSource>()?.PlayOneShot(finalClip);
+
                 location!.GetContainer(out var obj, out var containerType);
                 Container.GetContainer(containerType)!.ApplyTargetContext(obj, gameObject, 0);
                 obj.SetActive(true);

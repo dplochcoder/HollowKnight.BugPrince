@@ -28,7 +28,7 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.Ruins2_01_b, "Quake Floor Glass")]
     public GameObject? QuakeFloorGlass { get; private set; }
 
-    public List<GameObject> QuakeFloorGlassDebris => QuakeFloorGlass!.FindChild("Debris")!.Children().Where(o => o.name.StartsWith("Bottle Glass")).ToList();
+    public List<GameObject> QuakeFloorGlassDebris => [.. QuakeFloorGlass!.FindChild("Debris")!.Children().Where(o => o.name.StartsWith("Bottle Glass"))];
 
     public AudioClip QuakeFloorGlassShatterAudio => QuakeFloorGlass!.LocateMyFSM("quake_floor").GetState("Glass").GetFirstActionOfType<AudioPlayerOneShot>().audioClips[0];
 

@@ -34,9 +34,9 @@ internal static class RandoInterop
 
     internal static RandomizationSettings RS => BugPrinceMod.GS.RandoSettings;
 
-    internal static bool IsEnabled => RS.EnableTransitionChoices || RS.NewLocations || RS.TheVault || RS.GemstoneCavern;
+    internal static bool IsEnabled => RS.EnableTransitionChoices || RS.CustomLocations || RS.TheVault || RS.GemstoneCavern;
 
-    internal static bool AreCostsEnabled => RS.EnableTransitionChoices && RS.CostsEnabled;
+    internal static bool AreCostsEnabled => RS.EnableTransitionChoices && RS.EnableCoinsAndGems;
 
     internal static void Setup()
     {
@@ -79,7 +79,12 @@ internal static class RandoInterop
 
         Locations.GetLocations().Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, RS));
 
-        ItemChangerMod.Modules.Add<BreakablesModule>();
+        if (RS.CustomLocations)
+        {
+            ItemChangerMod.Modules.Add<BreakablesModule>();
+            ItemChangerMod.Modules.Add<IseldaExtensionModule>();
+            if (!rc.gs.PoolSettings.Maps) IseldaExtensionModule.PlaceVanillaMaps();
+        }
     }
 
     private static void LogSettings(RandomizerMod.Logging.LogArguments args, TextWriter tw)

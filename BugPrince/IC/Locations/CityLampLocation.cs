@@ -20,7 +20,7 @@ internal class CityLampLocation : ExistingContainerLocation
 
     protected override void OnUnload() => Events.RemoveSceneChangeEdit(UnsafeSceneName, InstallLamp);
 
-    private static FieldInfo debrisParts = typeof(Breakable).GetField("debrisParts", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly FieldInfo debrisParts = typeof(Breakable).GetField("debrisParts", BindingFlags.Instance | BindingFlags.NonPublic);
 
     private void InstallLamp(Scene scene)
     {
@@ -28,26 +28,27 @@ internal class CityLampLocation : ExistingContainerLocation
         obj.transform.position = new(x, y, z);
 
         var active = obj.FindChild("Active")!;
-        active.FindChild("Lamp_Bug")!.SetActive(false);
+        var lampBug = active.FindChild("Lamp_Bug")!;
+        lampBug.SetActive(false);
 
         if (!Placement.AllObtained())
         {
             var shiny = GameObjectUtil.MakeShinyDecorator(Placement.Items);
             shiny.transform.SetParent(active.transform);
-            shiny.transform.localPosition = new(0, 0, -0.4f);
+            shiny.transform.localPosition = lampBug.transform.localPosition;
             shiny.SetActive(true);
         }
 
         var breakable = obj.GetComponent<Breakable>();
         var debris = (debrisParts.GetValue(breakable) as List<GameObject>)!;
         debris.RemoveAll(o => o.name.StartsWith("lamp_bug"));
-        ItemChangerMod.Modules.Get<BreakablesModule>()?.DoOnBreak(breakable, () => SpawnItems(obj));
+        ItemChangerMod.Modules.Get<BreakablesModule>()?.DoOnBreak(breakable, () => SpawnItems(lampBug.transform));
 
         obj.SetActive(true);
     }
 
-    private void SpawnItems(GameObject src)
+    private void SpawnItems(Transform src)
     {
-        foreach (var item in Placement.Items) item.GiveOrFling(Placement, src.transform, direction);
+        foreach (var item in Placement.Items) item.GiveOrFling(Placement, src, direction);
     }
 }

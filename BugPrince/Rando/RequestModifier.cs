@@ -76,7 +76,7 @@ internal class RequestModifier
             foreach (var location in Locations.GetLocations())
             {
                 var (name, loc) = (location.Key, location.Value);
-                if (loc.IsEnabled(RandoInterop.RS)) rb.AddLocationByName(location.Key);
+                loc.AddToRequestBuilder(RandoInterop.RS, rb);
             }
             return;
         }
@@ -126,11 +126,11 @@ internal class RequestModifier
         var RS = RandoInterop.RS;
         if (rb.gs.PoolSettings.Relics)
         {
-            for (int i = 0; i < RS.NumDiceTotems - RS.StartingDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
-            for (int i = 0; i < RS.NumPushPins - RS.StartingPushPins; i++) rb.AddItemByName(PushPinItem.ITEM_NAME);
+            for (int i = 0; i < RS.TotaliceTotems - RS.StartingDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
+            for (int i = 0; i < RS.TotalPushPins - RS.StartingPushPins; i++) rb.AddItemByName(PushPinItem.ITEM_NAME);
         }
 
-        if (rb.gs.PoolSettings.Keys && RS.CostsEnabled)
+        if (rb.gs.PoolSettings.Keys && RS.EnableCoinsAndGems)
         {
             var coins = RandoInterop.LS.GetItemCount(CostType.Coins) + RandoInterop.RS.CoinTolerance;
             for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);

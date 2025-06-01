@@ -7,6 +7,7 @@ using RandomizerMod.Menu;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace BugPrince.Rando;
 
@@ -24,8 +25,9 @@ internal class ConnectionMenu
 
     private readonly SmallButton entryButton;
     private readonly MenuElementFactory<RandomizationSettings> factory;
+    private GridItemPanel mainSettings;
     private GridItemPanel relicSettings;
-    private GridItemPanel costSettingsHeader;
+    private MenuItem<bool> costsEnabled;
     private GridItemPanel costSettings;
 
     private static List<IValueElement> GetElements<T>(MenuElementFactory<RandomizationSettings> factory) where T : Attribute
@@ -50,24 +52,18 @@ internal class ConnectionMenu
         var s = Settings;
         var enabled = (factory.ElementLookup[nameof(s.EnableTransitionChoices)] as MenuItem<bool>)!;
         enabled.SelfChanged += _ => UpdateColorsAndVisibility();
-        var costsEnabled = (factory.ElementLookup[nameof(s.CostsEnabled)] as MenuItem<bool>)!;
+        costsEnabled = (factory.ElementLookup[nameof(s.EnableCoinsAndGems)] as MenuItem<bool>)!;
         costsEnabled.SelfChanged += _ => UpdateColorsAndVisibility();
 
-        GridItemPanel mainSettings = new(bugPrincePage, new(), 2, SpaceParameters.VSPACE_MEDIUM, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
+        mainSettings = new(bugPrincePage, new(), 2, SpaceParameters.VSPACE_MEDIUM, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
         relicSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
-        costSettingsHeader = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [costsEnabled]);
         costSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
         GridItemPanel locationSettings = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationSettingAttribute>(factory)]);
 
-        List<GridItemPanel> order = [mainSettings, costSettingsHeader, costSettings, locationSettings];
-        VerticalItemPanel main = new(bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, SpaceParameters.VSPACE_MEDIUM, true, [enabled, .. order]);
+        VerticalItemPanel main = new(
+            bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, 100, true,
+            [enabled, mainSettings, relicSettings, costsEnabled, costSettings, locationSettings]);
         main.Reposition();
-        for (int i = 1; i < order.Count; i++)
-        {
-            // Give more space for the 2-row grid.
-            order[i].Translate(new(0, -SpaceParameters.VSPACE_MEDIUM));
-            order[i].Reposition();
-        }
 
         UpdateColorsAndVisibility();
     }
@@ -82,9 +78,10 @@ internal class ConnectionMenu
 
     private void UpdateColorsAndVisibility()
     {
-        entryButton.Text.color = Settings.EnableTransitionChoices ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
+        entryButton.Text.color = RandoInterop.IsEnabled ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
+        mainSettings.SetShown(Settings.EnableTransitionChoices);
         relicSettings.SetShown(Settings.EnableTransitionChoices);
-        costSettingsHeader.SetShown(Settings.EnableTransitionChoices);
+        costsEnabled.SetShown(Settings.EnableTransitionChoices);
         costSettings.SetShown(RandoInterop.AreCostsEnabled);
     }
 

@@ -6,7 +6,7 @@ using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Locations;
 using PurenailCore.SystemUtil;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -25,22 +25,31 @@ internal class AncestralMoundPuzzleLocation : ContainerLocation
     private void ModifyScene(Scene scene)
     {
         System.Random rng = new(Seed());
-        var numTorches = rng.Next(6, 8);
+        var numTorches = rng.Next(5, 7);
 
         List<int> order = [];
         for (int i = 0; i < numTorches; i++) order.Add(i);
-        List<int> suffix = new(order);
+        List<int> suffix = [.. order];
         suffix.Shuffle(rng);
-        for (int i = 0; i < 10 - numTorches; i++) order.Add(suffix[i]);
+        for (int i = 0; i < 8 - numTorches; i++) order.Add(suffix[i]);
         order.Shuffle(rng);
 
-        UnityEngine.Object.Destroy(scene.FindGameObject("_Props/Torch Breakable 4")!);
+        scene.FindGameObject("_Props/Torch Breakable 4")?.SetActive(false);
+        scene.FindGameObject("_Props/Shaman Generic 7")?.SetActive(false);
+        scene.FindGameObject("_Scenery/haze/haze16")?.SetActive(false);
+        scene.FindGameObject("_Scenery/haze/haze18")?.SetActive(false);
+
         var torchTemplate = scene.FindGameObject("_Props/Torch Breakable 3")!;
+        Object.Destroy(torchTemplate.GetComponent<Breakable>());
         torchTemplate.transform.Translate(new(0, -0.2f));
         torchTemplate.transform.localRotation = Quaternion.Euler(0, 0, rng.NextFloat(-13, 3));
 
-        var popParticles = torchTemplate.FindChild("Pop")!;
-        var popClips = torchTemplate.LocateMyFSM("Pop Control").GetState("Pop").GetFirstActionOfType<AudioPlayerOneShot>().audioClips;
+        var popParticles = torchTemplate.FindChild("Active")!.FindChild("Pop")!;
+        var particleSystem = popParticles.GetComponent<ParticleSystem>();
+        var main = particleSystem.main;
+        main.maxParticles = 100;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        var popClips = popParticles.LocateMyFSM("Pop Control").GetState("Pop").GetFirstActionOfType<AudioPlayerOneShot>().audioClips;
 
         var min = torchTemplate.transform.position;
         var max = min with { x = 74.5f };
@@ -48,7 +57,8 @@ internal class AncestralMoundPuzzleLocation : ContainerLocation
         List<GameObject> signals = [torchTemplate];
         for (int i = 1; i < numTorches; i++)
         {
-            var next = UnityEngine.Object.Instantiate(torchTemplate);
+            var next = Object.Instantiate(torchTemplate);
+            Object.Destroy(next.GetComponent<Breakable>());
             next.transform.position = Vector3.Lerp(min, max, i / (numTorches - 1f));
             next.transform.localRotation = Quaternion.Euler(0, 0, rng.NextFloat(-13, 3));
             signals.Add(next);
@@ -59,61 +69,46 @@ internal class AncestralMoundPuzzleLocation : ContainerLocation
         List<GameObject> switches = [leftSwitch];
         for (int i = 1; i < numTorches - 1; i++)
         {
-            var next = UnityEngine.Object.Instantiate(leftSwitch);
+            var next = Object.Instantiate(leftSwitch);
             next.transform.position = Vector3.Lerp(leftSwitch.transform.position, rightSwitch.transform.position, i / (numTorches - 1f));
+            switches.Add(next);
         }
         switches.Add(rightSwitch);
 
-        void SpawnContainer(Vector2 pos)
-        {
-            GetContainer(out var obj, out var containerType);
-            Container.GetContainer(containerType)!.ApplyTargetContext(obj, pos.x, pos.y, 0);
-            obj.SetActive(true);
-        }
-
-        CoordinatePops([.. order.Select(idx => signals[idx])]);
-        MakeSwitches(order, [.. order.Select(idx => switches[idx])], popParticles, popClips, SpawnContainer);
+        CoordinatePops(order, signals);
+        MakeSwitches(order, switches, popParticles, popClips);
     }
 
-    private const float INTERVAL = 0.35f;
-
-    private static void CoordinatePops(List<GameObject> signals)
+    private static void CoordinatePops(List<int> order, List<GameObject> signals)
     {
-        signals.ForEach(o => o.SetActive(false));
-
-        Wrapped<float> nextWait = new(0);
+        List<PlayMakerFSM> fsms = [];
         for (int i = 0; i < signals.Count; i++)
         {
-            var fsm = signals[i].FindChild("Pop")!.LocateMyFSM("Pop Control");
+            var fsm = signals[i].FindChild("Active")!.FindChild("Pop")!.LocateMyFSM("Pop Control");
             var waitState = fsm.GetState("Wait");
-            var wait = waitState.GetFirstActionOfType<WaitRandom>();
+            waitState.RemoveTransitionsTo("Pop");
+            waitState.AddTransition("MANUAL POP", "Pop");
 
-            var firstWait = 1f + i * INTERVAL;
-            bool first = i == 0;
-            Wrapped<bool> firstIter = new(false);
-            waitState.AddFirstAction(new Lambda(() =>
+            var popState = fsm.GetState("Pop");
+            popState.RemoveActionsOfType<PlayParticleEmitter>();
+            var particles = fsm.gameObject.GetComponent<ParticleSystem>();
+            popState.AddLastAction(new Lambda(() =>
             {
-                var waitTime = firstIter.Value ? firstWait : nextWait.Value;
-                firstIter.Value = false;
-                wait.timeMin.Value = waitTime;
-                wait.timeMax.Value = waitTime;
-
-                if (first)
-                {
-                    var min = INTERVAL * signals.Count + 3;
-                    nextWait.Value = UnityEngine.Random.Range(min, min + 2);
-                }
+                particles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                particles.Play();
             }));
 
             fsm.SetState("Init");
+            fsms.Add(fsm);
         }
 
-        signals.ForEach(o => o.SetActive(true));
+        GameObject popper = new("Popper");
+        popper.AddComponent<PopCoordinator>().Init(order, fsms);
     }
 
     private const int NUM_PARTICLES = 12;
 
-    private void MakeSwitches(IReadOnlyList<int> order, List<GameObject> switches, GameObject particlesTemplate, AudioClip[] popClips, Action<Vector2> spawnContainer)
+    private void MakeSwitches(IReadOnlyList<int> order, List<GameObject> switches, GameObject particlesTemplate, AudioClip[] popClips)
     {
         List<int> history = [];
         Wrapped<bool> complete = new(false);
@@ -131,7 +126,7 @@ internal class AncestralMoundPuzzleLocation : ContainerLocation
             List<GameObject> particles = [];
             for (int j = 0; j < NUM_PARTICLES; j++)
             {
-                var copy = UnityEngine.Object.Instantiate(particlesTemplate);
+                var copy = Object.Instantiate(particlesTemplate);
                 copy.transform.SetParent(particlesParent.transform);
                 copy.transform.position = particlesParent.transform.position;
                 copy.transform.localRotation = Quaternion.Euler(0, 0, j * 360f / NUM_PARTICLES);
@@ -140,6 +135,38 @@ internal class AncestralMoundPuzzleLocation : ContainerLocation
 
             obj.AddComponent<TorchPuzzleSwitch>().Init(
                 i, particlesParent, [.. particles.Select(o => o.GetComponent<ParticleSystem>())], history, order, complete, popClips, this);
+        }
+    }
+}
+
+internal class PopCoordinator : MonoBehaviour
+{
+    private List<int> order = [];
+    private List<PlayMakerFSM> fsms = [];
+
+    private void Awake() => StartCoroutine(Run());
+
+    internal void Init(List<int> order, List<PlayMakerFSM> fsms)
+    {
+        this.fsms = [.. fsms];
+        this.order = [.. order];
+    }
+
+    private IEnumerator Run()
+    {
+        yield return null;
+
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(3f, 5));
+
+            bool first = true;
+            foreach (var idx in order)
+            {
+                if (!first) yield return new WaitForSeconds(0.4f);
+                first = false;
+                fsms[idx].SendEvent("MANUAL POP");
+            }
         }
     }
 }
@@ -175,7 +202,7 @@ internal class TorchPuzzleSwitch : MonoBehaviour, IHitResponder
         if (invuln > 0) return;
 
         invuln = 0.15f;
-        particlesParent.transform.localRotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0, 360f));
+        particlesParent.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0, 360f));
         particles.ForEach(p => p.Play());
         gameObject.GetOrAddComponent<AudioSource>().PlayOneShot(audioClips.Random());
 

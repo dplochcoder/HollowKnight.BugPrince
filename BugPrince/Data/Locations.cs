@@ -36,7 +36,6 @@ internal enum LocationState
 
 internal record LocationData
 {
-    public string Name = "";
     public ItemType Type;
     public int Count;
     public AbstractLocation? Location;
@@ -48,18 +47,18 @@ internal record LocationData
         AdditionalProgressionPenalty = FullFlexible,
         FlexibleCount = FullFlexible,
         Name = Location?.name ?? "",
-        SceneName = Location?.sceneName ?? "";
+        SceneName = Location?.sceneName ?? ""
     };
 
     private LocationState GetLocationState(GenerationSettings gs, RandomizationSettings rs)
     {
-        if (!rs.NewLocations) return LocationState.Skip;
+        if (!rs.CustomLocations) return LocationState.Skip;
 
         switch (Type)
         {
             case ItemType.Coin:
             case ItemType.Gem:
-                return (rs.CostsEnabled && !gs.PoolSettings.Keys) ? LocationState.Preplaced : LocationState.Randomized;
+                return (rs.EnableCoinsAndGems && !gs.PoolSettings.Keys) ? LocationState.Preplaced : LocationState.Randomized;
             case ItemType.DiceTotem:
             case ItemType.PushPin:
                 return gs.PoolSettings.Relics ? LocationState.Randomized : LocationState.Preplaced;

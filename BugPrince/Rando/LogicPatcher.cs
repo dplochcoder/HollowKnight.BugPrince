@@ -37,7 +37,7 @@ internal static class LogicPatcher
 
     private static void ModifyTransitions(GenerationSettings gs, LogicManagerBuilder lmb)
     {
-        if (!RandoInterop.IsEnabled) return;
+        if (!RandoInterop.RS.EnableTransitionChoices) return;
 
         HashSet<string> costScenes = [];
         foreach (var cgp in CostGroup.GetProducers().Values) costScenes.AddRange(cgp.RelevantSceneNames());
@@ -65,7 +65,7 @@ internal static class LogicPatcher
             lmb.GetOrAddTerm(transitionName, TermType.State);
             
             // The internal proxy is only accessible if we can purchase the transition.
-            lmb.AddWaypoint(new(internalProxy, $"{transitionName} + {BugPrinceVariableResolver.BUG_PRINCE_ACCESS}[{transition.SceneName}, {transition.GateName}]"));
+            lmb.AddWaypoint(new(internalProxy, $"{transitionName} + {BugPrinceVariableResolver.BUG_PRINCE_ACCESS_PREFIX}[{transition.SceneName},{transition.GateName}]"));
             replacer.IgnoredNames.Add(internalProxy);
 
             // The external proxy represents what the transition used to represent.
