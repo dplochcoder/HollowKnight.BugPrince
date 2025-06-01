@@ -29,12 +29,12 @@ public record RandomizationSettings
 
     [RelicSetting]
     [MenuRange(0, 3)]
-    [DynamicBound(nameof(TotaliceTotems), true)]
+    [DynamicBound(nameof(TotalDiceTotems), true)]
     public int StartingDiceTotems = 0;
     [RelicSetting]
     [MenuRange(0, 10)]
     [DynamicBound(nameof(StartingDiceTotems), false)]
-    public int TotaliceTotems = 7;
+    public int TotalDiceTotems = 7;
     [RelicSetting]
     [MenuRange(0, 2)]
     [DynamicBound(nameof(TotalPushPins), true)]

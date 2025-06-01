@@ -126,7 +126,7 @@ internal class RequestModifier
         var RS = RandoInterop.RS;
         if (rb.gs.PoolSettings.Relics)
         {
-            for (int i = 0; i < RS.TotaliceTotems - RS.StartingDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
+            for (int i = 0; i < RS.TotalDiceTotems - RS.StartingDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
             for (int i = 0; i < RS.TotalPushPins - RS.StartingPushPins; i++) rb.AddItemByName(PushPinItem.ITEM_NAME);
         }
 
