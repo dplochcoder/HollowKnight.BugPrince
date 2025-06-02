@@ -54,7 +54,8 @@
                 "x": 5.0,
                 "y": 101.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             },
             {
               "p1": {
@@ -65,7 +66,8 @@
                 "x": -2.0,
                 "y": 140.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             },
             {
               "p1": {
@@ -76,7 +78,8 @@
                 "x": 22.0,
                 "y": 140.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             },
             {
               "p1": {
@@ -87,7 +90,8 @@
                 "x": 22.0,
                 "y": 133.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             },
             {
               "p1": {
@@ -98,7 +102,8 @@
                 "x": 21.0,
                 "y": 124.0
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -109,7 +114,8 @@
                 "x": 22.0,
                 "y": 125.0
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -120,7 +126,8 @@
                 "x": 23.0,
                 "y": 126.0
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -131,7 +138,8 @@
                 "x": 28.0,
                 "y": 127.0
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             }
           ],
           "HazardRespawnTriggerPos": {
@@ -415,7 +423,8 @@
                 "x": 83.0,
                 "y": -2.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             },
             {
               "p1": {
@@ -426,7 +435,20 @@
                 "x": 83.0,
                 "y": 170.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
+            },
+            {
+              "p1": {
+                "x": 50.0,
+                "y": 148.0
+              },
+              "p2": {
+                "x": 90.0,
+                "y": 149.0
+              },
+              "Spikes": false,
+              "Terrain": true
             },
             {
               "p1": {
@@ -437,7 +459,8 @@
                 "x": 68.678,
                 "y": 16.2
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -448,7 +471,8 @@
                 "x": 68.398,
                 "y": 16.95
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -459,7 +483,8 @@
                 "x": 67.828,
                 "y": 17.77
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -470,7 +495,8 @@
                 "x": 67.288,
                 "y": 18.43
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -481,7 +507,8 @@
                 "x": 66.648,
                 "y": 18.92
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -492,7 +519,8 @@
                 "x": 66.078,
                 "y": 19.21
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -503,7 +531,8 @@
                 "x": 65.377,
                 "y": 19.558
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -514,7 +543,8 @@
                 "x": 63.895,
                 "y": 19.958
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             },
             {
               "p1": {
@@ -525,7 +555,8 @@
                 "x": 68.937,
                 "y": 15.552
               },
-              "Spikes": true
+              "Spikes": true,
+              "Terrain": false
             }
           ],
           "HazardRespawnTriggerPos": {
@@ -648,7 +679,8 @@
                 "x": 15.0,
                 "y": -3.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             },
             {
               "p1": {
@@ -659,7 +691,8 @@
                 "x": 41.0,
                 "y": -3.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             },
             {
               "p1": {
@@ -670,7 +703,8 @@
                 "x": 42.0,
                 "y": 122.0
               },
-              "Spikes": false
+              "Spikes": false,
+              "Terrain": false
             }
           ],
           "HazardRespawnTriggerPos": {

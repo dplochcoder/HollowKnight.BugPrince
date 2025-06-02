@@ -10,34 +10,41 @@ using UnityEngine.SceneManagement;
 
 namespace BugPrince.IC.Tags;
 
-internal record HazardBox
+internal record ColliderBox
 {
     [JsonConverter(typeof(Vector2Converter))] public Vector2 p1;
     [JsonConverter(typeof(Vector2Converter))] public Vector2 p2;
     public bool Spikes;
+    public bool Terrain;
 
     internal GameObject MakeGameObject()
     {
-        GameObject hazard = new("Hazard");
-        hazard.transform.position = (p1 + p2) / 2;
-        hazard.layer = (int)PhysLayers.ENEMY_ATTACK;
-        var box = hazard.AddComponent<BoxCollider2D>();
-        box.size = new(Mathf.Abs(p2.x - p1.x), Mathf.Abs(p2.y - p1.y));
-        box.isTrigger = true;
-        var damage = hazard.AddComponent<DamageHero>();
-        damage.damageDealt = 1;
-        damage.hazardType = 2;
+        GameObject obj = new("Hazard");
+        obj.transform.position = (p1 + p2) / 2;
 
-        if (!Spikes) hazard.AddComponent<NonBouncer>();
+        var box = obj.AddComponent<BoxCollider2D>();
+        box.size = new(Mathf.Abs(p2.x - p1.x), Mathf.Abs(p2.y - p1.y));
+
+        if (Terrain) obj.layer = (int)PhysLayers.TERRAIN;
         else
         {
-            var tink = hazard.AddComponent<TinkEffect>();
-            tink.blockEffect = BugPrincePreloader.Instance.Goam!.GetComponent<TinkEffect>().blockEffect;
-            tink.SetAttr("boxCollider", box);
-            tink.useNailPosition = true;
+            box.isTrigger = true;
+            obj.layer = (int)PhysLayers.ENEMIES;
+            var damage = obj.AddComponent<DamageHero>();
+            damage.damageDealt = 1;
+            damage.hazardType = 2;
+
+            if (!Spikes) obj.AddComponent<NonBouncer>();
+            else
+            {
+                var tink = obj.AddComponent<TinkEffect>();
+                tink.blockEffect = BugPrincePreloader.Instance.Goam!.GetComponent<TinkEffect>().blockEffect;
+                tink.SetAttr("boxCollider", box);
+                tink.useNailPosition = true;
+            }
         }
 
-        return hazard;
+        return obj;
     }
 }
 
@@ -52,7 +59,7 @@ internal class WindowBreakTag : SceneModifierTag
     public float PaneY1;
     public float PaneY2;
     public bool Left;
-    public List<HazardBox> HazardBoxes = [];
+    public List<ColliderBox> HazardBoxes = [];
     [JsonConverter(typeof(Vector2Converter))] public Vector2 HazardRespawnTriggerPos;
     [JsonConverter(typeof(Vector2Converter))] public Vector2 HazardRespawnTriggerSize;
     [JsonConverter(typeof(Vector2Converter))] public Vector2 HazardRespawnMarkerPos;
@@ -104,6 +111,7 @@ internal class WindowBreakTag : SceneModifierTag
             layer = (int)PhysLayers.INTERACTIVE_OBJECT
         };
         detector.transform.position = new(PaneX, (PaneY1 + PaneY2) / 2);
+        detector.AddComponent<NonBouncer>();
 
         var box = detector.AddComponent<BoxCollider2D>();
         box.size = new(0.6f, Mathf.Abs(PaneY1 - PaneY2));
