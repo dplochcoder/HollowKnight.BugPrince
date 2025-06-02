@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace BugPrince.IC.Tags;
 
-internal class LurienRoofColliderEditTag : SceneModifierTag
+internal class LurienRoofColliderTag : SceneModifierTag
 {
     protected override string GetSceneName() => SceneNames.Ruins2_Watcher_Room;
 

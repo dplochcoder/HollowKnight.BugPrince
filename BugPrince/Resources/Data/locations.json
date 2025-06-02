@@ -519,7 +519,7 @@
             {
               "p1": {
                 "x": 68.575,
-                "y": 14.170
+                "y": 14.17
               },
               "p2": {
                 "x": 68.937,
@@ -545,7 +545,7 @@
         },
         {
           "$type": "BugPrince.IC.Tags.LurienSecretSpriteCopiesTag, BugPrince"
-        }
+        },
         {
           "$type": "BugPrince.IC.Tags.LurienRoofColliderTag, BugPrince"
         }
