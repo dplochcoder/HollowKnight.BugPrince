@@ -513,6 +513,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
                 SwapTransitions(src, choice.OrigSrc);
                 ResetTrackers();
 
+                BugPrinceMod.DebugLog($"CHOSE: {src} -> {UnsyncedRandoPlacements[src]}");
                 UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
                 orig(self, info);
             },
