@@ -1,4 +1,5 @@
-﻿using BugPrince.IC.Items;
+﻿using BugPrince.IC;
+using BugPrince.IC.Items;
 using ItemChanger;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
@@ -82,9 +83,22 @@ internal record LocationData
         var state = GetLocationState(gs, rs);
         if (state != LocationState.Preplaced) return;
 
-        ItemChangerMod.CreateSettingsProfile(false);
         var placement = Location!.Wrap();
-        for (int i = 0; i < Count; i++) placement.Add(Finder.GetItem(ItemType.ItemName())!);
+        for (int i = 0; i < Count; i++)
+        {
+            var item = Finder.GetItem(ItemType.ItemName())!;
+
+            if (LocationPool == LocationPool.MapShop)
+            {
+                var cost = item.AddTag<CostTag>();
+                cost.Cost += Cost.NewGeoCost((i + 1) * 480);
+                cost.Cost += new MapCost((i + 1) * 5);
+            }
+            placement.Add(item);
+        }
+
+        ItemChangerMod.CreateSettingsProfile(false);
+        ItemChangerMod.AddPlacements([placement]);
     }
 }
 

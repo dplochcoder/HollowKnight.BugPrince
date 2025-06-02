@@ -6,6 +6,7 @@ using MenuChanger.MenuPanels;
 using RandomizerMod.Menu;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -29,6 +30,7 @@ internal class ConnectionMenu
     private GridItemPanel relicSettings;
     private MenuItem<bool> costsEnabled;
     private GridItemPanel costSettings;
+    private GridItemPanel mapShopSettings;
 
     private static List<IValueElement> GetElements<T>(MenuElementFactory<RandomizationSettings> factory) where T : Attribute
     {
@@ -60,11 +62,14 @@ internal class ConnectionMenu
         mainSettings = new(bugPrincePage, new(), 2, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
         relicSettings = new(bugPrincePage, new(), 4, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
         costSettings = new(bugPrincePage, new(), 4, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
-        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationSettingAttribute>(factory)]);
+        var mapShopField = (factory.ElementLookup[nameof(s.MapShop)] as MenuItem<bool>)!;
+        mapShopField.SelfChanged += _ => UpdateColorsAndVisibility();
+        mapShopSettings = new(bugPrincePage, new(), 3, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<MapShopSettingAttribute>(factory)]);
+        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationSettingAttribute>(factory).Where(m => m != mapShopField)]);
 
         VerticalItemPanel main = new(
             bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, VSPACE_MEDIUM_LARGE, true,
-            [enabled, mainSettings, relicSettings, costsEnabled, costSettings, locationSettings]);
+            [enabled, mainSettings, relicSettings, costsEnabled, costSettings, mapShopField, mapShopSettings, locationSettings]);
         main.Reposition();
 
         UpdateColorsAndVisibility();
@@ -85,6 +90,7 @@ internal class ConnectionMenu
         relicSettings.SetShown(Settings.EnableTransitionChoices);
         costsEnabled.SetShown(Settings.EnableTransitionChoices);
         costSettings.SetShown(RandoInterop.AreCostsEnabled);
+        mapShopSettings.SetShown(Settings.MapShop);
     }
 
     internal void ApplySettings(RandomizationSettings settings)

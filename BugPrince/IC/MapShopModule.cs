@@ -15,19 +15,20 @@ internal class MapShopModule : ItemChanger.Modules.Module
 {
     private static readonly List<(string, string)> VANILLA_MAPS =
     [
-        (LocationNames.Crossroads_Map, ItemNames.Crossroads_Map),
-        (LocationNames.Greenpath_Map, ItemNames.Greenpath_Map),
-        (LocationNames.Fungal_Wastes_Map, ItemNames.Fungal_Wastes_Map),
-        (LocationNames.Howling_Cliffs_Map, ItemNames.Howling_Cliffs_Map),
+        (LocationNames.Ancient_Basin_Map, ItemNames.Ancient_Basin_Map),
         (LocationNames.City_of_Tears_Map, ItemNames.City_of_Tears_Map),
+        (LocationNames.Crossroads_Map, ItemNames.Crossroads_Map),
         (LocationNames.Crystal_Peak_Map, ItemNames.Crystal_Peak_Map),
-        (LocationNames.Resting_Grounds_Map, ItemNames.Resting_Grounds_Map),
         (LocationNames.Deepnest_Map_Right, ItemNames.Deepnest_Map),
         (LocationNames.Deepnest_Map_Upper, ItemNames.Deepnest_Map),
         (LocationNames.Fog_Canyon_Map, ItemNames.Fog_Canyon_Map),
+        (LocationNames.Fungal_Wastes_Map, ItemNames.Fungal_Wastes_Map),
+        (LocationNames.Greenpath_Map, ItemNames.Greenpath_Map),
+        (LocationNames.Howling_Cliffs_Map, ItemNames.Howling_Cliffs_Map),
         (LocationNames.Kingdoms_Edge_Map, ItemNames.Kingdoms_Edge_Map),
-        (LocationNames.Ancient_Basin_Map, ItemNames.Ancient_Basin_Map),
-        (LocationNames.Queens_Gardens_Map, ItemNames.Queens_Gardens_Map)
+        (LocationNames.Queens_Gardens_Map, ItemNames.Queens_Gardens_Map),
+        (LocationNames.Resting_Grounds_Map, ItemNames.Resting_Grounds_Map),
+        (LocationNames.Royal_Waterways_Map, ItemNames.Royal_Waterways_Map)
     ];
 
     internal static void PlaceVanillaMaps()
@@ -35,8 +36,6 @@ internal class MapShopModule : ItemChanger.Modules.Module
         ItemChangerMod.CreateSettingsProfile(false);
         ItemChangerMod.AddPlacements(VANILLA_MAPS.Select(pair => Finder.GetLocation(pair.Item1)!.Wrap().Add(Finder.GetItem(pair.Item2)!)));
     }
-
-    private static readonly FsmID FSM_ID = new("Shop Region", "Shop Region");
 
     // Store these separately so RandoMapMod still works.
     public HashSet<string> RealFieldNames = [];

@@ -20,7 +20,7 @@
   },
   "BugPrince-Bench_Secret-Queen's_Gardens": {
     "ItemType": "PushPin",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "AdvancedLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -176,7 +176,7 @@
   },
   "BugPrince-Challenge-Crystallized_Mound": {
     "ItemType": "DiceTotem",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "ShamanPuzzles",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.CrystallizedMoundChallengeLocation, BugPrince",
@@ -324,7 +324,7 @@
   },
   "BugPrince-Hidden_Perch-Lake_of_Unn": {
     "ItemType": "PushPin",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "AdvancedLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -354,7 +354,7 @@
   },
   "BugPrince-Iselda_(Requires_Maps)": {
     "ItemType": "PushPin",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "MapShop",
     "Count": 2,
     "Location": {
       "$type": "ItemChanger.Locations.ShopLocation, ItemChanger",
@@ -381,7 +381,7 @@
   },
   "BugPrince-Lurien's_Secret": {
     "ItemType": "Gem",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "AdvancedLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -542,7 +542,7 @@
   },
   "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
     "ItemType": "Coin",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "AdvancedLocations",
     "Count": 2,
     "Location": {
       "$type": "ItemChanger.Locations.DualLocation, ItemChanger",
@@ -583,7 +583,7 @@
   },
   "BugPrince-Millibelle-Pleasure_House": {
     "ItemType": "Coin",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "AdvancedLocations",
     "Count": 2,
     "Location": {
       "$type": "BugPrince.IC.Locations.MillibelleLocation, BugPrince",
@@ -599,7 +599,7 @@
   },
   "BugPrince-Outside_Window-Soul_Sanctum": {
     "ItemType": "PushPin",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "AdvancedLocations",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",
@@ -700,7 +700,7 @@
   },
   "BugPrince-Puzzle-Ancestral_Mound": {
     "ItemType": "DiceTotem",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "ShamanPuzzles",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.AncestralMoundPuzzleLocation, BugPrince",
@@ -715,7 +715,7 @@
   },
   "BugPrince-Puzzle-Overgrown_Mound": {
     "ItemType": "DiceTotem",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "ShamanPuzzles",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.OvergrownMoundPuzzleLocation, BugPrince",
@@ -749,7 +749,7 @@
   },
   "BugPrince-Secret_Lamp-City_Fountain": {
     "ItemType": "Gem",
-    "LocationPool": "BasicLocations",
+    "LocationPool": "AdvancedLocations",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",

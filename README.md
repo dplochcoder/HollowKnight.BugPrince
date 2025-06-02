@@ -52,19 +52,31 @@ Unlike simple keys in base rando, Bug Prince does _not_ require that you have ac
 
 ## Locations
 
-To offset the weight of the many new items that Bug Prince adds to the game, Bug Prince also adds 36 new locations to the game (~25 unique), containing 12 coins, 12 gems, 7 dice totems and 5 push pins in vanilla configuration.
+To offset the weight of the many new items that Bug Prince adds to the game, Bug Prince also adds many new locations of different varieties. These are separated into several unique categories.
 
-These locations come in a variety of sphapes, from empty spots in common pathways, to forgotten nooks, to new and hidden places with unique access in the spirit of Blue Prince. If you are stumped on a specific location, consult the SPOILER directory and check the file with the same name as the location in helper log.
+### Basic Locations
 
-These locations can be enabled without any of the transition randomizer items and mechanics if desired, widening the location pool. Two specific high-density locations also have their own separate knobs.
+The majority of the locations; these are abandoned corners and other otherwise mundane spots within Hallownest that needed something to fill them.
+
+### Advanced Locations
+
+New locations added to the map, obscure and difficult to access or _impossible_ to access without map modifications. Finding these can be difficult without guidance.
+
+### Shaman Puzzles
+
+Unique puzzles added to each of the three Shaman Mounds. If stumped, check the SPOILER directory for solutions.
+
+### Map Shop
+
+An extension of Iselda's shop which adds a map cost to items in the shop, similar to the way Salubra's shop items sometimes have charm costs.
 
 ### The Vault
 
-The Vault is a new room located in right-side City of Tears, accessible through a door below Pleasure House. It contains 5 chests, each with a cost to access, and each accessible via different movement requirements.
+A new room located in right-side City of Tears, accessible through a door below Pleasure House. It contains 5 chests, each with a cost to access, and each accessible via different movement requirements.
 
 ### Gemstone Cavern
 
-The gemstone cavern is a new room located in upper-right Crystal Peaks, accessible through a breakable wall above the entrance to the Crystal Heart room. It contains a single large boulder that contains many embedded items.
+A new room located in upper-right Crystal Peaks, accessible through a breakable wall above the entrance to the Crystal Heart room. It contains a single large boulder that contains many embedded items.
 
 Items are embedded at different depths within the boulder, each of which require a minimum nail strength to 'mine'. The final tier requires the Pure Nail, Fragile Strength, and Fury of the Fallen all at once in order to be obtained.
 
