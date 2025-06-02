@@ -11,3 +11,4 @@ TheRealJournalRando
 Breakable Wall Randomizer
 SFCore
 DebugMod
+Benchwarp

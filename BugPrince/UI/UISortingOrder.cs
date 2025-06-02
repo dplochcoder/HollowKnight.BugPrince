@@ -14,6 +14,7 @@ internal static class UISortingOrder
     internal const int InventoryLossText = 6;
     internal const int InventoryIcons = 7;
     internal const int InventoryText = 7;
+    internal const int RedOut = 8;
 
     internal static void SetUILayer(this Renderer self, int order)
     {

@@ -492,7 +492,6 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         }
 
         var choices = CalculateSceneChoices(src, target)!;
-        // FIXME: No choices.
 
         Wrapped<RoomSelectionUI?> wrapped = new(null);
         wrapped.Value = RoomSelectionUI.Create(
@@ -503,8 +502,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
             {
                 if (decision.chosen is not SceneChoiceInfo choice)
                 {
-                    // FIXME: Rejection.
                     UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
+                    Benchwarp.ChangeScene.WarpToRespawn();
                     return;
                 }
 

@@ -35,6 +35,7 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private TransitionSelectionModule? module;
     private List<SceneChoiceInfo> choiceInfos = [];
+    private bool canSelect;
     private bool hiddenPin;
     private SelectionCb selectionCb = _ => { };
     private RerollCb rerollCb = _ => null;
@@ -62,6 +63,7 @@ internal class RoomSelectionUI : MonoBehaviour
     {
         this.module = module;
         choiceInfos = [.. infos];
+        canSelect = choiceInfos.Any(i => i.CanAfford(module));
         hiddenPin = module.PinnedScene != null && !choiceInfos.Any(i => i.Pinned);
         this.selectionCb = selectionCb;
         this.rerollCb = rerollCb;
@@ -79,6 +81,15 @@ internal class RoomSelectionUI : MonoBehaviour
         bgRender.SetUILayer(UISortingOrder.Background);
         backgroundFade.FadeColor(Color.black.WithAlpha(0), Color.black.WithAlpha(0.5f), 1.5f);
         backgroundFade.SetActive(true);
+
+        var redOutObj = gameObject.AddNewChild("RedOut");
+        redOutObj.transform.localScale = new(50, 50, 50);
+        redOutObj.SetActive(false);
+        redOutRenderer = redOutObj.AddComponent<SpriteRenderer>();
+        redOutRenderer.sprite = fullwhite.Value;
+        redOutRenderer.SetUILayer(UISortingOrder.RedOut);
+        redOutRenderer.color = Color.red.WithAlpha(0);
+        redOutObj.SetActive(true);
 
         float invY = UIConstants.Y_MAIN - UIConstants.SCENE_Y_SPACE / 2 - UIConstants.INV_SLOT_BAR_Y_SPACE;
         Vector2 InvPos(int idx) => new((idx * 2 - 3) * UIConstants.INV_SLOT_BAR_X_SPACE / 2, invY);
@@ -124,17 +135,18 @@ internal class RoomSelectionUI : MonoBehaviour
             if (i + 1 < choiceInfos.Count) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
         }
 
-        yield return new WaitUntil(() => choiceObjects[choiceObjects.Count - 1].IsReady());
+        if (choiceObjects.Count > 0) yield return new WaitUntil(() => choiceObjects[choiceObjects.Count - 1].IsReady());
+        else yield return new WaitForSeconds(UIConstants.SCENE_ASCEND_TIME);
 
-        selection = 0;
+        selection = choiceObjects.Count > 0 ? 0 : -1;
         newPinSelection = null;
-        selectionCorners = SelectionCorners.Create(gameObject, layout![0].Pos);
+        selectionCorners = SelectionCorners.Create(gameObject, choiceObjects.Count > 0 ? layout![0].Pos : new Vector2(0, UIConstants.Y_MAIN));
         acceptingInput = true;
     }
 
     private bool rerolled = false;
 
-    private bool UsedPinShown => choiceInfos[choiceInfos.Count - 1].Pinned;
+    private bool UsedPinShown => choiceInfos.Count > 0 && choiceInfos[choiceInfos.Count - 1].Pinned;
     private bool PinIsUsed => hiddenPin || UsedPinShown;
     private void ShakePinIndicators()
     {
@@ -184,6 +196,12 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void TrySelectIndex(int selection)
     {
+        if (selection == -1)
+        {
+            selectionCorners?.Shake();
+            return;
+        }
+
         var info = choiceInfos[selection];
         if (newPinSelection.HasValue && PinIsUsed && selection != newPinSelection.Value && !choiceInfos[selection].Pinned)
         {
@@ -252,6 +270,12 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void TryTogglePin(int selection)
     {
+        if (!canSelect)
+        {
+            pushPinSlot?.Shake();
+            return;
+        }
+
         if (hiddenPin)
         {
             pushPinSlot?.Shake();
@@ -301,6 +325,11 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void TryReroll()
     {
+        if (!canSelect)
+        {
+            diceTotemSlot?.Shake();
+            return;
+        }
         if (rerolled || module!.DiceTotems == 0)
         {
             diceTotemSlot?.Shake();
@@ -346,18 +375,36 @@ internal class RoomSelectionUI : MonoBehaviour
         StartCoroutine(DoReroll());
     }
 
+    private const float START_RED_OUT = 3f;
+    private const float RED_OUT = 6f;
+    private float rejectionTimer;
+    private bool rejected = false;
+    private SpriteRenderer? redOutRenderer;
+
     private void Update()
     {
         if (!acceptingInput) return;
 
         var actions = InputHandler.Instance.inputActions;
-        var current = layout![selection];
-        if (actions.left.WasPressed) TryMoveToIndex(current.LeftIndex);
-        else if (actions.right.WasPressed) TryMoveToIndex(current.RightIndex);
-        else if (actions.up.WasPressed) TryMoveToIndex(current.UpIndex);
-        else if (actions.down.WasPressed) TryMoveToIndex(current.DownIndex);
+        var current = selection != -1 ? layout![selection] : null;
+        if (actions.left.WasPressed) TryMoveToIndex(current?.LeftIndex);
+        else if (actions.right.WasPressed) TryMoveToIndex(current?.RightIndex);
+        else if (actions.up.WasPressed) TryMoveToIndex(current?.UpIndex);
+        else if (actions.down.WasPressed) TryMoveToIndex(current?.DownIndex);
         else if (actions.jump.WasPressed || actions.attack.WasPressed) TrySelectIndex(selection);
         else if (actions.cast.WasPressed) TryTogglePin(selection);
         else if (actions.dash.WasPressed) TryReroll();
+
+        if (!canSelect && !rejected)
+        {
+            rejectionTimer += Time.deltaTime;
+            if (rejectionTimer >= RED_OUT)
+            {
+                redOutRenderer?.SetAlpha(1f);
+                rejected = true;
+                selectionCb(new());
+            }
+            else if (rejectionTimer >= START_RED_OUT) redOutRenderer?.SetAlpha((rejectionTimer - START_RED_OUT) / (RED_OUT - START_RED_OUT));
+        }
     }
 }

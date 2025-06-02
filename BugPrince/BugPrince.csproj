@@ -53,6 +53,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Benchwarp">
+      <HintPath>$(HollowKnightRefs)/Mods/Benchwarp/Benchwarp.dll</HintPath>
+    </Reference>
     <Reference Include="BreakableWallRandomizer">
       <HintPath>$(HollowKnightRefs)/Mods/Breakable Wall Randomizer/BreakableWallRandomizer.dll</HintPath>
     </Reference>

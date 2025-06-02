@@ -30,6 +30,7 @@ internal class RoomSelectionLayout
 
     public RoomSelectionLayout(int size)
     {
+        if (size == 0) return;
         if (size < 1 || size > 6) throw new System.ArgumentException($"Bad size: {size}");
 
         if (size <= 3) AddRow(RowType.Mid, size);
