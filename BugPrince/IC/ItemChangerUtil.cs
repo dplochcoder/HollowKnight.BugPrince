@@ -34,6 +34,9 @@ internal static class ItemChangerUtil
         else
         {
             var shiny = ShinyUtility.MakeNewShiny(placement, self, FlingType.Everywhere);
+            shiny.transform.position = src.position;
+            shiny.SetActive(true);
+
             var fsm = shiny.LocateMyFSM("Shiny Control");
             switch (dir)
             {
@@ -42,7 +45,6 @@ internal static class ItemChangerUtil
                 case FlingDirection.Down: ShinyUtility.FlingShinyDown(fsm); break;
                 default: ShinyUtility.FlingShinyRandomly(fsm); break;
             }
-            shiny.SetActive(true);
         }
         return true;
     }

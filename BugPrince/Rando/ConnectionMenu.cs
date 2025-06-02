@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 namespace BugPrince.Rando;
 
@@ -43,7 +42,7 @@ internal class ConnectionMenu
         return ret;
     }
 
-    private const float VSPACE_MEDIUM_LARGE = 100;
+    private const float VSPACE = 90;
 
     private ConnectionMenu(MenuPage connectionsPage)
     {
@@ -59,16 +58,16 @@ internal class ConnectionMenu
         costsEnabled = (factory.ElementLookup[nameof(s.EnableCoinsAndGems)] as MenuItem<bool>)!;
         costsEnabled.SelfChanged += _ => UpdateColorsAndVisibility();
 
-        mainSettings = new(bugPrincePage, new(), 2, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
-        relicSettings = new(bugPrincePage, new(), 4, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
-        costSettings = new(bugPrincePage, new(), 4, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
+        mainSettings = new(bugPrincePage, new(), 2, VSPACE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
+        relicSettings = new(bugPrincePage, new(), 4, VSPACE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
+        costSettings = new(bugPrincePage, new(), 4, VSPACE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
         var mapShopField = (factory.ElementLookup[nameof(s.MapShop)] as MenuItem<bool>)!;
         mapShopField.SelfChanged += _ => UpdateColorsAndVisibility();
-        mapShopSettings = new(bugPrincePage, new(), 3, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<MapShopSettingAttribute>(factory)]);
-        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationSettingAttribute>(factory).Where(m => m != mapShopField)]);
+        mapShopSettings = new(bugPrincePage, new(), 3, VSPACE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<MapShopSettingAttribute>(factory)]);
+        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, VSPACE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<LocationSettingAttribute>(factory).Where(m => m != mapShopField)]);
 
         VerticalItemPanel main = new(
-            bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, VSPACE_MEDIUM_LARGE, true,
+            bugPrincePage, SpaceParameters.TOP_CENTER, VSPACE, true,
             [enabled, mainSettings, relicSettings, costsEnabled, costSettings, mapShopField, mapShopSettings, locationSettings]);
         main.Reposition();
 

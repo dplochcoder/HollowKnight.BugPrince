@@ -1,6 +1,4 @@
-﻿using Galaxy.Api;
-using MenuChanger.Attributes;
-using Newtonsoft.Json;
+﻿using MenuChanger.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

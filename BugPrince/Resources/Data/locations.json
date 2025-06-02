@@ -335,7 +335,7 @@
       "forceShiny": false,
       "name": "BugPrince-Hidden_Perch-Lake_of_Unn",
       "sceneName": "Fungus1_26",
-      "flingType": "Everywhere",
+      "flingType": "DirectDeposit",
       "tags": [
         {
           "$type": "BugPrince.IC.Tags.DeployerTag, BugPrince",
@@ -397,7 +397,7 @@
         {
           "$type": "BugPrince.IC.Tags.WindowBreakTag, BugPrince",
           "SceneName": "Ruins2_Watcher_Room",
-          "TerrainPath": "Window Collider (2)",
+          "TerrainPath": "_Scenery/Window Collider (2)",
           "WindowPath": "_Scenery/ruins_mid_window_01 (2)",
           "DressingObjName": "ruin_layered_0054_w",
           "ClippedDressingSpriteName": "Game.city_clipped_window_dressing",
@@ -515,6 +515,17 @@
                 "y": 19.958
               },
               "Spikes": true
+            },
+            {
+              "p1": {
+                "x": 68.575,
+                "y": 14.170
+              },
+              "p2": {
+                "x": 68.937,
+                "y": 15.552
+              },
+              "Spikes": true
             }
           ],
           "HazardRespawnTriggerPos": {
@@ -534,6 +545,9 @@
         },
         {
           "$type": "BugPrince.IC.Tags.LurienSecretSpriteCopiesTag, BugPrince"
+        }
+        {
+          "$type": "BugPrince.IC.Tags.LurienRoofColliderTag, BugPrince"
         }
       ]
     },
@@ -774,7 +788,7 @@
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
       "x": 6.3,
-      "y": 107.5,
+      "y": 31.0,
       "elevation": 0.0,
       "managed": false,
       "forceShiny": false,

@@ -1,5 +1,4 @@
-﻿using GlobalEnums;
-using ItemChanger;
+﻿using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Internal;
 using ItemChanger.Util;

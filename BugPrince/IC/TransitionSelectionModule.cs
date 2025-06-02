@@ -131,7 +131,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
     private bool IsValidSwap(Transition src1, Transition dst1, Transition src2, Transition dst2)
     {
         if (src1 == src2 && dst1 == dst2) return true;
-        if (IsExitOnly(dst1) != IsExitOnly(dst2)) return false;
+
+        bool oneWay1 = IsExitOnly(dst1);
+        bool oneWay2 = IsExitOnly(dst2);
+        if (oneWay1 != oneWay2) return false;
+        if (oneWay1 && oneWay2) return true;
 
         var matchingMode = TransitionSettings().TransitionMatching;
         bool matching = matchingMode != RandomizerMod.Settings.TransitionSettings.TransitionMatchingSetting.NonmatchingDirections;
@@ -171,8 +175,6 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
         return true;
     }
-
-    private static V Get<K, V>(IDictionary<K, V> dict, K key) => dict.TryGetValue(key, out V value) ? value : throw new ArgumentException($"Missing key: {key}");
 
     private bool CanSwapTransitions(
         Transition src1, Transition dst1, Transition src2, Transition dst2)
@@ -223,8 +225,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
                 TransitionPlacement t = new()
                 {
-                    Source = Get(sourceRandoTransitions, source),
-                    Target = Get(targetRandoTransitions, target)
+                    Source = sourceRandoTransitions[source],
+                    Target = targetRandoTransitions[target]
                 };
                 updates.Add(new PrePlacedItemUpdateEntry(t));
             }
@@ -261,7 +263,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
             var target = p.Target.ToStruct();
             if (UnsyncedRandoPlacements.TryGetValue(source, out var newTarget) && target != newTarget)
             {
-                placements[i] = new(p.Source, targetRandoTransitions[newTarget]);
+                placements[i] = new()
+                {
+                    Source = p.Source,
+                    Target = targetRandoTransitions[newTarget]
+                };
                 transitionLookup[source.ToString()] = newTarget.ToString();
             }
         }
