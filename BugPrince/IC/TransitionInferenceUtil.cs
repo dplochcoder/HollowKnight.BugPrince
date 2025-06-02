@@ -99,9 +99,9 @@ internal static class TransitionInferenceUtil
         var split = self.Split('[');
         if (split.Length != 2) return false;
         if (split[0].Length == 0) return false;
-        if (split[1].Length == 0) return false;
+        if (split[1].Length <= 1) return false;
 
-        transition = new(split[0], split[1]);
+        transition = new(split[0], split[1].Substring(0, split[1].Length - 1));
         return true;
     }
 
