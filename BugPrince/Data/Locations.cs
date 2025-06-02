@@ -36,7 +36,8 @@ internal enum LocationState
 
 internal record LocationData
 {
-    public ItemType Type;
+    public ItemType ItemType;
+    public LocationPool LocationPool;
     public int Count;
     public AbstractLocation? Location;
     public bool FullFlexible;
@@ -52,18 +53,14 @@ internal record LocationData
 
     private LocationState GetLocationState(GenerationSettings gs, RandomizationSettings rs)
     {
-        if (!rs.CustomLocations) return LocationState.Skip;
+        if (!rs.IsEnabled(LocationPool)) return LocationState.Skip;
 
-        switch (Type)
+        return ItemType switch
         {
-            case ItemType.Coin:
-            case ItemType.Gem:
-                return (rs.EnableCoinsAndGems && !gs.PoolSettings.Keys) ? LocationState.Preplaced : LocationState.Randomized;
-            case ItemType.DiceTotem:
-            case ItemType.PushPin:
-                return gs.PoolSettings.Relics ? LocationState.Randomized : LocationState.Preplaced;
-            default: throw new ArgumentException($"Bad type: {Type}");
-        }
+            ItemType.Coin or ItemType.Gem => (rs.EnableCoinsAndGems && !gs.PoolSettings.Keys) ? LocationState.Preplaced : LocationState.Randomized,
+            ItemType.DiceTotem or ItemType.PushPin => gs.PoolSettings.Relics ? LocationState.Randomized : LocationState.Preplaced,
+            _ => throw new ArgumentException($"Bad type: {ItemType}"),
+        };
     }
 
     internal void AddToRequestBuilder(RandomizationSettings rs, RequestBuilder rb)
@@ -72,7 +69,7 @@ internal record LocationData
         {
             case LocationState.Skip: break;
             case LocationState.Preplaced:
-                for (int i = 0; i < Count; i++) rb.AddToPreplaced(new(Type.ItemName(), Location!.name));
+                for (int i = 0; i < Count; i++) rb.AddToPreplaced(new(ItemType.ItemName(), Location!.name));
                 break;
             case LocationState.Randomized:
                 rb.AddLocationByName(Location!.name);
@@ -87,7 +84,7 @@ internal record LocationData
 
         ItemChangerMod.CreateSettingsProfile(false);
         var placement = Location!.Wrap();
-        for (int i = 0; i < Count; i++) placement.Add(Finder.GetItem(Type.ItemName())!);
+        for (int i = 0; i < Count; i++) placement.Add(Finder.GetItem(ItemType.ItemName())!);
     }
 }
 

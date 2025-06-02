@@ -33,7 +33,7 @@ public class DiceTotemItem : AbstractItem
         };
     }
 
-    public override void GiveImmediate(GiveInfo info) => BugPrinceModule.Get().DiceTotems++;
+    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().DiceTotems++;
 
     public override AbstractItem Clone() => new DiceTotemItem();
 }

@@ -13,7 +13,7 @@ internal static class UIConstants
     internal const float INV_SLOT_TEXT_CHANGE_SCALE = 0.2f;
     internal const float INV_SLOT_TEXT_SCALE = 0.3f;
     internal const int INV_SLOT_TEXT_SIZE = 48;
-    internal const float INV_SLOT_TEXT_USED_SCALE = 0.2f;
+    internal const float INV_SLOT_TEXT_USED_SCALE = 0.3f;
     internal const int INV_SLOT_TEXT_USED_SIZE = 20;
     internal const float INV_SLOT_TEXT_USED_X_POS = 2.5f;
     internal const float INV_SLOT_TICK_INTERVAL = 0.15f;

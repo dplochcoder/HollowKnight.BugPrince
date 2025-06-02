@@ -1,5 +1,10 @@
-﻿using MenuChanger.Attributes;
+﻿using Galaxy.Api;
+using MenuChanger.Attributes;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace BugPrince;
 
@@ -14,7 +19,23 @@ internal class RelicSettingAttribute : Attribute { }
 
 internal class CostSettingAttribute : Attribute { }
 
-internal class LocationSettingAttribute : Attribute { }
+internal enum LocationPool
+{
+    BasicLocations,
+    AdvancedLocations,
+    MapShop,
+    ShamanPuzzles,
+    TheVault,
+    GemstoneCavern
+}
+
+internal class LocationSettingAttribute : Attribute
+{
+    public LocationPool LocationPool { get; init; }
+    internal LocationSettingAttribute(LocationPool locationPool) => LocationPool = locationPool;
+}
+
+internal class MapShopSettingAttribute : Attribute { }
 
 public record RandomizationSettings
 {
@@ -58,10 +79,40 @@ public record RandomizationSettings
     [MenuRange(0, 10)]
     public int GemDuplicates = 2;
 
-    [LocationSetting]
-    public bool CustomLocations = true;
-    [LocationSetting]
+    [LocationSetting(LocationPool.BasicLocations)]
+    public bool BasicLocations = true;
+    [LocationSetting(LocationPool.AdvancedLocations)]
+    public bool AdvancedLocations = true;
+    [LocationSetting(LocationPool.ShamanPuzzles)]
+    public bool ShamanPuzzles = true;
+    [LocationSetting(LocationPool.TheVault)]
     public bool TheVault = true;
-    [LocationSetting]
+    [LocationSetting(LocationPool.GemstoneCavern)]
     public bool GemstoneCavern = true;
+
+    [LocationSetting(LocationPool.MapShop)]
+    public bool MapShop = true;
+    [MapShopSetting]
+    [DynamicBound(nameof(MaximumMaps), true)]
+    public int MinimumMaps = 1;
+    [MapShopSetting]
+    [DynamicBound(nameof(MinimumMaps), false)]
+    [DynamicBound(nameof(MaximumMapsLimit), true)]
+    public int MaximumMaps = 10;
+    [MapShopSetting]
+    [MenuRange(0, 10)]
+    public int MapTolerance = 2;
+    private int MaximumMapsLimit() => 13 - MapTolerance;
+
+    static RandomizationSettings()
+    {
+        foreach (var field in typeof(RandomizationSettings).GetFields())
+            if (field.GetCustomAttribute<LocationSettingAttribute>() is LocationSettingAttribute attr) poolFields.Add(attr.LocationPool, field);
+    }
+
+    private static readonly Dictionary<LocationPool, FieldInfo> poolFields = [];
+
+    internal bool IsEnabled(LocationPool locationPool) => poolFields.TryGetValue(locationPool, out var field) && field.GetValue(this) is true;
+
+    internal bool IsAnyLocationPoolEnabled() => poolFields.Values.Any(f => f.GetValue(this) is true);
 }

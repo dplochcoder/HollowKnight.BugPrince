@@ -2,6 +2,7 @@
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Locations;
+using System;
 using UnityEngine;
 
 namespace BugPrince.IC.Locations;
@@ -13,6 +14,8 @@ internal class BankStandLocation : ExistingContainerLocation
     protected override void OnLoad() => Events.AddFsmEdit(UnsafeSceneName, FSM_ID, ModifyStandControl);
 
     protected override void OnUnload() => Events.RemoveFsmEdit(UnsafeSceneName, FSM_ID, ModifyStandControl);
+
+    public override ContainerLocation AsContainerLocation() => throw new InvalidOperationException("BankStandLocation cannot be replaced");
 
     private void ModifyStandControl(PlayMakerFSM fsm)
     {

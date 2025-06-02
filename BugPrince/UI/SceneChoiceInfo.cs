@@ -12,7 +12,7 @@ internal record SceneChoiceInfo
     public (CostType, int)? Cost;
     public bool Pinned;
 
-    public bool CanAfford(BugPrinceModule module)
+    public bool CanAfford(TransitionSelectionModule module)
     {
         if (!Cost.HasValue) return true;
 

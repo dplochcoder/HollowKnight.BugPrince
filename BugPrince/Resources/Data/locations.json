@@ -1,6 +1,7 @@
 {
   "BugPrince-Basin_Grub_Nook": {
-    "Type": "DiceTotem",
+    "ItemType": "DiceTotem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -18,7 +19,8 @@
     "Logic": "*Grub-Basin_Requires_Wings"
   },
   "BugPrince-Bench_Secret-Queen's_Gardens": {
-    "Type": "PushPin",
+    "ItemType": "PushPin",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -141,12 +143,11 @@
             "y": 7.0
           },
           "HazardRespawnMarkerPos": {
-            "x": 23.0,
+            "x": 27.0,
             "y": 117.0
           },
           "RespawnRight": false,
-          "Broken": false,
-          "Loaded": false
+          "Broken": false
         },
         {
           "$type": "BugPrince.IC.Tags.ObjectMoverTag, BugPrince",
@@ -156,8 +157,7 @@
             "x": 0.0,
             "y": -1.0,
             "z": 0.0
-          },
-          "Loaded": false
+          }
         },
         {
           "$type": "BugPrince.IC.Tags.ObjectMoverTag, BugPrince",
@@ -167,8 +167,7 @@
             "x": 0.0,
             "y": -0.5,
             "z": 0.0
-          },
-          "Loaded": false
+          }
         }
       ]
     },
@@ -176,7 +175,8 @@
     "Logic": "Fungus3_50[right1] + LEFTFIREBALL + $CASTSPELL[1,before:AREASOUL,after:AREASOUL]"
   },
   "BugPrince-Challenge-Crystallized_Mound": {
-    "Type": "DiceTotem",
+    "ItemType": "DiceTotem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.CrystallizedMoundChallengeLocation, BugPrince",
@@ -190,7 +190,8 @@
     "Logic": "*Descending_Dark + LEFTCLAW + RIGHTSUPERDASH + WINGS + LEFTDASH"
   },
   "BugPrince-Coin_Plateau-Junk_Pit": {
-    "Type": "Coin",
+    "ItemType": "Coin",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -208,7 +209,8 @@
     "Logic": "GG_Waterways[door1]"
   },
   "BugPrince-Exterior_Belflies-Colosseum": {
-    "Type": "DiceTotem",
+    "ItemType": "DiceTotem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -226,7 +228,8 @@
     "Logic": "Deepnest_East_09[left1]"
   },
   "BugPrince-Garbage_Bin-Crystal_Peak_Entrance": {
-    "Type": "Gem",
+    "ItemType": "Gem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -244,7 +247,8 @@
     "Logic": "Mines_02[top1]"
   },
   "BugPrince-Greenpath_Entrance_Nook": {
-    "Type": "Coin",
+    "ItemType": "Coin",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -262,7 +266,8 @@
     "Logic": "Fungus1_01[right1]"
   },
   "BugPrince-Guarded_Relic-Resting_Grounds-Catacombs": {
-    "Type": "DiceTotem",
+    "ItemType": "DiceTotem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -280,7 +285,8 @@
     "Logic": "RestingGrounds_10[left1]"
   },
   "BugPrince-Hidden_Alcove_Left-Hallownest_Crown": {
-    "Type": "Gem",
+    "ItemType": "Gem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -298,7 +304,8 @@
     "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
   },
   "BugPrince-Hidden_Alcove_Right-Hallownest_Crown": {
-    "Type": "Gem",
+    "ItemType": "Gem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -316,7 +323,8 @@
     "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
   },
   "BugPrince-Hidden_Perch-Lake_of_Unn": {
-    "Type": "PushPin",
+    "ItemType": "PushPin",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -337,17 +345,17 @@
             "X": 30.0,
             "Y": 49.0,
             "Test": null
-          },
-          "Loaded": false
+          }
         }
       ]
     },
     "FullFlexible": false,
     "Logic": "Fungus1_26[right1] + FULLSUPERDASH + FULLCLAW + WINGS"
   },
-  "BugPrince-Iselda_(11_Maps)": {
-    "Type": "PushPin",
-    "Count": 1,
+  "BugPrince-Iselda_(Requires_Maps)": {
+    "ItemType": "PushPin",
+    "LocationPool": "BasicLocations",
+    "Count": 2,
     "Location": {
       "$type": "ItemChanger.Locations.ShopLocation, ItemChanger",
       "objectName": "Iselda",
@@ -361,44 +369,19 @@
           "Cumulative": false
         }
       },
-      "requiredPlayerDataBool": "bugPrince_have11Maps",
+      "requiredPlayerDataBool": "",
       "dungDiscount": false,
-      "name": "BugPrince-Iselda_(11_Maps)",
+      "name": "BugPrince-Iselda_(Requires_Maps)",
       "sceneName": "Room_mapper",
       "flingType": "Everywhere",
       "tags": null
     },
     "FullFlexible": true,
-    "Logic": "Room_mapper[left1] + (ANYCLAW | WINGS) + COMBAT[Colosseum_2] + MAPS>12"
-  },
-  "BugPrince-Iselda_(5_Maps)": {
-    "Type": "PushPin",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.ShopLocation, ItemChanger",
-      "objectName": "Iselda",
-      "fsmName": "Conversation Control",
-      "defaultShopItems": "None",
-      "costDisplayerSelectionStrategy": {
-        "$type": "ItemChanger.SingleCostDisplayerSelectionStrategy, ItemChanger",
-        "CostDisplayer": {
-          "$type": "ItemChanger.GeoCostDisplayer, ItemChanger",
-          "CustomCostSprite": null,
-          "Cumulative": false
-        }
-      },
-      "requiredPlayerDataBool": "bugPrince_have5Maps",
-      "dungDiscount": false,
-      "name": "BugPrince-Iselda_(5_Maps)",
-      "sceneName": "Room_mapper",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "FullFlexible": true,
-    "Logic": "Room_mapper[left1] + MAPS>5"
+    "Logic": "Room_mapper[left1]"
   },
   "BugPrince-Lurien's_Secret": {
-    "Type": "Gem",
+    "ItemType": "Gem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -547,12 +530,10 @@
             "y": 4.0
           },
           "RespawnRight": true,
-          "Broken": false,
-          "Loaded": false
+          "Broken": false
         },
         {
-          "$type": "BugPrince.IC.Tags.LurienSecretSpriteCopiesTag, BugPrince",
-          "Loaded": false
+          "$type": "BugPrince.IC.Tags.LurienSecretSpriteCopiesTag, BugPrince"
         }
       ]
     },
@@ -560,7 +541,8 @@
     "Logic": "Ruins2_Watcher_Room[bot1] + RIGHTFIREBALL + LEFTCLAW + RIGHTDASH + WINGS"
   },
   "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
-    "Type": "Coin",
+    "ItemType": "Coin",
+    "LocationPool": "BasicLocations",
     "Count": 2,
     "Location": {
       "$type": "ItemChanger.Locations.DualLocation, ItemChanger",
@@ -600,7 +582,8 @@
     "Logic": "Paid_Millibelle"
   },
   "BugPrince-Millibelle-Pleasure_House": {
-    "Type": "Coin",
+    "ItemType": "Coin",
+    "LocationPool": "BasicLocations",
     "Count": 2,
     "Location": {
       "$type": "BugPrince.IC.Locations.MillibelleLocation, BugPrince",
@@ -615,7 +598,8 @@
     "Logic": "Ruins_Bathhouse[door1] + Paid_Millibelle"
   },
   "BugPrince-Outside_Window-Soul_Sanctum": {
-    "Type": "PushPin",
+    "ItemType": "PushPin",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",
@@ -688,8 +672,7 @@
             "y": 4.0
           },
           "RespawnRight": true,
-          "Broken": false,
-          "Loaded": false
+          "Broken": false
         }
       ]
     },
@@ -697,7 +680,8 @@
     "Logic": "Ruins1_25[left3] + RIGHTFIREBALL + WINGS + LEFTCLAW"
   },
   "BugPrince-Petra_Overlook-Queen's_Gardens": {
-    "Type": "Coin",
+    "ItemType": "Coin",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -715,7 +699,8 @@
     "Logic": "Fungus3_04[right2]"
   },
   "BugPrince-Puzzle-Ancestral_Mound": {
-    "Type": "DiceTotem",
+    "ItemType": "DiceTotem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.AncestralMoundPuzzleLocation, BugPrince",
@@ -726,10 +711,11 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Crossroads_ShamanTemple[left1]"
+    "Logic": "Crossroads_ShamanTemple[left1] + Viewed_Torch_Puzzle + (UPSLASH | WINGS | LEFTCLAW + RIGHTSUPERDASH | LEFTSUPERDASH)"
   },
   "BugPrince-Puzzle-Overgrown_Mound": {
-    "Type": "DiceTotem",
+    "ItemType": "DiceTotem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.OvergrownMoundPuzzleLocation, BugPrince",
@@ -743,7 +729,8 @@
     "Logic": "Room_Fungus_Shaman[left1] + (FULLDASH | WINGS)"
   },
   "BugPrince-Quirrel-Crystal_Peak": {
-    "Type": "Gem",
+    "ItemType": "Gem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -761,7 +748,8 @@
     "Logic": "Mines_13[right1]"
   },
   "BugPrince-Secret_Lamp-City_Fountain": {
-    "Type": "Gem",
+    "ItemType": "Gem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.CityLampLocation, BugPrince",
@@ -780,7 +768,8 @@
     "Logic": "Ruins1_27[left1] + RIGHTCLAW + WINGS + LEFTSUPERDASH"
   },
   "BugPrince-Storerooms_Ledge-City": {
-    "Type": "Coin",
+    "ItemType": "Coin",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -798,7 +787,8 @@
     "Logic": "Ruins1_17[top1]"
   },
   "BugPrince-Upper_Alcove_Outside_Galien": {
-    "Type": "DiceTotem",
+    "ItemType": "DiceTotem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
@@ -813,8 +803,7 @@
       "tags": [
         {
           "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
-          "fling": "Left",
-          "Loaded": false
+          "fling": "Left"
         }
       ]
     },
@@ -822,7 +811,8 @@
     "Logic": "(LANTERN | DARKROOMS) + (Deepnest_35[top1] | Deepnest_35[left1] + ANYCLAW)"
   },
   "BugPrince-Upper_Crossroads_Platform": {
-    "Type": "Gem",
+    "ItemType": "Gem",
+    "LocationPool": "BasicLocations",
     "Count": 1,
     "Location": {
       "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",

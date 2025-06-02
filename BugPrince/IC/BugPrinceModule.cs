@@ -17,7 +17,7 @@ using System.Reflection;
 
 namespace BugPrince.IC;
 
-public class BugPrinceModule : ItemChanger.Modules.Module
+public class TransitionSelectionModule : ItemChanger.Modules.Module
 {
     // Setup
     public RandomizationSettings Settings = new();
@@ -47,7 +47,7 @@ public class BugPrinceModule : ItemChanger.Modules.Module
     private readonly Dictionary<Transition, RandoModTransition> sourceRandoTransitions = [];
     private readonly Dictionary<Transition, RandoModTransition> targetRandoTransitions = [];
 
-    public static BugPrinceModule Get() => ItemChangerMod.Modules.Get<BugPrinceModule>()!;
+    public static TransitionSelectionModule Get() => ItemChangerMod.Modules.Get<TransitionSelectionModule>()!;
 
     public override void Initialize()
     {
@@ -527,9 +527,9 @@ public class BugPrinceModule : ItemChanger.Modules.Module
 
 internal class ModuleCostGroupProgressionProvider : ICostGroupProgressionProvider
 {
-    private readonly BugPrinceModule module;
+    private readonly TransitionSelectionModule module;
 
-    internal ModuleCostGroupProgressionProvider(BugPrinceModule module) => this.module = module;
+    internal ModuleCostGroupProgressionProvider(TransitionSelectionModule module) => this.module = module;
 
     public IReadOnlyDictionary<string, CostGroup> CostGroups() => module.CostGroups;
 

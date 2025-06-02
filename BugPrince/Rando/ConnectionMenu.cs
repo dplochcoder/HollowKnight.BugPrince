@@ -41,6 +41,8 @@ internal class ConnectionMenu
         return ret;
     }
 
+    private const float VSPACE_MEDIUM_LARGE = 100;
+
     private ConnectionMenu(MenuPage connectionsPage)
     {
         MenuPage bugPrincePage = new("Bug Prince", connectionsPage);
@@ -55,13 +57,13 @@ internal class ConnectionMenu
         costsEnabled = (factory.ElementLookup[nameof(s.EnableCoinsAndGems)] as MenuItem<bool>)!;
         costsEnabled.SelfChanged += _ => UpdateColorsAndVisibility();
 
-        mainSettings = new(bugPrincePage, new(), 2, SpaceParameters.VSPACE_MEDIUM, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
-        relicSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
-        costSettings = new(bugPrincePage, new(), 4, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
-        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, SpaceParameters.VSPACE_SMALL, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationSettingAttribute>(factory)]);
+        mainSettings = new(bugPrincePage, new(), 2, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
+        relicSettings = new(bugPrincePage, new(), 4, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
+        costSettings = new(bugPrincePage, new(), 4, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
+        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, VSPACE_MEDIUM_LARGE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<LocationSettingAttribute>(factory)]);
 
         VerticalItemPanel main = new(
-            bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, 100, true,
+            bugPrincePage, SpaceParameters.TOP_CENTER_UNDER_TITLE, VSPACE_MEDIUM_LARGE, true,
             [enabled, mainSettings, relicSettings, costsEnabled, costSettings, locationSettings]);
         main.Reposition();
 

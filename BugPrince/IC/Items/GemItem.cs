@@ -34,7 +34,7 @@ public class GemItem : AbstractItem
         };
     }
 
-    public override void GiveImmediate(GiveInfo info) => BugPrinceModule.Get().Gems++;
+    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().Gems++;
 
     public override AbstractItem Clone() => new GemItem();
 }

@@ -2,6 +2,7 @@
 using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Locations;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -20,11 +21,14 @@ internal class CityLampLocation : ExistingContainerLocation
 
     protected override void OnUnload() => Events.RemoveSceneChangeEdit(UnsafeSceneName, InstallLamp);
 
+    public override ContainerLocation AsContainerLocation() => throw new InvalidOperationException("CityLampLocation cannot be replaced");
+
+
     private static readonly FieldInfo debrisParts = typeof(Breakable).GetField("debrisParts", BindingFlags.Instance | BindingFlags.NonPublic);
 
     private void InstallLamp(Scene scene)
     {
-        var obj = Object.Instantiate(BugPrincePreloader.Instance.CityLamp!);
+        var obj = UnityEngine.Object.Instantiate(BugPrincePreloader.Instance.CityLamp!);
         obj.transform.position = new(x, y, z);
 
         var active = obj.FindChild("Active")!;

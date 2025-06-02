@@ -33,7 +33,7 @@ internal class RoomSelectionUI : MonoBehaviour
 
     internal static bool uiPresent = false;
 
-    private BugPrinceModule? module;
+    private TransitionSelectionModule? module;
     private List<SceneChoiceInfo> choiceInfos = [];
     private bool hiddenPin;
     private SelectionCb selectionCb = _ => { };
@@ -41,7 +41,7 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private RoomSelectionLayout? layout;
 
-    internal static RoomSelectionUI Create(BugPrinceModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
+    internal static RoomSelectionUI Create(TransitionSelectionModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
     {
         GameObject obj = new("Room Selection");
         obj.SetActive(false);
@@ -58,7 +58,7 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void OnDestroy() => uiPresent = false;
 
-    private void Init(BugPrinceModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
+    private void Init(TransitionSelectionModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SelectionCb selectionCb, RerollCb rerollCb)
     {
         this.module = module;
         choiceInfos = [.. infos];
@@ -356,8 +356,8 @@ internal class RoomSelectionUI : MonoBehaviour
         else if (actions.right.WasPressed) TryMoveToIndex(current.RightIndex);
         else if (actions.up.WasPressed) TryMoveToIndex(current.UpIndex);
         else if (actions.down.WasPressed) TryMoveToIndex(current.DownIndex);
-        else if (actions.attack.WasPressed) TrySelectIndex(selection);
-        else if (actions.cast.WasPressed) TryTogglePin(selection);  // FIXME???
+        else if (actions.jump.WasPressed || actions.attack.WasPressed) TrySelectIndex(selection);
+        else if (actions.cast.WasPressed) TryTogglePin(selection);
         else if (actions.dash.WasPressed) TryReroll();
     }
 }

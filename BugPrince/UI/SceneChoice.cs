@@ -43,7 +43,8 @@ internal class SceneChoice : MonoBehaviour
         var pinRenderer = pinIco.AddComponent<SpriteRenderer>();
         pinRenderer.sprite = PushPinItem.LargeSprite.Value;
         pinRenderer.SetUILayer(UISortingOrder.CostIcons);
-        var pinTracker = pinIco.AddComponent<PinAnimator>();
+        var pinAnimator = pinIco.AddComponent<PinAnimator>();
+        pinAnimator.Pin(info.Pinned);
 
         if (info.Cost.HasValue)
         {
@@ -64,7 +65,7 @@ internal class SceneChoice : MonoBehaviour
 
         choice.pinShaker = pinShaker;
         choice.costsShaker = costsShaker;
-        choice.pinAnimator = pinTracker;
+        choice.pinAnimator = pinAnimator;
         choice.targetPos = targetPos;
         return choice;
     }

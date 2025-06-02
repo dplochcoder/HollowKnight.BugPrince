@@ -3,6 +3,7 @@ using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Locations;
+using System;
 using System.Collections.Generic;
 
 namespace BugPrince.IC.Locations;
@@ -14,6 +15,8 @@ internal class MillibelleLocation : ExistingContainerLocation
     protected override void OnLoad() => Events.AddFsmEdit(UnsafeSceneName, FSM_ID, ModifyMillibelle);
 
     protected override void OnUnload() => Events.RemoveFsmEdit(UnsafeSceneName, FSM_ID, ModifyMillibelle);
+
+    public override ContainerLocation AsContainerLocation() => throw new InvalidOperationException("MillibelleLocation cannot be replaced");
 
     private const int MIN_HITS = 2;
     private const int MAX_HITS = 4;

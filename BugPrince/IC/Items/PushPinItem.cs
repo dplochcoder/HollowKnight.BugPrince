@@ -33,7 +33,7 @@ public class PushPinItem : AbstractItem
         };
     }
 
-    public override void GiveImmediate(GiveInfo info) => BugPrinceModule.Get().PushPins++;
+    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().PushPins++;
 
     public override AbstractItem Clone() => new PushPinItem();
 }

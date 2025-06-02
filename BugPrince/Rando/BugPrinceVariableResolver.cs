@@ -22,7 +22,7 @@ internal class BugPrinceVariableResolver : VariableResolver
     {
         if (progressionProviderOverride != null) return progressionProviderOverride;
         if (RandoInterop.LS != null) return RandoInterop.LS;
-        return ItemChangerMod.Modules.Get<BugPrinceModule>()?.AsProgressionProvider();
+        return ItemChangerMod.Modules.Get<TransitionSelectionModule>()?.AsProgressionProvider();
     }
 
     internal void OverrideProgressionProvider(ICostGroupProgressionProvider? progressionProvider) => progressionProviderOverride = progressionProvider;

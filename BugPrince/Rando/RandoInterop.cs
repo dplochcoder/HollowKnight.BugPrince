@@ -34,7 +34,7 @@ internal static class RandoInterop
 
     internal static RandomizationSettings RS => BugPrinceMod.GS.RandoSettings;
 
-    internal static bool IsEnabled => RS.EnableTransitionChoices || RS.CustomLocations || RS.TheVault || RS.GemstoneCavern;
+    internal static bool IsEnabled => RS.EnableTransitionChoices || RS.IsAnyLocationPoolEnabled() || RS.TheVault || RS.GemstoneCavern;
 
     internal static bool AreCostsEnabled => RS.EnableTransitionChoices && RS.EnableCoinsAndGems;
 
@@ -66,25 +66,25 @@ internal static class RandoInterop
 
     private static void OnExportCompleted(RandoController rc)
     {
-        if (!IsEnabled) return;
-
-        var module = ItemChangerMod.Modules.Add<BugPrinceModule>();
-        module.CostGroups = LS!.CostGroups;
-        module.CostGroupsByScene = LS.CostGroupsByScene;
-        module.RandomizedTransitions = LS.RandomizedTransitions;
-        module.CostGroupProgression = LS.CostGroupProgression;
-        module.Seed = rc.gs.Seed;
-        module.DiceTotems = RS.StartingDiceTotems;
-        module.PushPins = RS.StartingPushPins;
+        if (RS.EnableTransitionChoices)
+        {
+            var module = ItemChangerMod.Modules.Add<TransitionSelectionModule>();
+            module.CostGroups = LS!.CostGroups;
+            module.CostGroupsByScene = LS.CostGroupsByScene;
+            module.RandomizedTransitions = LS.RandomizedTransitions;
+            module.CostGroupProgression = LS.CostGroupProgression;
+            module.Seed = rc.gs.Seed;
+            module.DiceTotems = RS.StartingDiceTotems;
+            module.PushPins = RS.StartingPushPins;
+        }
+        if (RS.AdvancedLocations) ItemChangerMod.Modules.Add<BreakablesModule>();
+        if (RS.MapShop)
+        {
+            ItemChangerMod.Modules.Add<MapShopModule>();
+            if (!rc.gs.PoolSettings.Maps) MapShopModule.PlaceVanillaMaps();
+        }
 
         Locations.GetLocations().Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, RS));
-
-        if (RS.CustomLocations)
-        {
-            ItemChangerMod.Modules.Add<BreakablesModule>();
-            ItemChangerMod.Modules.Add<IseldaExtensionModule>();
-            if (!rc.gs.PoolSettings.Maps) IseldaExtensionModule.PlaceVanillaMaps();
-        }
     }
 
     private static void LogSettings(RandomizerMod.Logging.LogArguments args, TextWriter tw)

@@ -1,6 +1,7 @@
 ﻿using BugPrince.Data;
 using BugPrince.IC;
 using BugPrince.IC.Items;
+using ItemChanger;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
@@ -16,7 +17,7 @@ internal class RequestModifier
 {
     internal static void Setup()
     {
-        RequestBuilder.OnUpdate.Subscribe(3000f, ModifyRequest);
+        RequestBuilder.OnUpdate.Subscribe(3000f, AddItemsAndLocations);
         ProgressionInitializer.OnCreateProgressionInitializer += AddTolerances;
     }
 
@@ -43,7 +44,6 @@ internal class RequestModifier
 
     private static void ProvideRequestInfo(RequestBuilder rb)
     {
-
         rb.EditItemRequest(CoinItem.ITEM_NAME, info => info.getItemDef = CoinItem.ItemDef);
         rb.EditItemRequest(DiceTotemItem.ITEM_NAME, info => info.getItemDef = DiceTotemItem.ItemDef);
         rb.EditItemRequest(GemItem.ITEM_NAME, info => info.getItemDef = GemItem.ItemDef);
@@ -52,11 +52,53 @@ internal class RequestModifier
         foreach (var location in Locations.GetLocations())
         {
             var (name, loc) = (location.Key, location.Value);
-            rb.EditLocationRequest(name, info => info.getLocationDef = loc.LocationDef);
+            rb.EditLocationRequest(name, info =>
+            {
+                info.getLocationDef = loc.LocationDef;
+
+                if (loc.LocationPool == LocationPool.MapShop)
+                {
+                    info.onRandoLocationCreation += (randoFactory, randoLocation) =>
+                    {
+                        randoLocation.AddCost(new LogicGeoCost(randoFactory.lm, -1));
+                        randoLocation.AddCost(new SimpleCost(randoFactory.lm.GetTermStrict("MAPS"), randoFactory.rng.Next(RandoInterop.RS.MinimumMaps, RandoInterop.RS.MaximumMaps + 1)));
+                    };
+                    info.onRandomizerFinish += placement =>
+                    {
+                        if (placement.Location is not RandoModLocation rl || placement.Item is not RandoModItem ri || rl.costs == null) return;
+                        foreach (var cost in rl.costs.OfType<LogicGeoCost>()) cost.GeoAmount = GetShopCost(rb.rng, ri);
+                    };
+                }
+            });
         }
+
+        rb.CostConverters.Subscribe(0f, TryConvertMapCost);
     }
 
-    private static void ModifyRequest(RequestBuilder rb)
+    // TODO: Make public in Randomizer 4?
+    private static int GetShopCost(Random rng, RandoModItem item)
+    {
+        double pow = 1.2; // setting?
+
+        int cap = item.ItemDef is not null ? item.ItemDef.PriceCap : 500;
+        if (cap <= 100) return cap;
+        if (item.Required) return rng.PowerLaw(pow, 100, Math.Min(cap, 500)).ClampToMultipleOf(5);
+        return rng.PowerLaw(pow, 100, cap).ClampToMultipleOf(5);
+    }
+
+    private static bool TryConvertMapCost(LogicCost logicCost, out Cost cost)
+    {
+        if (logicCost is SimpleCost simple && simple.term.Name == "MAPS")
+        {
+            cost = new MapCost(simple.threshold);
+            return true;
+        }
+
+        cost = default;
+        return false;
+    }
+
+    private static void AddItemsAndLocations(RequestBuilder rb)
     {
         if (!RandoInterop.IsEnabled) return;
         ProvideRequestInfo(rb);
@@ -132,22 +174,32 @@ internal class RequestModifier
 
         if (rb.gs.PoolSettings.Keys && RS.EnableCoinsAndGems)
         {
-            var coins = RandoInterop.LS.GetItemCount(CostType.Coins) + RandoInterop.RS.CoinTolerance;
-            for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);
-            for (int i = 0; i < RandoInterop.RS.CoinDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}");
+            var neededCoins = RandoInterop.LS.GetItemCount(CostType.Coins);
+            if (neededCoins > 0)
+            {
+                var coins = neededCoins + RandoInterop.RS.CoinTolerance;
+                for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);
+                for (int i = 0; i < RandoInterop.RS.CoinDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}");
+            }
 
-            var gems = RandoInterop.LS.GetItemCount(CostType.Gems) + RandoInterop.RS.GemTolerance;
-            for (int i = 0; i < gems; i++) rb.AddItemByName(GemItem.ITEM_NAME);
-            for (int i = 0; i < RandoInterop.RS.GemDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}");
+            var neededGems = RandoInterop.LS.GetItemCount(CostType.Gems);
+            if (neededGems > 0)
+            {
+                var gems = neededGems + RandoInterop.RS.GemTolerance;
+                for (int i = 0; i < gems; i++) rb.AddItemByName(GemItem.ITEM_NAME);
+                for (int i = 0; i < RandoInterop.RS.GemDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}");
+            }
         }
     }
 
     private static void AddTolerances(LogicManager lm, GenerationSettings gs, ProgressionInitializer pi)
     {
-        if (!RandoInterop.AreCostsEnabled) return;
-
-        pi.Setters.Add(new(CostType.Coins.GetTerm(lm), -RandoInterop.RS.CoinTolerance));
-        pi.Setters.Add(new(CostType.Gems.GetTerm(lm), -RandoInterop.RS.GemTolerance));
+        if (RandoInterop.AreCostsEnabled)
+        {
+            pi.Setters.Add(new(CostType.Coins.GetTerm(lm), -RandoInterop.RS.CoinTolerance));
+            pi.Setters.Add(new(CostType.Gems.GetTerm(lm), -RandoInterop.RS.GemTolerance));
+        }
+        if (RandoInterop.RS.MapShop) pi.Setters.Add(new(lm.GetTermStrict("MAPS"), -RandoInterop.RS.MapTolerance));
     }
 
     private static void WeightedRandomSort(List<(string, CostGroup)> list, Random r)

@@ -34,7 +34,7 @@ public class CoinItem : AbstractItem
         };
     }
 
-    public override void GiveImmediate(GiveInfo info) => BugPrinceModule.Get().Coins++;
+    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().Coins++;
 
     public override AbstractItem Clone() => new CoinItem();
 }

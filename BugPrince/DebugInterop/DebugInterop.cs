@@ -8,9 +8,9 @@ public static class DebugInterop
 {
     internal static void Setup() => DebugMod.DebugMod.AddToKeyBindList(typeof(DebugInterop));
 
-    private static bool BugPrinceEnabled(out BugPrinceModule mod)
+    private static bool BugPrinceEnabled(out TransitionSelectionModule mod)
     {
-        mod = ItemChanger.ItemChangerMod.Modules.Get<BugPrinceModule>();
+        mod = ItemChanger.ItemChangerMod.Modules.Get<TransitionSelectionModule>();
         if (mod == null)
         {
             Console.AddLine("Bug Prince not enabled in this save; doing nothing");
