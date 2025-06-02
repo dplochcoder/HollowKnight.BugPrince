@@ -168,8 +168,8 @@ internal class RequestModifier
         var RS = RandoInterop.RS;
         if (rb.gs.PoolSettings.Relics)
         {
-            for (int i = 0; i < RS.TotalDiceTotems - RS.StartingDiceTotems; i++) rb.AddItemByName(DiceTotemItem.ITEM_NAME);
-            for (int i = 0; i < RS.TotalPushPins - RS.StartingPushPins; i++) rb.AddItemByName(PushPinItem.ITEM_NAME);
+            rb.AddItemByName(DiceTotemItem.ITEM_NAME, RS.TotalDiceTotems - RS.StartingDiceTotems);
+            rb.AddItemByName(PushPinItem.ITEM_NAME, RS.TotalPushPins - RS.StartingPushPins);
         }
 
         if (rb.gs.PoolSettings.Keys && RS.EnableCoinsAndGems)
@@ -177,17 +177,15 @@ internal class RequestModifier
             var neededCoins = RandoInterop.LS.GetItemCount(CostType.Coins);
             if (neededCoins > 0)
             {
-                var coins = neededCoins + RandoInterop.RS.CoinTolerance;
-                for (int i = 0; i < coins; i++) rb.AddItemByName(CoinItem.ITEM_NAME);
-                for (int i = 0; i < RandoInterop.RS.CoinDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}");
+                rb.AddItemByName(CoinItem.ITEM_NAME, neededCoins + RandoInterop.RS.CoinTolerance);
+                rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}", RandoInterop.RS.CoinDuplicates);
             }
 
             var neededGems = RandoInterop.LS.GetItemCount(CostType.Gems);
             if (neededGems > 0)
             {
-                var gems = neededGems + RandoInterop.RS.GemTolerance;
-                for (int i = 0; i < gems; i++) rb.AddItemByName(GemItem.ITEM_NAME);
-                for (int i = 0; i < RandoInterop.RS.GemDuplicates; i++) rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}");
+                rb.AddItemByName(GemItem.ITEM_NAME, neededGems + RandoInterop.RS.GemTolerance);
+                rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}", RandoInterop.RS.GemDuplicates);
             }
         }
     }
