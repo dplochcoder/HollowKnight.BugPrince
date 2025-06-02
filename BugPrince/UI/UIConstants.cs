@@ -36,7 +36,7 @@ internal static class UIConstants
     internal const float SCENE_COST_X_SPACE = 0.9f;
     internal const float SCENE_COST_Y = -2.3f;
     internal const float SCENE_FADE_OUT_DURATION = 0.4f;
-    internal const float SCENE_SCALE = 0.4f;
+    internal const float SCENE_SCALE = 1.2f;
     internal const float SCENE_X_SPACE = 9.1f;
     internal const float SCENE_Y_SPACE = 5.5f;
     internal const float SHAKE_SPAN = 0.15f;
