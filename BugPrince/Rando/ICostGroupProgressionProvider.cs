@@ -50,11 +50,11 @@ internal static class ICostGroupProgressionProviderExtensions
         return self.CostGroups().TryGetValue(groupName, out costGroup);
     }
 
-    internal static bool GetProgressiveCost(this ICostGroupProgressionProvider self, string groupName, out CostType costType, out int cost)
+    internal static bool GetProgressiveCostByScene(this ICostGroupProgressionProvider self, string sceneName, out CostType costType, out int cost)
     {
         costType = default;
         cost = 0;
-        if (!self.CostGroups().TryGetValue(groupName, out var group)) return false;
+        if (!self.GetCostGroupByScene(sceneName, out var groupName, out var group)) return false;
 
         costType = group.Type;
 

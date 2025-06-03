@@ -1,4 +1,5 @@
-﻿using BugPrince.IC;
+﻿using BugPrince.Data;
+using BugPrince.IC;
 using ItemChanger;
 using Newtonsoft.Json;
 using RandomizerCore.Logic;
@@ -29,46 +30,38 @@ internal class BugPrinceVariableResolver : VariableResolver
 
     public override bool TryMatch(LogicManager lm, string term, out LogicVariable variable)
     {
-        if (TryMatchPrefix(term, BUG_PRINCE_ACCESS_PREFIX, out var args) && args.Length == 2)
+        if (TryMatchPrefix(term, BUG_PRINCE_ACCESS_PREFIX, out var args) && args.Length == 1)
         {
-            variable = ParseBugPrinceAccess(lm, term, new(args[0], args[1]));
+            if (!args[0].ToTransition(out var transition)) throw new ArgumentException($"Invalid transition argument: {term}");
+            variable = new BugPrinceAccessLogicInt(this, transition, CostType.Coins.GetTerm(lm), CostType.Gems.GetTerm(lm));
             return true;
         }
 
         return Inner!.TryMatch(lm, term, out variable);
-    }
-
-    private LogicInt ParseBugPrinceAccess(LogicManager lm, string name, Transition transition)
-    {
-        var provider = GetProgressionProvider();
-        if (provider == null) throw new ArgumentException("Missing progression provider");
-        if (!provider.IsRandomizedTransition(transition)) return new ConstantInt(LogicVariable.TRUE);
-        if (!provider.GetCostGroupByScene(transition.SceneName, out var groupName, out var group)) return new ConstantInt(LogicVariable.TRUE);
-
-        return new BugPrinceAccessLogicInt(this, name, groupName, group.Type.GetTerm(lm));
     }
 }
 
 internal class BugPrinceAccessLogicInt : LogicInt
 {
     private readonly BugPrinceVariableResolver resolver;
-    private readonly string name;
-    private readonly string costGroupName;
-    private readonly Term term;
+    private readonly Transition transition;
+    private readonly Term coinsTerm;
+    private readonly Term gemsTerm;
 
-    public override string Name => name;
+    public override string Name => $"{BugPrinceVariableResolver.BUG_PRINCE_ACCESS_PREFIX}[{transition}]";
 
-    internal BugPrinceAccessLogicInt(BugPrinceVariableResolver resolver, string name, string costGroupName, Term term)
+    internal BugPrinceAccessLogicInt(BugPrinceVariableResolver resolver, Transition transition, Term coinsTerm, Term gemsTerm)
     {
         this.resolver = resolver;
-        this.name = name;
-        this.costGroupName = costGroupName;
-        this.term = term;
+        this.transition = transition;
+        this.coinsTerm = coinsTerm;
+        this.gemsTerm = gemsTerm;
     }
 
-    public override IEnumerable<Term> GetTerms() => [term];
+    public override IEnumerable<Term> GetTerms() => [coinsTerm, gemsTerm];
 
     private ICostGroupProgressionProvider? cachedProvider;
+    private Term? cachedTerm;
     private int cachedCost;
 
     public override int GetValue(object? sender, ProgressionManager pm)
@@ -77,9 +70,18 @@ internal class BugPrinceAccessLogicInt : LogicInt
         if (provider != cachedProvider)
         {
             cachedProvider = provider;
-            if (!provider.GetProgressiveCost(costGroupName, out var _, out cachedCost)) throw new ArgumentException("CostGroup state changed");
+            if (provider.GetProgressiveCostByScene(transition.SceneName, out var costType, out var cost))
+            {
+                cachedTerm = costType == CostType.Coins ? coinsTerm : gemsTerm;
+                cachedCost = cost;
+            }
+            else
+            {
+                cachedTerm = coinsTerm;
+                cachedCost = -1;
+            }
         }
 
-        return pm.Get(term) >= cachedCost ? TRUE : FALSE;
+        return (cachedCost < 0 || pm.Get(cachedTerm!) >= cachedCost) ? TRUE : FALSE;
     }
 }
