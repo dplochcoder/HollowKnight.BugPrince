@@ -106,7 +106,7 @@ internal class AncestralMoundPuzzleLocation : ContainerLocation
         popper.AddComponent<PopCoordinator>().Init(order, fsms);
     }
 
-    private const int NUM_PARTICLES = 12;
+    private const int NUM_PARTICLES = 11;
 
     private void MakeSwitches(IReadOnlyList<int> order, List<GameObject> switches, GameObject particlesTemplate, AudioClip[] popClips)
     {
@@ -163,7 +163,7 @@ internal class PopCoordinator : MonoBehaviour
             bool first = true;
             foreach (var idx in order)
             {
-                if (!first) yield return new WaitForSeconds(0.4f);
+                if (!first) yield return new WaitForSeconds(0.55f);
                 first = false;
                 fsms[idx].SendEvent("MANUAL POP");
             }
