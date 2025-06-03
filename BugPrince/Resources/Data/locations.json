@@ -195,7 +195,7 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "*Descending_Dark + LEFTCLAW + RIGHTSUPERDASH + WINGS + LEFTDASH"
+    "Logic": "Mines_35[left1] + Broke_Crystallized_Mound_Quake_Floor + LEFTDASH + WINGS + ANYCLAW + (RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH)"
   },
   "BugPrince-Exterior_Belflies-Colosseum": {
     "ItemType": "DiceTotem",
