@@ -3,6 +3,7 @@ using MenuChanger;
 using MenuChanger.Extensions;
 using MenuChanger.MenuElements;
 using MenuChanger.MenuPanels;
+using PurenailCore.SystemUtil;
 using RandomizerMod.Menu;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,9 @@ internal class ConnectionMenu
 
     private readonly SmallButton entryButton;
     private readonly MenuElementFactory<RandomizationSettings> factory;
-    private GridItemPanel mainSettings;
+    private GridItemPanel transitionSettings;
     private GridItemPanel relicSettings;
-    private MenuItem<bool> costsEnabled;
+    private MenuItem<bool> enableCoinsAndGems;
     private GridItemPanel costSettings;
     private GridItemPanel mapShopSettings;
 
@@ -51,24 +52,23 @@ internal class ConnectionMenu
         entryButton.AddHideAndShowEvent(bugPrincePage);
 
         factory = new(bugPrincePage, BugPrinceMod.GS.RandoSettings);
+        factory.Elements.Select(e => e as MenuItem<bool>).Where(e => e != null).ForEach(e => e.SelfChanged += _ => UpdateColorsAndVisibility());
 
         var s = Settings;
-        var enabled = (factory.ElementLookup[nameof(s.EnableTransitionChoices)] as MenuItem<bool>)!;
-        enabled.SelfChanged += _ => UpdateColorsAndVisibility();
-        costsEnabled = (factory.ElementLookup[nameof(s.EnableCoinsAndGems)] as MenuItem<bool>)!;
-        costsEnabled.SelfChanged += _ => UpdateColorsAndVisibility();
+        var enableTransitionChoices = (factory.ElementLookup[nameof(s.EnableTransitionChoices)] as MenuItem<bool>)!;
+        enableCoinsAndGems = (factory.ElementLookup[nameof(s.EnableCoinsAndGems)] as MenuItem<bool>)!;
 
-        mainSettings = new(bugPrincePage, new(), 2, VSPACE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
+        transitionSettings = new(bugPrincePage, new(), 2, VSPACE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<TransitionSettingAttribute>(factory)]);
         relicSettings = new(bugPrincePage, new(), 4, VSPACE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<RelicSettingAttribute>(factory)]);
         costSettings = new(bugPrincePage, new(), 4, VSPACE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<CostSettingAttribute>(factory)]);
-        var mapShopField = (factory.ElementLookup[nameof(s.MapShop)] as MenuItem<bool>)!;
-        mapShopField.SelfChanged += _ => UpdateColorsAndVisibility();
+        var mapShop = (factory.ElementLookup[nameof(s.MapShop)] as MenuItem<bool>)!;
+        mapShop.SelfChanged += _ => UpdateColorsAndVisibility();
         mapShopSettings = new(bugPrincePage, new(), 3, VSPACE, SpaceParameters.HSPACE_MEDIUM, false, [.. GetElements<MapShopSettingAttribute>(factory)]);
-        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, VSPACE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<LocationSettingAttribute>(factory).Where(m => m != mapShopField)]);
+        GridItemPanel locationSettings = new(bugPrincePage, new(), 3, VSPACE, SpaceParameters.HSPACE_SMALL, false, [.. GetElements<LocationSettingAttribute>(factory).Where(m => m != mapShop)]);
 
         VerticalItemPanel main = new(
             bugPrincePage, SpaceParameters.TOP_CENTER, VSPACE, true,
-            [enabled, mainSettings, relicSettings, costsEnabled, costSettings, mapShopField, mapShopSettings, locationSettings]);
+            [enableTransitionChoices, transitionSettings, relicSettings, enableCoinsAndGems, costSettings, mapShop, mapShopSettings, locationSettings]);
         main.Reposition();
 
         UpdateColorsAndVisibility();
@@ -85,9 +85,9 @@ internal class ConnectionMenu
     private void UpdateColorsAndVisibility()
     {
         entryButton.Text.color = RandoInterop.IsEnabled ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
-        mainSettings.SetShown(Settings.EnableTransitionChoices);
+        transitionSettings.SetShown(Settings.EnableTransitionChoices);
         relicSettings.SetShown(Settings.EnableTransitionChoices);
-        costsEnabled.SetShown(Settings.EnableTransitionChoices);
+        enableCoinsAndGems.SetShown(Settings.EnableTransitionChoices);
         costSettings.SetShown(RandoInterop.AreCostsEnabled);
         mapShopSettings.SetShown(Settings.MapShop);
     }
