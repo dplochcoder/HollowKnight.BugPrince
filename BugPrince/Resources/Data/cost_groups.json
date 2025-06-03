@@ -11,7 +11,7 @@
   },
   "Abyss": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "TitledAreaRando",
+    "Constraint": "FullAreaRando",
     "SceneNames": [
       "Abyss_06_Core"
     ],
@@ -21,7 +21,7 @@
   },
   "Ancient Basin": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "MapOrTitledAreaRando",
+    "Constraint": "MapAreaRando | FullAreaRando",
     "SceneNames": [
       "Abyss_03",
       "Abyss_04"
@@ -49,7 +49,26 @@
     "Cost": 1,
     "SkewedAverage": 0.5
   },
-  "Colosseum": {
+  "Colosseum_(Full_Area_Rando)": {
+    "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
+    "SceneNames": [
+      "Room_Colosseum_01",
+      "Room_Colosseum_Spectate"
+    ],
+    "Type": "Gems",
+    "Tiers": [
+      {
+        "Constraint": "TRJR + FullAreaRando",
+        "Cost": 2
+      },
+      {
+        "Constraint": "None",
+        "Cost": 1
+      }
+    ],
+    "SkewedAverage": 0.5
+  },
+  "Colosseum_(Room_Rando)": {
     "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
     "SceneNames": [
       "Room_Colosseum_01"
@@ -57,7 +76,7 @@
     "Type": "Gems",
     "Tiers": [
       {
-        "Constraint": "TRJR",
+        "Constraint": "TRJR + RoomRando",
         "Cost": 2
       },
       {
@@ -69,7 +88,7 @@
   },
   "Crystal Peaks": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "MapOrTitledAreaRando",
+    "Constraint": "MapAreaRando | FullAreaRando",
     "SceneNames": [
       "Mines_01",
       "Mines_02",
@@ -146,7 +165,7 @@
   },
   "King's Station'": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "TitledAreaRando",
+    "Constraint": "FullAreaRando",
     "SceneNames": [
       "Ruins2_05",
       "Ruins2_06",
@@ -258,7 +277,7 @@
   },
   "Queen's Gardens": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "MapOrTitledAreaRando",
+    "Constraint": "MapAreaRando | FullAreaRando",
     "SceneNames": [
       "Fungus3_22",
       "Fungus3_34",
@@ -270,7 +289,7 @@
   },
   "Queen's Station'": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "TitledAreaRando",
+    "Constraint": "FullAreaRando",
     "SceneNames": [
       "Fungus2_01"
     ],
@@ -280,7 +299,7 @@
   },
   "Resting Grounds": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "MapOrTitledAreaRando",
+    "Constraint": "MapAreaRando | FullAreaRando",
     "SceneNames": [
       "Crossroads_50",
       "RestingGrounds_02"
@@ -337,7 +356,7 @@
   },
   "Teacher's Archives": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "TitledAreaRando",
+    "Constraint": "FullAreaRando",
     "SceneNames": [
       "Fungus3_archive"
     ],
