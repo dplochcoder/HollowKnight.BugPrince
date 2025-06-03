@@ -197,25 +197,6 @@
     "FullFlexible": false,
     "Logic": "*Descending_Dark + LEFTCLAW + RIGHTSUPERDASH + WINGS + LEFTDASH"
   },
-  "BugPrince-Coin_Plateau-Junk_Pit": {
-    "ItemType": "Coin",
-    "LocationPool": "BasicLocations",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
-      "x": 95.0,
-      "y": 47.5,
-      "elevation": 0.0,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BugPrince-Coin_Plateau-Junk_Pit",
-      "sceneName": "GG_Waterways",
-      "flingType": "StraightUp",
-      "tags": null
-    },
-    "FullFlexible": false,
-    "Logic": "GG_Waterways[door1]"
-  },
   "BugPrince-Exterior_Belflies-Colosseum": {
     "ItemType": "DiceTotem",
     "LocationPool": "BasicLocations",
