@@ -63,7 +63,7 @@ internal class LanternControl : MonoBehaviour
         flamePillar = lanternClone.FindChild("Flame Pillar")!;
 
         var dreamEffects = lanternClone.FindChild("dream_area_effect")!;
-        dreamParticles = dreamEffects.Children();
+        dreamParticles = dreamEffects.Children().ToList();
         dreamParticles.ForEach(o => o.SetActive(true));
         dreamEffects.SetActive(true);
         Deactivate(dreamParticles, true);
@@ -80,7 +80,7 @@ internal class LanternControl : MonoBehaviour
         mainAudioLoop = lanternLitObjects.FindChild("Main Audio Loop")!;
         mainAudioLoop.SetActive(false);
         var grimmFlame = lanternLitObjects.FindChild("Grimm_lantern_flame")!;
-        grimmFlameChildren = grimmFlame.Children();
+        grimmFlameChildren = grimmFlame.Children().ToList();
         grimmFlameChildren.ForEach(o => o.SetActive(true));
         Destroy(lanternLitObjects.LocateMyFSM("Control"));
         lanternLitObjects.SetActive(true);

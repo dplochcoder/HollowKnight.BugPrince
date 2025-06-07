@@ -7,6 +7,10 @@
         "Action": "Start"
       },
       {
+        "Path": "UnityScriptShims\\UnityScriptShims.csproj",
+        "Action": "Start"
+      },
+      {
         "Path": "DataUpdater\\DataUpdater.csproj",
         "Action": "Start"
       }

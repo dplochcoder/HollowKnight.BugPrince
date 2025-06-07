@@ -2,6 +2,7 @@
 using ItemChanger.Extensions;
 using ItemChanger.Internal;
 using ItemChanger.Util;
+using PurenailCore.SystemUtil;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,11 +21,10 @@ internal static class GameObjectUtil
         return child;
     }
 
-    internal static List<GameObject> Children(this GameObject self)
+    internal static IEnumerable<GameObject> Children(this GameObject self)
     {
         List<GameObject> ret = [];
-        foreach (Transform transform in self.transform) ret.Add(transform.gameObject);
-        return ret;
+        foreach (Transform transform in self.transform) yield return transform.gameObject;
     }
 
     internal static void Recursively(this GameObject self, Action<GameObject> action)
@@ -36,6 +36,17 @@ internal static class GameObjectUtil
             action(obj);
 
             foreach (Transform transform in obj.transform) queue.Enqueue(transform.gameObject);
+        }
+    }
+
+    internal static IEnumerable<T> GetComponentsRecursively<T>(this GameObject self) where T : Component
+    {
+        Queue<GameObject> queue = new([self]);
+        while (queue.Count > 0)
+        {
+            var obj = queue.Dequeue();
+            foreach (var t in obj.GetComponents<T>()) yield return t;
+            obj.Children().ForEach(queue.Enqueue);
         }
     }
 

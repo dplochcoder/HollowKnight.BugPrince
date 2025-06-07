@@ -25,6 +25,9 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.Cliffs_06, "Nightmare Lantern/lantern_dream")]
     public GameObject? NightmareLantern { get; private set; }
 
+    [Preload(SceneNames.White_Palace_18, "_Managers/PlayMaker Unity 2D")]
+    public GameObject? PlayMaker { get; private set; }
+
     [Preload(SceneNames.Ruins2_01_b, "Quake Floor Glass")]
     public GameObject? QuakeFloorGlass { get; private set; }
 
@@ -39,6 +42,11 @@ internal class BugPrincePreloader : Preloader
 
     [Preload(SceneNames.Crossroads_ShamanTemple, "_Props/Shaman Meeting")]
     public GameObject? ShamanMeeting { get; private set; }
+
+    [Preload("Tutorial_01", "_Scenery/plat_float_07")]
+    public GameObject SmallPlatform { get; private set; }
+    
+    public PhysicsMaterial2D TerrainMaterial => SmallPlatform.GetComponent<Collider2D>().sharedMaterial;
 
     public AudioClip TinkEffectClip => Goam!.GetComponent<TinkEffect>().blockEffect.GetComponent<AudioSource>().clip;
 

@@ -19,7 +19,7 @@
     <HollowKnightRefs>..\API</HollowKnightRefs>
     <ExportDir>bin\Publish</ExportDir>
   </PropertyGroup>
-  <Import Project="LocalOverrides.targets" Condition="Exists('LocalOverrides.targets')" />
+  <Import Project="../LocalOverrides.targets" Condition="Exists('../LocalOverrides.targets')" />
   <Target Name="CopyMod" AfterTargets="PostBuildEvent">
     <ItemGroup>
       <OutputFiles Include="$(TargetPath)" />
@@ -42,6 +42,13 @@
     <WriteLinesToFile File="$(ExportDir)/VERSION.txt" Lines="@(VersionNumber)" Overwrite="true" Encoding="UTF-8" />
   </Target>
   <ItemGroup>
+    <Compile Remove="Unity\**" />
+    <None Remove="Unity\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Unity\Assets\AssetBundles\**" />
+    <EmbeddedResource Remove="Unity\**\*.manifest" />
+    <EmbeddedResource Remove="Unity\**\*.meta" />
     <EmbeddedResource Include="Resources\**\*.json" />
     <EmbeddedResource Include="Resources\**\*.png" />
     <EmbeddedResource Include="Resources\**\*.wav" />
@@ -362,12 +369,5 @@
     <Reference Include="WavLib">
       <HintPath>$(HollowKnightRefs)/Mods/SFCore/WavLib.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".gitignore" />
-    <None Include="LocalOverrides.targets" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SPOILER\" />
   </ItemGroup>
 </Project>
