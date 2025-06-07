@@ -18,13 +18,12 @@ internal class MillibelleLocation : ExistingContainerLocation
 
     public override ContainerLocation AsContainerLocation() => throw new InvalidOperationException("MillibelleLocation cannot be replaced");
 
-    private const int MIN_HITS = 2;
-    private const int MAX_HITS = 4;
+    private const int NUM_HITS = 3;
 
     private void ModifyMillibelle(PlayMakerFSM fsm)
     {
         List<(string, FlingDirection)> dirs = [("Right", FlingDirection.Right), ("Left", FlingDirection.Left), ("Up", FlingDirection.Any), ("Down", FlingDirection.Down)];
-        Wrapped<int> numHits = new(UnityEngine.Random.Range(MIN_HITS, MAX_HITS + 1));
+        Wrapped<int> numHits = new(NUM_HITS);
         foreach (var (name, dir) in dirs)
         {
             var dirCopy = dir;
@@ -36,7 +35,7 @@ internal class MillibelleLocation : ExistingContainerLocation
                 {
                     if (!item.GiveOrFling(Placement, fsm.gameObject.transform, dirCopy)) continue;
 
-                    numHits.Value = UnityEngine.Random.Range(MIN_HITS, MAX_HITS + 1);
+                    numHits.Value = NUM_HITS;
                     break;
                 }
             }));
