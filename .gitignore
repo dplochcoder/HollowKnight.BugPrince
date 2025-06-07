@@ -5,3 +5,13 @@
 /.vs
 /DataUpdater/bin/Debug/net9.0
 /DataUpdater/obj
+/BugPrince/Unity/Assets/Assemblies/BugPrince.dll
+/BugPrince/Unity/Assets/Assemblies/SFCore.dll
+/BugPrince/Unity/Library
+/BugPrince/Unity/Temp
+/BugPrince/Unity/UserSettings
+/hooks
+/lfs/objects
+/UnityScriptShims/bin/Debug/net472
+/UnityScriptShims/obj
+/LocalOverrides.targets
