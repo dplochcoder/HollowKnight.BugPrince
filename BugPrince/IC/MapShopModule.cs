@@ -79,7 +79,7 @@ internal record MapCost : Cost
 
     public override bool CanPay() => (ItemChangerMod.Modules.Get<MapShopModule>()?.NumMaps ?? 13) >= Cost;
 
-    public override string GetCostText() => $"Requires {Cost} maps owned.";
+    public override string GetCostText() => $"Requires {Cost} maps.";
 
     public override bool HasPayEffects() => false;
 
