@@ -1,4 +1,5 @@
 ﻿using BreakableWallRandomizer.Settings;
+using BugPrince.Util;
 using Modding;
 using Newtonsoft.Json;
 using RandomizerMod.Settings;
@@ -32,39 +33,28 @@ internal record CostConstraintCondition
     public CostConstraintAtom atom;
     public bool negated;
 
-    private static bool TryGetSettings<T>(Mod mod, out T settings)
-    {
-        if (mod is IGlobalSettings<T> m)
-        {
-            settings = m.OnSaveGlobal();
-            return true;
-        }
-        settings = default;
-        return false;
-    }
-
-    private static bool DiveFloorsImpl(Mod mod) => TryGetSettings<BWR_Settings>(mod, out var settings) && settings.Enabled && settings.DiveFloors;
+    private static bool DiveFloorsImpl(Mod mod) => mod.TryGetSettings<BWR_Settings>(out var settings) && settings.Enabled && settings.DiveFloors;
     private static bool DiveFloorsApplies() => ModHooks.GetMod("Breakable Wall Randomizer") is Mod mod && DiveFloorsImpl(mod);
 
-    private static bool GhostEssenceImpl(Mod mod) => TryGetSettings<RandoPlus.GlobalSettings>(mod, out var settings) && settings.GhostEssence;
+    private static bool GhostEssenceImpl(Mod mod) => mod.TryGetSettings<RandoPlus.GlobalSettings>(out var settings) && settings.GhostEssence;
     private static bool GhostEssenceApplies() => ModHooks.GetMod("RandoPlus") is Mod mod && GhostEssenceImpl(mod);
 
-    private static bool JunkShopImpl(Mod mod) => TryGetSettings<MoreLocations.GlobalSettings>(mod, out var settings) && settings.RS.Enabled && settings.RS.JunkShopSettings.Enabled;
+    private static bool JunkShopImpl(Mod mod) => mod.TryGetSettings<MoreLocations.GlobalSettings>(out var settings) && settings.RS.Enabled && settings.RS.JunkShopSettings.Enabled;
     private static bool JunkShopApplies() => ModHooks.GetMod("MoreLocations") is Mod mod && JunkShopImpl(mod);
 
-    private static bool LemmShopImpl(Mod mod) => TryGetSettings<MoreLocations.GlobalSettings>(mod, out var settings) && settings.RS.Enabled && settings.RS.LemmShopSettings.Enabled;
+    private static bool LemmShopImpl(Mod mod) => mod.TryGetSettings<MoreLocations.GlobalSettings>(out var settings) && settings.RS.Enabled && settings.RS.LemmShopSettings.Enabled;
     private static bool LemmShopApplies() => ModHooks.GetMod("MoreLocations") is Mod mod && LemmShopImpl(mod);
 
-    private static bool LeversImpl(Mod mod) => TryGetSettings<RandomizableLevers.GlobalSettings>(mod, out var settings) && settings.RandoSettings.RandomizeLevers;
+    private static bool LeversImpl(Mod mod) => mod.TryGetSettings<RandomizableLevers.GlobalSettings>(out var settings) && settings.RandoSettings.RandomizeLevers;
     private static bool LeversApplies() => ModHooks.GetMod("RandomizableLevers") is Mod mod && LeversImpl(mod);
 
-    private static bool NailUpgradesImpl(Mod mod) => TryGetSettings<RandoPlus.GlobalSettings>(mod, out var settings) && settings.NailUpgrades;
+    private static bool NailUpgradesImpl(Mod mod) => mod.TryGetSettings<RandoPlus.GlobalSettings>(out var settings) && settings.NailUpgrades;
     private static bool NailUpgradesApplies() => ModHooks.GetMod("RandoPlus") is Mod mod && NailUpgradesImpl(mod);
 
-    private static bool RockWallsImpl(Mod mod) => TryGetSettings<BWR_Settings>(mod, out var settings) && settings.Enabled && settings.RockWalls;
+    private static bool RockWallsImpl(Mod mod) => mod.TryGetSettings<BWR_Settings>(out var settings) && settings.Enabled && settings.RockWalls;
     private static bool RockWallsApplies() => ModHooks.GetMod("Breakable Wall Randomizer") is Mod mod && RockWallsImpl(mod);
 
-    private static bool TRJRImpl(Mod mod) => TryGetSettings<TheRealJournalRando.GlobalSettings>(mod, out var settings) && settings.RandoSettings.Enabled;
+    private static bool TRJRImpl(Mod mod) => mod.TryGetSettings<TheRealJournalRando.GlobalSettings>(out var settings) && settings.RandoSettings.Enabled;
     private static bool TRJRApplies() => ModHooks.GetMod("TheRealJournalRando") is Mod mod && TRJRImpl(mod);
 
     internal static bool Applies(CostConstraintAtom atom, GenerationSettings gs)

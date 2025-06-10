@@ -1,0 +1,28 @@
+{
+  "BugPrince_GemstoneCavern[left1]": {
+    "LocationPool": "GemstoneCavern",
+    "Def": {
+      "SceneName": "BugPrince_GemstoneCavern",
+      "DoorName": null,
+      "VanillaTarget": "Mines_20[right_gemstonecavern]",
+      "Direction": "Left",
+      "IsTitledAreaTransition": true,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BugPrince_GemstoneCavern[left1]"
+  },
+  "Mines_20[right_gemstonecavern]": {
+    "LocationPool": "GemstoneCavern",
+    "Def": {
+      "SceneName": "Mines_20",
+      "DoorName": null,
+      "VanillaTarget": "BugPrince_GemstoneCavern[left1]",
+      "Direction": "Right",
+      "IsTitledAreaTransition": true,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "Mines_20[right_gemstonecavern] | Mines_20[left1]"
+  }
+}

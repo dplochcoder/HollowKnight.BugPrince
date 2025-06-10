@@ -5,6 +5,7 @@ using ItemChanger;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
+using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System;
@@ -17,8 +18,9 @@ internal class RequestModifier
 {
     internal static void Setup()
     {
-        RequestBuilder.OnUpdate.Subscribe(3000f, AddItemsAndLocations);
         ProgressionInitializer.OnCreateProgressionInitializer += AddTolerances;
+        PurenailCore.RandoUtil.TransitionInjector.AddInjector(AddTransitions);
+        RequestBuilder.OnUpdate.Subscribe(3000f, AddItemsAndLocations);
     }
 
     private static IEnumerable<string> GetRandomizedTransitions(RequestBuilder rb)
@@ -39,6 +41,15 @@ internal class RequestModifier
                 foreach (var name in stgb.Group1.EnumerateDistinct()) yield return name;
                 foreach (var name in stgb.Group2.EnumerateDistinct()) yield return name;
             }
+        }
+    }
+
+    private static IEnumerable<(string, TransitionDef)> AddTransitions(RequestBuilder rb)
+    {
+        foreach (var e in Transitions.GetTransitions())
+        {
+            if (!RandoInterop.RS.IsEnabled(e.Value.LocationPool)) continue;
+            yield return (e.Key, e.Value.Def!);
         }
     }
 
@@ -101,6 +112,7 @@ internal class RequestModifier
     private static void AddItemsAndLocations(RequestBuilder rb)
     {
         if (!RandoInterop.IsEnabled) return;
+
         ProvideRequestInfo(rb);
 
         HashSet<string> randomizedScenes = [];

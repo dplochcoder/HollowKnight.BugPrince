@@ -16,6 +16,12 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.Ruins1_05, "ruind_dressing_light_03 (4)")]
     public GameObject? CityLamp { get; private set; }
 
+    [Preload(SceneNames.Mines_05, "Breakable Wall")]
+    public GameObject? CrystalBreakableWall { get; private set; }
+
+    [Preload(SceneNames.Mines_11, "mine_globe_02 (2)")]
+    public GameObject? CrystalGlobe { get; private set; }
+
     [Preload(SceneNames.Deepnest_40, "Dream Gate (2)")]
     public GameObject? DreamWall { get; private set; }
 
@@ -40,13 +46,16 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.Deepnest_44, "Secret Sound Region")]
     public GameObject? SecretSoundRegion { get; private set; }
 
+    [Preload("Deepnest_East_08", "Hollow_Shade Marker")]
+    public GameObject? ShadeMarker { get; private set; }
+
     [Preload(SceneNames.Crossroads_ShamanTemple, "_Props/Shaman Meeting")]
     public GameObject? ShamanMeeting { get; private set; }
 
     [Preload("Tutorial_01", "_Scenery/plat_float_07")]
-    public GameObject SmallPlatform { get; private set; }
+    public GameObject? SmallPlatform { get; private set; }
     
-    public PhysicsMaterial2D TerrainMaterial => SmallPlatform.GetComponent<Collider2D>().sharedMaterial;
+    public PhysicsMaterial2D TerrainMaterial => SmallPlatform!.GetComponent<Collider2D>().sharedMaterial;
 
     public AudioClip TinkEffectClip => Goam!.GetComponent<TinkEffect>().blockEffect.GetComponent<AudioSource>().clip;
 

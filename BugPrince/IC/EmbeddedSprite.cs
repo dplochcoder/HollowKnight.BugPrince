@@ -17,7 +17,7 @@ internal class EmbeddedSpriteInfo : SpriteManager.Info
 
     public override float GetPixelsPerUnit(string name)
     {
-        if (name.StartsWith("Game.") && overridePPUs != null && !overridePPUs.ContainsKey(name)) return 64f;
+        if (name.StartsWith("Game.") && (overridePPUs == null || !overridePPUs.ContainsKey(name))) return 64f;
         return base.GetPixelsPerUnit(name);
     }
 }

@@ -31,12 +31,18 @@ internal static class LogicPatcher
         lmb.AddItem(GemItem.LogicItem());
         lmb.AddItem(PushPinItem.LogicItem());
 
-        foreach (var e in Locations.GetLocations()) lmb.AddLogicDef(new(e.Key, e.Value.Logic));
+        foreach (var e in Locations.GetLocations()) lmb.AddLogicDef(new(e.Key, e.Value.Logic.Value));
         foreach (var e in Waypoints.GetWaypoints()) lmb.AddWaypoint(new(e.Key, e.Value, true));
     }
 
     private static void ModifyTransitions(GenerationSettings gs, LogicManagerBuilder lmb)
     {
+        foreach (var transition in Transitions.GetTransitions())
+        {
+            if (!RandoInterop.RS.IsEnabled(transition.Value.LocationPool)) continue;
+            lmb.AddTransition(new(transition.Key, transition.Value.Logic));
+        }
+
         if (!RandoInterop.RS.EnableTransitionChoices) return;
 
         HashSet<string> costScenes = [];

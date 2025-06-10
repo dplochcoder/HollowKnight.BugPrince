@@ -219,7 +219,6 @@ public class MainMenuExtensions
     [MenuItem("BugPrince/All Scenes/Build")]
     static void BuildAllAssetBundles()
     {
-
         OptimizeAllScenes();
         BuildAllAssetBundles(BuildTarget.StandaloneWindows);
     }

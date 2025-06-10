@@ -54,19 +54,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Lib\MathExt.cs" />
-    <Compile Include="Assets\Scripts\Lib\UnityEditorShims.cs" />
-    <Compile Include="Assets\Scripts\Lib\SceneDataOptimizer.cs" />
-    <Compile Include="Assets\Scripts\Lib\TilemapCovering.cs" />
-    <Compile Include="Assets\Scripts\Lib\Hash.cs" />
-    <Compile Include="Assets\Scripts\TilemapCompiler.cs" />
-    <Compile Include="Assets\Scripts\TransitionPoint.cs" />
+    <Compile Include="Assets\Scripts\Lib\CollectionsExt.cs" />
     <Compile Include="Assets\Scripts\NonBouncer.cs" />
     <Compile Include="Assets\Scripts\HazardRespawnMarker.cs" />
-    <Compile Include="Assets\Scripts\HazardRespawnTrigger.cs" />
-    <Compile Include="Assets\Scripts\DamageHero.cs" />
+    <Compile Include="Assets\Scripts\Lib\UnityEditorShims.cs" />
+    <Compile Include="Assets\Scripts\Lib\SceneDataOptimizer.cs" />
     <Compile Include="Assets\Scripts\Lib\OptimizerFinder.cs" />
-    <Compile Include="Assets\Scripts\Lib\CollectionsExt.cs" />
+    <Compile Include="Assets\Scripts\Lib\TilemapCovering.cs" />
+    <Compile Include="Assets\Scripts\Lib\Hash.cs" />
+    <Compile Include="Assets\Scripts\DamageHero.cs" />
     <Compile Include="Assets\Scripts\Lib\GameObjectsExt.cs" />
+    <Compile Include="Assets\Scripts\HazardRespawnTrigger.cs" />
+    <Compile Include="Assets\Scripts\TransitionPoint.cs" />
+    <Compile Include="Assets\Scripts\TilemapCompiler.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Assemblies\BugPrince.dll" />

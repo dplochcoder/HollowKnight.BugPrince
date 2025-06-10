@@ -1,5 +1,6 @@
 ﻿using BugPrince.IC;
 using BugPrince.IC.Items;
+using BugPrince.Util;
 using ItemChanger;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
@@ -24,7 +25,8 @@ internal static class ItemTypeExtensions
         ItemType.Coin => CoinItem.ITEM_NAME,
         ItemType.DiceTotem => DiceTotemItem.ITEM_NAME,
         ItemType.Gem => GemItem.ITEM_NAME,
-        ItemType.PushPin => PushPinItem.ITEM_NAME
+        ItemType.PushPin => PushPinItem.ITEM_NAME,
+        _ => throw self.InvalidEnum()
     };
 }
 
@@ -42,7 +44,7 @@ internal record LocationData
     public int Count;
     public AbstractLocation? Location;
     public bool FullFlexible;
-    public string Logic = "";
+    public IString Logic = new BoxedString("");
 
     internal LocationDef LocationDef() => new()
     {

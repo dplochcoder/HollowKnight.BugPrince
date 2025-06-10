@@ -1,4 +1,5 @@
 {
+  "Gemstone_Boulder": "BugPrince_GemstoneCavern[left1] + (RIGHTDASH | RIGHTSUPERDASH | WINGS | $SHADESKIP)",
   "Paid_Millibelle": "Fungus3_35[right1] + Can_Replenish_Geo + Can_Visit_Lemm + (ANYCLAW | WINGS)",
   "Viewed_Torch_Puzzle": "Crossroads_ShamanTemple[left1] + (UPWALLBREAK | (((LEFTSUPERDASH + RIGHTCLAW) | (RIGHTSUPERDASH + LEFTCLAW)) + OBSCURESKIPS)) | $StartLocation[Ancestral Mound]"
 }

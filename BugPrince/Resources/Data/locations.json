@@ -16,7 +16,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "*Grub-Basin_Requires_Wings"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "*Grub-Basin_Requires_Wings"
+    }
   },
   "BugPrince-Bench_Secret-Queen's_Gardens": {
     "ItemType": "PushPin",
@@ -180,7 +183,10 @@
       ]
     },
     "FullFlexible": false,
-    "Logic": "Fungus3_50[right1] + LEFTFIREBALL + $CASTSPELL[1,before:AREASOUL,after:AREASOUL]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Fungus3_50[right1] + LEFTFIREBALL + $CASTSPELL[1,before:AREASOUL,after:AREASOUL]"
+    }
   },
   "BugPrince-Challenge-Crystallized_Mound": {
     "ItemType": "DiceTotem",
@@ -195,7 +201,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Mines_35[left1] + Broke_Crystallized_Mound_Quake_Floor + LEFTDASH + WINGS + ANYCLAW + (RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH)"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Mines_35[left1] + Broke_Crystallized_Mound_Quake_Floor + LEFTDASH + WINGS + ANYCLAW + (RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH)"
+    }
   },
   "BugPrince-Exterior_Belflies-Colosseum": {
     "ItemType": "DiceTotem",
@@ -214,7 +223,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Deepnest_East_09[left1]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Deepnest_East_09[left1]"
+    }
   },
   "BugPrince-Garbage_Bin-Crystal_Peak_Entrance": {
     "ItemType": "Gem",
@@ -233,7 +245,105 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Mines_02[top1]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Mines_02[top1]"
+    }
+  },
+  "BugPrince-GemstoneBoulder-Nail0": {
+    "ItemType": "Gem",
+    "LocationPool": "GemstoneCavern",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.GemstoneBoulderLocation, BugPrince",
+      "NailUpgradesThreshold": 0,
+      "BoulderSprite": {
+        "key": "Game.boulder_full"
+      },
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "BugPrince-GemstoneBoulder-Nail0",
+      "sceneName": "BugPrince_GemstoneCavern",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Gemstone_Boulder"
+    }
+  },
+  "BugPrince-GemstoneBoulder-Nail1": {
+    "ItemType": "Gem",
+    "LocationPool": "GemstoneCavern",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.GemstoneBoulderLocation, BugPrince",
+      "NailUpgradesThreshold": 1,
+      "BoulderSprite": {
+        "key": "Game.boulder_chip1"
+      },
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "BugPrince-GemstoneBoulder-Nail1",
+      "sceneName": "BugPrince_GemstoneCavern",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
+      "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>1",
+      "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo"
+    }
+  },
+  "BugPrince-GemstoneBoulder-Nail2": {
+    "ItemType": "Gem",
+    "LocationPool": "GemstoneCavern",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.GemstoneBoulderLocation, BugPrince",
+      "NailUpgradesThreshold": 2,
+      "BoulderSprite": {
+        "key": "Game.boulder_chip2"
+      },
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "BugPrince-GemstoneBoulder-Nail2",
+      "sceneName": "BugPrince_GemstoneCavern",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
+      "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>2",
+      "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + PALEORE>1"
+    }
+  },
+  "BugPrince-GemstoneBoulder-Nail3": {
+    "ItemType": "Gem",
+    "LocationPool": "GemstoneCavern",
+    "Count": 2,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.GemstoneBoulderLocation, BugPrince",
+      "NailUpgradesThreshold": 3,
+      "BoulderSprite": {
+        "key": "Game.boulder_chip3"
+      },
+      "containerType": null,
+      "nonreplaceable": true,
+      "name": "BugPrince-GemstoneBoulder-Nail3",
+      "sceneName": "BugPrince_GemstoneCavern",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
+      "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>3",
+      "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + Can_Visit_Lemm + PALEORE>3"
+    }
   },
   "BugPrince-Greenpath_Entrance_Nook": {
     "ItemType": "Coin",
@@ -252,7 +362,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Fungus1_01[right1]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Fungus1_01[right1]"
+    }
   },
   "BugPrince-Guarded_Relic-Resting_Grounds-Catacombs": {
     "ItemType": "DiceTotem",
@@ -271,9 +384,12 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "RestingGrounds_10[left1]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "RestingGrounds_10[left1]"
+    }
   },
-  "BugPrince-Hidden_Alcove_Left-Hallownest_Crown": {
+  "BugPrince-Hidden_Alcove-Hallownest_Crown": {
     "ItemType": "Gem",
     "LocationPool": "BasicLocations",
     "Count": 1,
@@ -284,32 +400,16 @@
       "elevation": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": "BugPrince-Hidden_Alcove_Left-Hallownest_Crown",
+      "name": "BugPrince-Hidden_Alcove-Hallownest_Crown",
       "sceneName": "Mines_34",
       "flingType": "Everywhere",
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
-  },
-  "BugPrince-Hidden_Alcove_Right-Hallownest_Crown": {
-    "ItemType": "Gem",
-    "LocationPool": "BasicLocations",
-    "Count": 1,
-    "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
-      "x": 158.5,
-      "y": 24.5,
-      "elevation": 0.0,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BugPrince-Hidden_Alcove_Right-Hallownest_Crown",
-      "sceneName": "Mines_34",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "FullFlexible": false,
-    "Logic": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
+    }
   },
   "BugPrince-Hidden_Perch-Lake_of_Unn": {
     "ItemType": "PushPin",
@@ -339,7 +439,10 @@
       ]
     },
     "FullFlexible": false,
-    "Logic": "Fungus1_26[right1] + FULLSUPERDASH + FULLCLAW + WINGS"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Fungus1_26[right1] + FULLSUPERDASH + FULLCLAW + WINGS"
+    }
   },
   "BugPrince-Iselda_(Requires_Maps)": {
     "ItemType": "PushPin",
@@ -366,7 +469,10 @@
       "tags": null
     },
     "FullFlexible": true,
-    "Logic": "Room_mapper[left1]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Room_mapper[left1]"
+    }
   },
   "BugPrince-Lurien's_Secret": {
     "ItemType": "Gem",
@@ -564,7 +670,10 @@
       ]
     },
     "FullFlexible": false,
-    "Logic": "Ruins2_Watcher_Room[bot1] + RIGHTFIREBALL + LEFTCLAW + RIGHTDASH + WINGS"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Ruins2_Watcher_Room[bot1] + RIGHTFIREBALL + LEFTCLAW + RIGHTDASH + WINGS"
+    }
   },
   "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
     "ItemType": "Coin",
@@ -604,8 +713,11 @@
       "flingType": "Everywhere",
       "tags": null
     },
-    "FullFlexible": true,
-    "Logic": "Paid_Millibelle"
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Paid_Millibelle"
+    }
   },
   "BugPrince-Millibelle-Pleasure_House": {
     "ItemType": "Coin",
@@ -620,8 +732,11 @@
       "flingType": "Everywhere",
       "tags": null
     },
-    "FullFlexible": true,
-    "Logic": "Ruins_Bathhouse[door1] + Paid_Millibelle"
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Ruins_Bathhouse[door1] + Paid_Millibelle"
+    }
   },
   "BugPrince-Outside_Window-Soul_Sanctum": {
     "ItemType": "PushPin",
@@ -706,7 +821,10 @@
       ]
     },
     "FullFlexible": false,
-    "Logic": "Ruins1_25[left3] + RIGHTFIREBALL + WINGS + LEFTCLAW"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Ruins1_25[left3] + RIGHTFIREBALL + WINGS + LEFTCLAW"
+    }
   },
   "BugPrince-Petra_Overlook-Queen's_Gardens": {
     "ItemType": "Coin",
@@ -725,7 +843,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Fungus3_04[right2]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Fungus3_04[right2]"
+    }
   },
   "BugPrince-Puzzle-Ancestral_Mound": {
     "ItemType": "DiceTotem",
@@ -740,7 +861,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Crossroads_ShamanTemple[left1] + Viewed_Torch_Puzzle + (UPSLASH | WINGS | LEFTCLAW + RIGHTSUPERDASH | LEFTSUPERDASH)"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Crossroads_ShamanTemple[left1] + Viewed_Torch_Puzzle + (UPSLASH | WINGS | LEFTCLAW + RIGHTSUPERDASH | LEFTSUPERDASH)"
+    }
   },
   "BugPrince-Puzzle-Overgrown_Mound": {
     "ItemType": "DiceTotem",
@@ -755,7 +879,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Room_Fungus_Shaman[left1] + (FULLDASH | WINGS)"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Room_Fungus_Shaman[left1] + (FULLDASH | WINGS)"
+    }
   },
   "BugPrince-Quirrel-Crystal_Peak": {
     "ItemType": "Gem",
@@ -774,7 +901,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Mines_13[right1]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Mines_13[right1]"
+    }
   },
   "BugPrince-Secret_Lamp-City_Fountain": {
     "ItemType": "Gem",
@@ -794,7 +924,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Ruins1_27[left1] + RIGHTCLAW + WINGS + LEFTSUPERDASH"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Ruins1_27[left1] + RIGHTCLAW + WINGS + LEFTSUPERDASH"
+    }
   },
   "BugPrince-Storerooms_Ledge-City": {
     "ItemType": "Coin",
@@ -813,7 +946,10 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Ruins1_17[top1]"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Ruins1_17[top1]"
+    }
   },
   "BugPrince-Upper_Alcove_Outside_Galien": {
     "ItemType": "DiceTotem",
@@ -837,7 +973,10 @@
       ]
     },
     "FullFlexible": false,
-    "Logic": "(LANTERN | DARKROOMS) + (Deepnest_35[top1] | Deepnest_35[left1] + ANYCLAW)"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "(LANTERN | DARKROOMS) + (Deepnest_35[top1] | Deepnest_35[left1] + ANYCLAW)"
+    }
   },
   "BugPrince-Upper_Crossroads_Platform": {
     "ItemType": "Gem",
@@ -856,6 +995,31 @@
       "tags": null
     },
     "FullFlexible": false,
-    "Logic": "Crossroads_39[left1] + (RIGHTSHARPSHADOW | RIGHTDASH + SPELLAIRSTALL + $CASTSPELL[2,before:ROOMSOUL,after:ROOMSOUL] | WINGS | RIGHTCLAW)"
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "Crossroads_39[left1] + (RIGHTSHARPSHADOW | RIGHTDASH + SPELLAIRSTALL + $CASTSPELL[2,before:ROOMSOUL,after:ROOMSOUL] | WINGS | RIGHTCLAW)"
+    }
+  },
+  "BugPrince-UpperGem-GemstoneCavern": {
+    "ItemType": "Gem",
+    "LocationPool": "GemstoneCavern",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 123.0,
+      "y": 42.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-UpperGem-GemstoneCavern",
+      "sceneName": "BugPrince_GemstoneCavern",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "BugPrince_GemstoneCavern[left1] + RIGHTSUPERDASH"
+    }
   }
 }

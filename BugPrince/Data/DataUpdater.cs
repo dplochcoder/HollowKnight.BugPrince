@@ -1,9 +1,6 @@
 ﻿using ItemChanger;
 using ItemChanger.Locations;
-using System.Collections.Generic;
-using System;
 using System.IO;
-using System.Linq;
 using JsonUtil = PurenailCore.SystemUtil.JsonUtil<BugPrince.BugPrinceMod>;
 
 namespace BugPrince.Data;
@@ -19,6 +16,8 @@ public static class DataUpdater
         var locations = Locations.GetLocations();
         foreach (var e in locations) UpdateNames(e.Key, e.Value.Location!);
         UpdateJson(Locations.GetLocations(), root, "locations");
+
+        UpdateJson(Transitions.GetTransitions(), root, "transitions");
 
         UpdateJson(Waypoints.GetWaypoints(), root, "waypoints");
 

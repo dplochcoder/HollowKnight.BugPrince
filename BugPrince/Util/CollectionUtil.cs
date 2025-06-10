@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BugPrince.Util;
 
@@ -8,4 +9,6 @@ internal static class CollectionUtil
     {
         foreach (var item in range) self.Add(item);
     }
+
+    internal static ArgumentException InvalidEnum<E>(this E self) where E : Enum => new($"Unsupported enum: {self}");
 }

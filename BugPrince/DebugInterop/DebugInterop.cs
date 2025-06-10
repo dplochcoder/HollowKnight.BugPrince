@@ -48,6 +48,23 @@ public static class DebugInterop
         mod.PushPins++;
     }
 
+    [BindableMethod(name = "Give Nail Upgrade", category = "Bug Prince")]
+    public static void GiveNailUpgrade()
+    {
+        var pd = PlayerData.instance;
+        var upgrades = pd.GetInt(nameof(pd.nailSmithUpgrades));
+        if (upgrades >= 4)
+        {
+            Console.AddLine("Already at maximum nail upgrades");
+            return;
+        }
+
+        pd.SetBool(nameof(pd.honedNail), true);
+        pd.IntAdd(nameof(pd.nailDamage), 4);
+        PlayMakerFSM.BroadcastEvent("UPDATE NAIL DAMAGE");
+        pd.IncrementInt(nameof(pd.nailSmithUpgrades));
+    }
+
 #if DEBUG
     [BindableMethod(name = "Take Screenshot", category = "Bug Prince")]
     public static void TakeScreenshot()
