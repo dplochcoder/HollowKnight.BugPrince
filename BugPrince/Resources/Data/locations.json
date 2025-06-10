@@ -212,7 +212,7 @@
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
-      "x": 84.0,
+      "x": 86.0,
       "y": 13.0,
       "elevation": 0.0,
       "managed": false,
@@ -269,7 +269,7 @@
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
-      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + Can_Visit_Lemm + (LEFTCLAW | WINGS + (RIGHTCLAW | LEFTSUPERDASH | $SHADESHIP) | RIGHTCLAW + (RIGHTDASH | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE) | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL]))"
+      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + Can_Visit_Lemm + (LEFTCLAW | WINGS + (RIGHTCLAW | LEFTSUPERDASH | $SHADESKIP) | RIGHTCLAW + (RIGHTDASH | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE) | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL]))"
     }
   },
   "BugPrince-Chest_4-Vault": {

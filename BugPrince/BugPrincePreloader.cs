@@ -59,6 +59,12 @@ internal class BugPrincePreloader : Preloader
 
     public AudioClip TinkEffectClip => Goam!.GetComponent<TinkEffect>().blockEffect.GetComponent<AudioSource>().clip;
 
+    [Preload(SceneNames.Mines_33, "Toll Gate")]
+    public GameObject? TollGate { get; private set; }
+
+    [Preload(SceneNames.Mines_33, "Toll Gate Machine")]
+    public GameObject? TollGateMachine { get; private set; }
+
     [Preload(SceneNames.Crossroads_ShamanTemple, "_Props/Torch Breakable 4")]
     public GameObject? TorchProp { get; private set; }
 }
