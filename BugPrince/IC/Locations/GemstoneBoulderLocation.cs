@@ -1,5 +1,6 @@
 ﻿using ItemChanger;
 using ItemChanger.Locations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -25,6 +26,9 @@ internal class GemstoneBoulderPlacement : AbstractPlacement
     internal static IEnumerable<GemstoneBoulderPlacement> ActivePlacements() => placements.Values;
 
     public GemstoneBoulderLocation Location;
+
+    [JsonConstructor]
+    private GemstoneBoulderPlacement() : base("") { }
 
     public GemstoneBoulderPlacement(GemstoneBoulderLocation loc) : base(loc.name) => Location = loc;
 
