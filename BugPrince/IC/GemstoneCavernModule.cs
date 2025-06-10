@@ -1,5 +1,6 @@
 ﻿using BugPrince.Util;
 using GlobalEnums;
+using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
 using Modding;
@@ -48,6 +49,9 @@ internal class GemstoneCavernModule : ItemChanger.Modules.Module
         var ceiling = Object.Instantiate(template);
         ceiling.transform.position = new(74.13f, 152.43f, 5.94f);
         ceiling.transform.rotation = Quaternion.Euler(0, 0, 179.18f);
+
+        // Don't bulldoze the player.
+        scene.FindGameObject("Crystal Crawler (1)").LocateMyFSM("Crawler").GetState("Walk").GetFirstActionOfType<WalkLeftRight>().startLeft = true;
 
         GameObject tilemapEditorObj = new("TilemapEditor");
         var tilemapEditor = tilemapEditorObj.AddComponent<TilemapEditor>();

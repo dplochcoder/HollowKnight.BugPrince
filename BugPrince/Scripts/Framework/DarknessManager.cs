@@ -8,14 +8,10 @@ internal class DarknessManager : MonoBehaviour
 {
     [ShimField] public int DarknessLevel;
 
-    private int sceneDarkness;
+    private int? sceneDarkness;
     private PlayMakerFSM? vignette;
 
-    private void Awake()
-    {
-        sceneDarkness = GameObject.FindGameObjectWithTag("SceneManager").GetComponent<SceneManager>().GetDarknessLevel();
-        vignette = GameObject.FindGameObjectWithTag("Vignette").LocateMyFSM("Darkness Control");
-    }
+    private void Awake() => vignette = GameObject.FindGameObjectWithTag("Vignette").LocateMyFSM("Darkness Control");
 
     private int triggerCount;
 
@@ -32,8 +28,9 @@ internal class DarknessManager : MonoBehaviour
     {
         if (--triggerCount > 0) return;
 
-        HeroController.instance.SetDarkness(sceneDarkness);
-        vignette!.FsmVariables.GetFsmInt("Darkness Level").Value = sceneDarkness;
+        sceneDarkness ??= GameObject.FindGameObjectWithTag("SceneManager").GetComponent<SceneManager>().GetDarknessLevel();
+        HeroController.instance.SetDarkness(sceneDarkness.Value);
+        vignette!.FsmVariables.GetFsmInt("Darkness Level").Value = sceneDarkness.Value;
         vignette!.SendEvent("SCENE RESET");
     }
 }

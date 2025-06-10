@@ -97,15 +97,16 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
     private void UpdateContainer()
     {
         Sprite!.sprite = currentPlacement?.Location?.BoulderSprite?.Value ?? emptySprite.Value;
-        if (currentPlacement == null)
+        if (currentPlacement != null)
         {
-            shakeTimer = 0;
-            invulnTimer = 0;
-            hp = -1;
+            hp = (5 + currentPlacement.Location.NailUpgradesThreshold * 4) * 10;
             return;
         }
 
-        hp = (5 + currentPlacement.Location.NailUpgradesThreshold * 4) * 10;
+        shakeTimer = 0;
+        invulnTimer = 0;
+        hp = -1;
+        gameObject.AddComponent<NonBouncer>();
     }
 
     private float invulnTimer;
