@@ -12,6 +12,19 @@
     },
     "Logic": "BugPrince_GemstoneCavern[left1]"
   },
+  "BugPrince_Vault[left1]": {
+    "LocationPool": "TheVault",
+    "Def": {
+      "SceneName": "BugPrince_Vault",
+      "DoorName": null,
+      "VanillaTarget": "Ruins2_04[door_BugPrince_Vault]",
+      "Direction": "Left",
+      "IsTitledAreaTransition": true,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BugPrince_Vault[left1]"
+  },
   "Mines_20[right_gemstonecavern]": {
     "LocationPool": "GemstoneCavern",
     "Def": {
@@ -24,5 +37,18 @@
       "Sides": "Both"
     },
     "Logic": "Mines_20[right_gemstonecavern] | Mines_20[left1]"
+  },
+  "Ruins2_04[door_BugPrince_Vault]": {
+    "LocationPool": "TheVault",
+    "Def": {
+      "SceneName": "Ruins2_04",
+      "DoorName": "door_BugPrince_Vault",
+      "VanillaTarget": "BugPrince_Vault[left1]",
+      "Direction": "Door",
+      "IsTitledAreaTransition": true,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "Ruins2_04[right1] | Ruins2_04[right2] + PRECISEMOVEMENT"
   }
 }

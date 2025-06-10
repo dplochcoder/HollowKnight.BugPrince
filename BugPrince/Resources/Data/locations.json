@@ -206,6 +206,94 @@
       "Value": "Mines_35[left1] + Broke_Crystallized_Mound_Quake_Floor + LEFTDASH + WINGS + ANYCLAW + (RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH)"
     }
   },
+  "BugPrince-Chest_1-Vault": {
+    "ItemType": "Coin",
+    "LocationPool": "TheVault",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "x": 84.0,
+      "y": 13.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Chest_1-Vault",
+      "sceneName": "BugPrince_Vault",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + (RIGHTDASH | PRECISEMOVEMENT + (SWIM | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL] | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE)))"
+    }
+  },
+  "BugPrince-Chest_2-Vault": {
+    "ItemType": "Coin",
+    "LocationPool": "TheVault",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "x": 20.0,
+      "y": 18.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Chest_2-Vault",
+      "sceneName": "BugPrince_Vault",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + LEFTSUPERDASH + (WINGS | $SHADESKIP | LEFTCLAW + (RIGHTDASH | SPELLAIRSTALL + $CASTSPELL[3,before:AREASOUL]) | RIGHTCLAW + (RIGHTDASH | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE) | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL]))"
+    }
+  },
+  "BugPrince-Chest_3-Vault": {
+    "ItemType": "Coin",
+    "LocationPool": "TheVault",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "x": 18.0,
+      "y": 39.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Chest_3-Vault",
+      "sceneName": "BugPrince_Vault",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + Can_Visit_Lemm + (LEFTCLAW | WINGS + (RIGHTCLAW | LEFTSUPERDASH | $SHADESHIP) | RIGHTCLAW + (RIGHTDASH | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE) | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL]))"
+    }
+  },
+  "BugPrince-Chest_4-Vault": {
+    "ItemType": "Coin",
+    "LocationPool": "TheVault",
+    "Count": 1,
+    "Location": {
+      "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "x": 87.0,
+      "y": 48.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BugPrince-Chest_4-Vault",
+      "sceneName": "BugPrince_Vault",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + Can_Visit_Lemm + WINGS"
+    }
+  },
   "BugPrince-Exterior_Belflies-Colosseum": {
     "ItemType": "DiceTotem",
     "LocationPool": "BasicLocations",
@@ -904,6 +992,28 @@
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Mines_13[right1]"
+    }
+  },
+  "BugPrince-Rafters-Vault": {
+    "ItemType": "Coin",
+    "LocationPool": "TheVault",
+    "Count": 1,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 56.0,
+      "y": 75.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": true,
+      "name": "BugPrince-Rafters-Vault",
+      "sceneName": "BugPrince_Vault",
+      "flingType": "DirectDeposit",
+      "tags": null
+    },
+    "FullFlexible": false,
+    "Logic": {
+      "$type": "ItemChanger.BoxedString, ItemChanger",
+      "Value": "BugPrince_Vault[left1] + WINGS + ANYCLAW"
     }
   },
   "BugPrince-Secret_Lamp-City_Fountain": {

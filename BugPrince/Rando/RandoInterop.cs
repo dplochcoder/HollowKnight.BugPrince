@@ -84,6 +84,7 @@ internal static class RandoInterop
             if (!rc.gs.PoolSettings.Maps) MapShopModule.PlaceVanillaMaps();
         }
         if (RS.GemstoneCavern) ItemChangerMod.Modules.Add<GemstoneCavernModule>();
+        if (RS.TheVault) ItemChangerMod.Modules.Add<VaultModule>();
 
         Locations.GetLocations().Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, RS));
     }
