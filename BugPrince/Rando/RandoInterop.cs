@@ -62,7 +62,11 @@ internal static class RandoInterop
         Finder.DefineCustomItem(new PushPinItem());
     }
 
-    private static void DefineCustomLocations() => Locations.GetLocations().Values.Select(l => l.Location!).ForEach(Finder.DefineCustomLocation);
+    private static void DefineCustomLocations() => Locations.GetLocations().Values.ForEach(l =>
+    {
+        l.AddInteropPinData();
+        Finder.DefineCustomLocation(l.Location!);
+    });
 
     private static void OnExportCompleted(RandoController rc)
     {

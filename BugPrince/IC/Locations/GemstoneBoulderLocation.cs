@@ -3,6 +3,7 @@ using ItemChanger.Locations;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BugPrince.IC.Locations;
 
@@ -43,4 +44,6 @@ internal class GemstoneBoulderPlacement : AbstractPlacement
         placements.Remove(Location.NailUpgradesThreshold);
         Location.Unload();
     }
+
+    public override IEnumerable<Tag> GetPlacementAndLocationTags() => base.GetPlacementAndLocationTags().Concat(Location.tags ?? []);
 }

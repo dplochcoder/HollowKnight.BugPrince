@@ -1,4 +1,5 @@
-﻿using BugPrince.Util;
+﻿using BugPrince.Data;
+using BugPrince.Util;
 using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Locations;
@@ -10,7 +11,7 @@ using UnityEngine.SceneManagement;
 
 namespace BugPrince.IC.Locations;
 
-internal class CityLampLocation : ExistingContainerLocation
+internal class CityLampLocation : ExistingContainerLocation, IPinLocationProvider
 {
     public float x;
     public float y;
@@ -55,4 +56,6 @@ internal class CityLampLocation : ExistingContainerLocation
     {
         foreach (var item in Placement.Items) item.GiveOrFling(Placement, src, direction);
     }
+
+    public PinLocation ProvidePinLocation() => new(sceneName!, x, y);
 }

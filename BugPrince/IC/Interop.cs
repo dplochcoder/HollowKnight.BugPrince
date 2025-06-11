@@ -21,6 +21,10 @@ internal static class Interop
         interop.Properties["ModSource"] = nameof(BugPrinceMod);
         interop.Properties["PinSpriteKey"] = pool;
 
-        if (pinLocation != null) interop.Properties["WorldMapLocations"] = pinLocation.AsTupleList();
+        if (pinLocation != null)
+        {
+            if (pinLocation.IsWorld) interop.Properties["WorldMapLocation"] = pinLocation.AsTuple();
+            else interop.Properties["MapLocations"] = pinLocation.AsTupleArray();
+        }
     }
 }

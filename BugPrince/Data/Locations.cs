@@ -3,7 +3,7 @@ using BugPrince.IC.Items;
 using BugPrince.Util;
 using ItemChanger;
 using ItemChanger.Locations;
-using Newtonsoft.Json;
+using ItemChanger.Tags;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
@@ -50,6 +50,7 @@ internal enum LocationState
 
 internal record PinLocation
 {
+    public bool IsWorld = true;
     public string SceneName = "";
     public float X;
     public float Y;
@@ -61,7 +62,14 @@ internal record PinLocation
         this.Y = Y;
     }
 
-    public (string, float, float)[] AsTupleList() => [(SceneName, X, Y)];
+
+    public (string, float, float) AsTuple() => (SceneName, X, Y);
+    public (string, float, float)[] AsTupleArray() => [AsTuple()];
+}
+
+internal interface IPinLocationProvider
+{
+    PinLocation ProvidePinLocation();
 }
 
 internal record LocationData
@@ -86,15 +94,18 @@ internal record LocationData
 
     private static PinLocation? DerivePinLocation(AbstractLocation location)
     {
+        if (location is IPinLocationProvider provider) return provider.ProvidePinLocation();
         if (location is CoordinateLocation loc) return new(loc.sceneName!, loc.x, loc.y);
         if (location is DualLocation dual) return DerivePinLocation(dual.falseLocation) ?? DerivePinLocation(dual.trueLocation);
         return null;
     }
 
+    internal void AddInteropPinData() => Location!.AddInteropPinData(ItemType.PoolName(), PinLocationOverride ?? DerivePinLocation(Location!));
+
     internal void Update(string name)
     {
         UpdateNames(name, Location!);
-        Location!.AddInteropPinData(ItemType.PoolName(), PinLocationOverride ?? DerivePinLocation(Location!));
+        Location!.RemoveTags<InteropTag>();
     }
 
     internal LocationDef LocationDef() => new()
