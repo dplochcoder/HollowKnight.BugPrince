@@ -1,16 +1,16 @@
+Benchwarp
+Breakable Wall Randomizer
+DebugMod
+ItemChanger
+MenuChanger
+MoreLocations
 PurenailCore
+RandoMapCore
+RandoMapMod
 RandomizerCore
 Randomizer 4
-ItemChanger
-RandoSettingsManager
-MenuChanger
 RandoPlus
-MoreLocations
+RandoSettingsManager
 Randomizable Levers
-TheRealJournalRando
-Breakable Wall Randomizer
 SFCore
-DebugMod
-Benchwarp
-RandoMapMod
-RandoMapCore
+TheRealJournalRando
