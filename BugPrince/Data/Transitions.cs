@@ -1,4 +1,5 @@
-﻿using RandomizerMod.RandomizerData;
+﻿using RandomizerCore.Logic;
+using RandomizerMod.RandomizerData;
 using System.Collections.Generic;
 
 namespace BugPrince.Data;
@@ -8,6 +9,7 @@ internal record TransitionData
     public LocationPool LocationPool;
     public TransitionDef? Def;
     public string Logic = "";
+    public List<RawLogicDef> LogicEdits = [];
 }
 
 internal static class Transitions
