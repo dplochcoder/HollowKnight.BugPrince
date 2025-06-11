@@ -82,6 +82,12 @@ Items are embedded at different depths within the boulder, each of which require
 
 TODO: Provide a mechanism to mine the boulder with a loaner nail, to avoid permanent nail upgrades.
 
+#### Nail Upgrade Logic
+
+Logic for nail upgrades is compatible both with base rando and with RandoPlus's randomized nail upgrades. In both cases, Nail 2 + Nail 3 are never in logic until you have some form of vertical.
+
+There is a built-in tolerance of 1 randomized nail upgrade (for RandoPlus), or 1 Pale Ore for base rando. That is, Nail 3 is not required until you have logical access to all 4 randomized nail upgrades, or 4 pale ore in base rando.
+
 ## Edge Cases
 
 This mod introduces a lot of complexity to Hollow Knight randomizer and in some sense strains its capabilities. Some issues and shortcomings may be encountered.
