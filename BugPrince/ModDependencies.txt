@@ -12,3 +12,5 @@ Breakable Wall Randomizer
 SFCore
 DebugMod
 Benchwarp
+RandoMapMod
+RandoMapCore

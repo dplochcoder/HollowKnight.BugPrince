@@ -271,6 +271,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
                 transitionLookup[source.ToString()] = newTarget.ToString();
             }
         }
+
+        RMMInterop.RMMInterop.MaybeUpdateRandoMapMod();
     }
 
     private void SwapTransitions(Transition src1, Transition src2)
