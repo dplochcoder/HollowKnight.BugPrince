@@ -8,7 +8,6 @@ using PurenailCore.SystemUtil;
 using RandomizerMod.RC;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace BugPrince.Rando;
 

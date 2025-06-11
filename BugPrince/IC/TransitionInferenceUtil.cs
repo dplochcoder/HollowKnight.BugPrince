@@ -25,7 +25,6 @@ internal static class TransitionInferenceUtil
 
         string sceneName = gameManager.sceneName;
         string? gateName = null;
-        Transition origTarget = new(info.SceneName, info.EntryGateName);
         target = new(info.SceneName, info.EntryGateName);
 
         TransitionPoint tp = Object.FindObjectsOfType<TransitionPoint>().FirstOrDefault(p => p.entryPoint == info.EntryGateName && p.targetScene == info.SceneName);

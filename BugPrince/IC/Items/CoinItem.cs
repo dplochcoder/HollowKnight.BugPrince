@@ -1,5 +1,4 @@
 ﻿using ItemChanger;
-using ItemChanger.Tags;
 using ItemChanger.UIDefs;
 using RandomizerCore.StringItems;
 using RandomizerMod.RandomizerData;

@@ -1,6 +1,4 @@
-﻿using ItemChanger;
-using ItemChanger.Locations;
-using System.IO;
+﻿using System.IO;
 using JsonUtil = PurenailCore.SystemUtil.JsonUtil<BugPrince.BugPrinceMod>;
 
 namespace BugPrince.Data;

@@ -3,7 +3,7 @@
     "LocationPool": "GemstoneCavern",
     "Def": {
       "SceneName": "BugPrince_GemstoneCavern",
-      "DoorName": null,
+      "DoorName": "left1",
       "VanillaTarget": "Mines_20[right_gemstonecavern]",
       "Direction": "Left",
       "IsTitledAreaTransition": true,
@@ -16,7 +16,7 @@
     "LocationPool": "TheVault",
     "Def": {
       "SceneName": "BugPrince_Vault",
-      "DoorName": null,
+      "DoorName": "left1",
       "VanillaTarget": "Ruins2_04[door_BugPrince_Vault]",
       "Direction": "Left",
       "IsTitledAreaTransition": true,
@@ -29,7 +29,7 @@
     "LocationPool": "GemstoneCavern",
     "Def": {
       "SceneName": "Mines_20",
-      "DoorName": null,
+      "DoorName": "right_gemstonecavern",
       "VanillaTarget": "BugPrince_GemstoneCavern[left1]",
       "Direction": "Right",
       "IsTitledAreaTransition": true,

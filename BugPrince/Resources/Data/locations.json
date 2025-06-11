@@ -345,7 +345,8 @@
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Deepnest_East_09[left1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Garbage_Bin-Crystal_Peak_Entrance": {
     "ItemType": "Gem",
