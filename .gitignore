@@ -16,3 +16,5 @@
 /UnityScriptShims/obj
 /LocalOverrides.targets
 /BugPrince/Unity/Assets/AssetBundles
+/DataUpdater/bin/Release/net9.0
+/UnityScriptShims/bin/Release/net472
