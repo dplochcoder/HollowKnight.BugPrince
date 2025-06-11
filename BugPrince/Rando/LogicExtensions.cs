@@ -1,12 +1,13 @@
 ﻿using BugPrince.Data;
 using BugPrince.IC.Items;
+using BugPrince.Util;
 using RandomizerCore.Logic;
 
 namespace BugPrince.Rando;
 
 internal static class LogicExtensions
 {
-    private static string GetTermString(this CostType self) => self switch { CostType.Coins => CoinItem.TERM_NAME, CostType.Gems => GemItem.TERM_NAME };
+    private static string GetTermString(this CostType self) => self switch { CostType.Coins => CoinItem.TERM_NAME, CostType.Gems => GemItem.TERM_NAME, _ => throw self.InvalidEnum() };
 
     internal static void AddCostTypeTerms(this LogicManagerBuilder self)
     {

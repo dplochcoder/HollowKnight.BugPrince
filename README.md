@@ -80,7 +80,7 @@ A new room located in upper-right Crystal Peaks, accessible through a breakable 
 
 Items are embedded at different depths within the boulder, each of which require a minimum nail quality to mine. The final tier requires Nail 3, or all but the last nail upgrade. Damage-increasing charms like Fragile Strength and Fury of the Fallen increase the speed at which the boulder can be mined, but do not grant access to more items.
 
-If one does not wish to dull their own nail in the process of mining, a loaner can be obtained from the cavern attendant, for a fair market deposit. The loaner is automatically reposessed upon leaving the cavern.
+TODO: Provide a mechanism to mine the boulder with a loaner nail, to avoid permanent nail upgrades.
 
 ## Edge Cases
 
@@ -91,10 +91,6 @@ This mod introduces a lot of complexity to Hollow Knight randomizer and in some 
 ItemSync is not currently supported. It is theoretically possible to implement, but it is complicated and challenging. Some mechanism will need to prevent two or more players from making transition decisions simultaneously, to avoid conflicts and corruption.
 
 MultiWorld will likely never be supported due to its architecture. Because BugPrince does not, and cannot know the logical structure of _other_ players' worlds, it must ensure all remote items never move into higher progression spheres, which severely limits options.
-
-### Rando Map Mod
-
-RandoMapMod currently does not work well with Bug Prince, for unknown reasons. Helper log and tracker log are made aware of transition choices at every event, so you can still use those to track logical progress and unchecked transitions.
 
 ### Empty Selections
 

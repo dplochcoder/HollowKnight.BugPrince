@@ -130,7 +130,7 @@ internal class RoomSelectionUI : MonoBehaviour
     {
         for (int i = 0; i < choiceInfos.Count; i++)
         {
-            var choice = SceneChoice.Create(gameObject, choiceInfos[i], layout![i].Pos);
+            var choice = SceneChoice.Create(module!, gameObject, choiceInfos[i], layout![i].Pos);
             choiceObjects.Add(choice);
             if (i + 1 < choiceInfos.Count) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
         }
@@ -191,6 +191,7 @@ internal class RoomSelectionUI : MonoBehaviour
         {
             CostType.Coins => coinSlot,
             CostType.Gems => gemSlot,
+            _ => throw info.Cost.Value.Item1.InvalidEnum()
         };
     }
 

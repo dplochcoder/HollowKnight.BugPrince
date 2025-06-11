@@ -1,5 +1,6 @@
 ﻿using ItemChanger;
 using ItemChanger.Locations;
+using ItemChanger.Placements;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

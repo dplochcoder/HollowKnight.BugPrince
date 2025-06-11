@@ -70,6 +70,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
     private static TransitionSettings TransitionSettings() => RandomizerMod.RandomizerMod.RS.GenerationSettings.TransitionSettings;
 
+    internal bool MatchingTransitions() => TransitionSettings().TransitionMatching != RandomizerMod.Settings.TransitionSettings.TransitionMatchingSetting.NonmatchingDirections;
+
     private ICostGroupProgressionProvider? cachedProvider;
     internal ICostGroupProgressionProvider AsProgressionProvider() => cachedProvider ??= new ModuleCostGroupProgressionProvider(this);
 

@@ -7,6 +7,7 @@ internal static class UISortingOrder
 {
     internal const int Background = 1;
     internal const int SceneText = 2;
+    internal const int SceneParticles = 2;
     internal const int ScenePicture = 3;
     internal const int SceneFrame = 4;
     internal const int CostIcons = 4;

@@ -21,9 +21,9 @@ internal static class RMMInterop
 // Rando map mod assumes that randomized transition placements only change on entering the game.
 internal static class RMMInteropImpl
 {
-    private static Type moduleType = Type.GetType("RandoMapMod.RmmDataModule, RandoMapMod");
-    private static FieldInfo randomizedTransitionsField = moduleType.GetField("_randomizedTransitions", BindingFlags.NonPublic | BindingFlags.Static);
-    private static FieldInfo randomizedTransitionPlacementsField = moduleType.GetField("_randomizedTransitionPlacements", BindingFlags.NonPublic | BindingFlags.Static);
+    private static readonly Type moduleType = Type.GetType("RandoMapMod.RmmDataModule, RandoMapMod");
+    private static readonly FieldInfo randomizedTransitionsField = moduleType.GetField("_randomizedTransitions", BindingFlags.NonPublic | BindingFlags.Static);
+    private static readonly FieldInfo randomizedTransitionPlacementsField = moduleType.GetField("_randomizedTransitionPlacements", BindingFlags.NonPublic | BindingFlags.Static);
 
     private static RmcTransitionDef ConvertTransitionDef(TransitionDef def) => new()
     {
@@ -34,9 +34,8 @@ internal static class RMMInteropImpl
 
     internal static void UpdateRmmDataModule()
     {
-        var randomizedTransitions = randomizedTransitionsField.GetValue(null) as Dictionary<string, RmcTransitionDef>;
-        var randomizedTransitionPlacements = randomizedTransitionPlacementsField.GetValue(null) as Dictionary<RmcTransitionDef, RmcTransitionDef>;
-        if (randomizedTransitions == null || randomizedTransitionPlacements == null) return;
+        if (randomizedTransitionsField.GetValue(null) is not Dictionary<string, RmcTransitionDef> randomizedTransitions) return;
+        if (randomizedTransitionPlacementsField.GetValue(null) is not Dictionary<RmcTransitionDef, RmcTransitionDef> randomizedTransitionPlacements) return;
 
         randomizedTransitions.Clear();
         randomizedTransitionPlacements.Clear();

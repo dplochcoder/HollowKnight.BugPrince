@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BugPrince.Util;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BugPrince.UI;
@@ -24,7 +25,7 @@ internal class RoomSelectionLayout
 
     private static float XPos(int i, int size) => (i - (size - 1f) / 2) * UIConstants.SCENE_X_SPACE;
 
-    private static float YPos(RowType rowType) => UIConstants.Y_MAIN + rowType switch { RowType.Mid => 0, RowType.Top => UIConstants.SCENE_Y_SPACE / 2, RowType.Bottom => -UIConstants.SCENE_Y_SPACE / 2, _ => throw new System.ArgumentException($"Invalid rowType: {rowType}") };
+    private static float YPos(RowType rowType) => UIConstants.Y_MAIN + rowType switch { RowType.Mid => 0, RowType.Top => UIConstants.SCENE_Y_SPACE / 2, RowType.Bottom => -UIConstants.SCENE_Y_SPACE / 2, _ => throw rowType.InvalidEnum() };
 
     private readonly List<RoomSelectionLayoutPosition> positions = [];
 

@@ -33,10 +33,8 @@ internal static class ItemTypeExtensions
 
     internal static string PoolName(this ItemType selF) => selF switch
     {
-        ItemType.Coin => "Keys",
-        ItemType.Gem => "Keys",
-        ItemType.DiceTotem => "Relics",
-        ItemType.PushPin => "Relics",
+        ItemType.Coin or ItemType.Gem => "Keys",
+        ItemType.DiceTotem or ItemType.PushPin => "Relics",
         _ => throw selF.InvalidEnum()
     };
 }
