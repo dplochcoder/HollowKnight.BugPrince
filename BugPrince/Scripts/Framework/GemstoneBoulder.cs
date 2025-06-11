@@ -129,7 +129,7 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
                 shakeTimer = 0;
                 Sprite!.transform.localPosition = origPos;
             }
-            else Sprite!.transform.localPosition = origPos + new Vector3(UnityEngine.Random.Range(-shakeRange, shakeRange), UnityEngine.Random.Range(-shakeRange, shakeRange));
+            else Sprite!.transform.localPosition = origPos + new Vector3(Random.Range(-shakeRange, shakeRange), Random.Range(-shakeRange, shakeRange));
         }
     }
 }

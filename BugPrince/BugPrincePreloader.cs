@@ -34,6 +34,9 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.White_Palace_18, "_Managers/PlayMaker Unity 2D")]
     public GameObject? PlayMaker { get; private set; }
 
+    [Preload(SceneNames.Ruins2_04, "lake_water_v02/ruin_water_top_v02_002 (12)")]
+    public GameObject? RuinsWater { get; private set; }
+
     [Preload(SceneNames.Ruins2_01_b, "Quake Floor Glass")]
     public GameObject? QuakeFloorGlass { get; private set; }
 
@@ -46,14 +49,17 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.Deepnest_44, "Secret Sound Region")]
     public GameObject? SecretSoundRegion { get; private set; }
 
-    [Preload("Deepnest_East_08", "Hollow_Shade Marker")]
+    [Preload(SceneNames.Deepnest_East_08, "Hollow_Shade Marker")]
     public GameObject? ShadeMarker { get; private set; }
 
     [Preload(SceneNames.Crossroads_ShamanTemple, "_Props/Shaman Meeting")]
     public GameObject? ShamanMeeting { get; private set; }
 
-    [Preload("Tutorial_01", "_Scenery/plat_float_07")]
+    [Preload(SceneNames.Tutorial_01, "_Scenery/plat_float_07")]
     public GameObject? SmallPlatform { get; private set; }
+
+    [Preload(SceneNames.Ruins2_04, "Surface Water Region")]
+    public GameObject? SurfaceWaterRegion { get; private set; }
     
     public PhysicsMaterial2D TerrainMaterial => SmallPlatform!.GetComponent<Collider2D>().sharedMaterial;
 

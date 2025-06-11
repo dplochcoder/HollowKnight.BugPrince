@@ -24,3 +24,9 @@ internal class CrystalGlobe : BasicPreloader
 {
     protected override GameObject GetTemplate(BugPrincePreloader preloader) => preloader.CrystalGlobe!;
 }
+
+[Shim]
+internal class RuinsWater : BasicPreloader
+{
+    protected override GameObject GetTemplate(BugPrincePreloader preloader) => preloader.RuinsWater!;
+}

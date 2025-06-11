@@ -212,6 +212,7 @@
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "TollGateProxyPath": "",
       "x": 86.0,
       "y": 13.0,
       "elevation": 0.0,
@@ -225,7 +226,7 @@
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
-      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + (RIGHTDASH | PRECISEMOVEMENT + (SWIM | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL] | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE)))"
+      "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + (RIGHTDASH | PRECISEMOVEMENT + (SWIM | RIGHTSUPERDASH | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL] | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE)))"
     }
   },
   "BugPrince-Chest_2-Vault": {
@@ -234,6 +235,7 @@
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "TollGateProxyPath": "",
       "x": 20.0,
       "y": 18.0,
       "elevation": 0.0,
@@ -256,6 +258,7 @@
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "TollGateProxyPath": "",
       "x": 18.0,
       "y": 39.0,
       "elevation": 0.0,
@@ -278,6 +281,7 @@
     "Count": 1,
     "Location": {
       "$type": "BugPrince.IC.Locations.VaultChestLocation, BugPrince",
+      "TollGateProxyPath": "",
       "x": 87.0,
       "y": 48.0,
       "elevation": 0.0,
