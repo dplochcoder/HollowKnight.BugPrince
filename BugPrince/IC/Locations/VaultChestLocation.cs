@@ -29,7 +29,9 @@ internal class VaultChestLocation : CoordinateLocation
         fsm.GetState("Range?").AddFirstAction(new Lambda(() =>
         {
             var tollGate = GameObject.Find(TollGateProxyPath);
-            if (tollGate?.GetComponent<TollGateProxy>()?.IsOpened ?? false) fsm.SendEvent("FINISHED");
+
+            if (tollGate?.GetComponent<TollGateProxy>()?.IsOpened ?? true) return;
+            else fsm.SendEvent("FINISHED");
         }));
     }
 }
