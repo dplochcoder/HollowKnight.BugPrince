@@ -1,14 +1,12 @@
 ﻿using ItemChanger;
-using ItemChanger.Locations;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BugPrince.IC.Locations;
 
-internal class GemstoneBoulderLocation : ExistingContainerLocation
+internal class GemstoneBoulderLocation : AbstractLocation
 {
     public int NailUpgradesThreshold;
     public EmbeddedSprite? BoulderSprite;
@@ -17,34 +15,38 @@ internal class GemstoneBoulderLocation : ExistingContainerLocation
 
     protected override void OnUnload() { }
 
-    public override AbstractPlacement Wrap() => new GemstoneBoulderPlacement(this);
-
-    public override ContainerLocation AsContainerLocation() => throw new InvalidOperationException("GemstoneBoulder cannot be replaced");
+    public override AbstractPlacement Wrap()
+    {
+        GemstoneBoulderPlacement p = new(name);
+        p.Location = this;
+        return p;
+    }
 }
 
-internal class GemstoneBoulderPlacement : AbstractPlacement
+internal class GemstoneBoulderPlacement : AbstractPlacement, IPrimaryLocationPlacement
 {
-    private static SortedDictionary<int, GemstoneBoulderPlacement> placements = [];
-    internal static IEnumerable<GemstoneBoulderPlacement> ActivePlacements() => placements.Values;
+    private static SortedDictionary<int, GemstoneBoulderPlacement> activePlacements = [];
+    internal static IEnumerable<GemstoneBoulderPlacement> ActivePlacements() => activePlacements.Values;
 
-    public GemstoneBoulderLocation Location;
+    public GemstoneBoulderLocation? Location;
 
-    [JsonConstructor]
-    private GemstoneBoulderPlacement() : base("") { }
+    [JsonIgnore]
+    AbstractLocation IPrimaryLocationPlacement.Location => Location!;
 
-    public GemstoneBoulderPlacement(GemstoneBoulderLocation loc) : base(loc.name) => Location = loc;
+    public GemstoneBoulderPlacement(string name) : base(name) { }
 
     protected override void OnLoad()
     {
+        Location!.Placement = this;
         Location.Load();
-        placements.Add(Location.NailUpgradesThreshold, this);
+        activePlacements.Add(Location.NailUpgradesThreshold, this);
     }
 
     protected override void OnUnload()
     {
-        placements.Remove(Location.NailUpgradesThreshold);
+        activePlacements.Remove(Location!.NailUpgradesThreshold);
         Location.Unload();
     }
 
-    public override IEnumerable<Tag> GetPlacementAndLocationTags() => base.GetPlacementAndLocationTags().Concat(Location.tags ?? []);
+    public override IEnumerable<Tag> GetPlacementAndLocationTags() => base.GetPlacementAndLocationTags().Concat(Location?.tags ?? []);
 }

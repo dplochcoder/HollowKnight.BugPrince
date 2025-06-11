@@ -381,8 +381,6 @@
       "BoulderSprite": {
         "key": "Game.boulder_full"
       },
-      "containerType": null,
-      "nonreplaceable": true,
       "name": "BugPrince-GemstoneBoulder-Nail0",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
@@ -410,8 +408,6 @@
       "BoulderSprite": {
         "key": "Game.boulder_chip1"
       },
-      "containerType": null,
-      "nonreplaceable": true,
       "name": "BugPrince-GemstoneBoulder-Nail1",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
@@ -440,8 +436,6 @@
       "BoulderSprite": {
         "key": "Game.boulder_chip2"
       },
-      "containerType": null,
-      "nonreplaceable": true,
       "name": "BugPrince-GemstoneBoulder-Nail2",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
@@ -470,8 +464,6 @@
       "BoulderSprite": {
         "key": "Game.boulder_chip3"
       },
-      "containerType": null,
-      "nonreplaceable": true,
       "name": "BugPrince-GemstoneBoulder-Nail3",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
