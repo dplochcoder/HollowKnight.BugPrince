@@ -451,7 +451,7 @@
     "Logic": {
       "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
       "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>2",
-      "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + PALEORE>1"
+      "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + PALEORE>1 + (ANYCLAW | WINGS)"
     },
     "PinLocationOverride": {
       "IsWorld": false,
@@ -481,7 +481,7 @@
     "Logic": {
       "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
       "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>3",
-      "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + Can_Visit_Lemm + PALEORE>3"
+      "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + Can_Visit_Lemm + PALEORE>3 + (ANYCLAW | WINGS)"
     },
     "PinLocationOverride": {
       "IsWorld": false,
