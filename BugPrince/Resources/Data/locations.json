@@ -13,13 +13,33 @@
       "name": "BugPrince-Basin_Grub_Nook",
       "sceneName": "Abyss_19",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Abyss_19",
+                  "Item2": 106.5,
+                  "Item3": 83.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "*Grub-Basin_Requires_Wings"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Bench_Secret-Queen's_Gardens": {
     "ItemType": "PushPin",
@@ -179,6 +199,24 @@
             "y": -0.5,
             "z": 0.0
           }
+        },
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Fungus3_50",
+                  "Item2": 3.0,
+                  "Item3": 107.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
         }
       ]
     },
@@ -186,7 +224,8 @@
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Fungus3_50[right1] + LEFTFIREBALL + $CASTSPELL[1,before:AREASOUL,after:AREASOUL]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Challenge-Crystallized_Mound": {
     "ItemType": "DiceTotem",
@@ -198,13 +237,23 @@
       "name": "BugPrince-Challenge-Crystallized_Mound",
       "sceneName": "Mines_35",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Mines_35[left1] + Broke_Crystallized_Mound_Quake_Floor + LEFTDASH + WINGS + ANYCLAW + (RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH)"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Chest_1-Vault": {
     "ItemType": "Coin",
@@ -221,13 +270,33 @@
       "name": "BugPrince-Chest_1-Vault",
       "sceneName": "BugPrince_Vault",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "BugPrince_Vault",
+                  "Item2": 86.0,
+                  "Item3": 13.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + (RIGHTDASH | PRECISEMOVEMENT + (SWIM | RIGHTSUPERDASH | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL] | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE)))"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Chest_2-Vault": {
     "ItemType": "Coin",
@@ -244,13 +313,33 @@
       "name": "BugPrince-Chest_2-Vault",
       "sceneName": "BugPrince_Vault",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "BugPrince_Vault",
+                  "Item2": 20.0,
+                  "Item3": 18.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + LEFTSUPERDASH + (WINGS | $SHADESKIP | LEFTCLAW + (RIGHTDASH | SPELLAIRSTALL + $CASTSPELL[3,before:AREASOUL]) | RIGHTCLAW + (RIGHTDASH | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE) | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL]))"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Chest_3-Vault": {
     "ItemType": "Coin",
@@ -267,13 +356,33 @@
       "name": "BugPrince-Chest_3-Vault",
       "sceneName": "BugPrince_Vault",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "BugPrince_Vault",
+                  "Item2": 18.0,
+                  "Item3": 39.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + Can_Visit_Lemm + (LEFTCLAW | WINGS + (RIGHTCLAW | LEFTSUPERDASH | $SHADESKIP) | RIGHTCLAW + (RIGHTDASH | OBSCURESKIPS + (LONGNAIL | MARKOFPRIDE) | SPELLAIRSTALL + $CASTSPELL[1,before:AREASOUL]))"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Chest_4-Vault": {
     "ItemType": "Coin",
@@ -290,13 +399,33 @@
       "name": "BugPrince-Chest_4-Vault",
       "sceneName": "BugPrince_Vault",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "BugPrince_Vault",
+                  "Item2": 87.0,
+                  "Item3": 48.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "BugPrince_Vault[left1] + Can_Replenish_Geo + Can_Visit_Lemm + WINGS"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Exterior_Belflies-Colosseum": {
     "ItemType": "DiceTotem",
@@ -312,13 +441,33 @@
       "name": "BugPrince-Exterior_Belflies-Colosseum",
       "sceneName": "Deepnest_East_09",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Deepnest_East_09",
+                  "Item2": 22.25,
+                  "Item3": 21.7
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Deepnest_East_09[left1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Garbage_Bin-Crystal_Peak_Entrance": {
     "ItemType": "Gem",
@@ -334,13 +483,33 @@
       "name": "BugPrince-Garbage_Bin-Crystal_Peak_Entrance",
       "sceneName": "Mines_02",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Mines_02",
+                  "Item2": 43.0,
+                  "Item3": 5.4
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Mines_02[top1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-GemstoneBoulder-Nail0": {
     "ItemType": "Gem",
@@ -357,13 +526,23 @@
       "name": "BugPrince-GemstoneBoulder-Nail0",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Gemstone_Boulder"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-GemstoneBoulder-Nail1": {
     "ItemType": "Gem",
@@ -380,14 +559,24 @@
       "name": "BugPrince-GemstoneBoulder-Nail1",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
       "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>1",
       "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-GemstoneBoulder-Nail2": {
     "ItemType": "Gem",
@@ -404,14 +593,24 @@
       "name": "BugPrince-GemstoneBoulder-Nail2",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
       "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>2",
       "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + PALEORE>1"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-GemstoneBoulder-Nail3": {
     "ItemType": "Gem",
@@ -428,14 +627,24 @@
       "name": "BugPrince-GemstoneBoulder-Nail3",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "BugPrince.Rando.NailUpgradesLogicString, BugPrince",
       "WithRandomizedNailUpgrades": "Gemstone_Boulder + NAILUPGRADE>3",
       "WithoutRandomizedNailUpgrades": "Gemstone_Boulder + Room_nailsmith[left1]/ + (LISTEN ? TRUE) + Can_Replenish_Geo + Can_Visit_Lemm + PALEORE>3"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Greenpath_Entrance_Nook": {
     "ItemType": "Coin",
@@ -451,13 +660,33 @@
       "name": "BugPrince-Greenpath_Entrance_Nook",
       "sceneName": "Fungus1_01",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Fungus1_01",
+                  "Item2": 163.5,
+                  "Item3": 21.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Fungus1_01[right1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Guarded_Relic-Resting_Grounds-Catacombs": {
     "ItemType": "DiceTotem",
@@ -473,13 +702,33 @@
       "name": "BugPrince-Guarded_Relic-Resting_Grounds-Catacombs",
       "sceneName": "RestingGrounds_10",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "RestingGrounds_10",
+                  "Item2": 55.0,
+                  "Item3": 2.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "RestingGrounds_10[left1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Hidden_Alcove-Hallownest_Crown": {
     "ItemType": "Gem",
@@ -495,13 +744,33 @@
       "name": "BugPrince-Hidden_Alcove-Hallownest_Crown",
       "sceneName": "Mines_34",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Mines_34",
+                  "Item2": 98.0,
+                  "Item3": 23.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Mines_34[bot1] + (ANYCLAW | WINGS | ENEMYPOGOS + PRECISEMOVEMENT) | $StartLocation[Hallownest's Crown]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Hidden_Perch-Lake_of_Unn": {
     "ItemType": "PushPin",
@@ -527,6 +796,24 @@
             "Y": 49.0,
             "Test": null
           }
+        },
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Fungus1_26",
+                  "Item2": 30.0,
+                  "Item3": 51.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
         }
       ]
     },
@@ -534,7 +821,8 @@
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Fungus1_26[right1] + FULLSUPERDASH + FULLCLAW + WINGS"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Iselda_(Requires_Maps)": {
     "ItemType": "PushPin",
@@ -558,13 +846,23 @@
       "name": "BugPrince-Iselda_(Requires_Maps)",
       "sceneName": "Room_mapper",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": true,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Room_mapper[left1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Lurien's_Secret": {
     "ItemType": "Gem",
@@ -758,6 +1056,24 @@
         },
         {
           "$type": "BugPrince.IC.Tags.LurienRoofColliderTag, BugPrince"
+        },
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Ruins2_Watcher_Room",
+                  "Item2": 74.75,
+                  "Item3": 144.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
         }
       ]
     },
@@ -765,7 +1081,8 @@
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Ruins2_Watcher_Room[bot1] + RIGHTFIREBALL + LEFTCLAW + RIGHTDASH + WINGS"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Millibelle_Bank_Stand-Fog_Canyon": {
     "ItemType": "Coin",
@@ -803,13 +1120,33 @@
       "name": "BugPrince-Millibelle_Bank_Stand-Fog_Canyon",
       "sceneName": "Fungus3_35",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Fungus3_35",
+                  "Item2": 18.0,
+                  "Item3": 6.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Paid_Millibelle"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Millibelle-Pleasure_House": {
     "ItemType": "Coin",
@@ -822,13 +1159,23 @@
       "name": "BugPrince-Millibelle-Pleasure_House",
       "sceneName": "Ruins_Bathhouse",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Ruins_Bathhouse[door1] + Paid_Millibelle"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Outside_Window-Soul_Sanctum": {
     "ItemType": "PushPin",
@@ -909,6 +1256,14 @@
           },
           "RespawnRight": true,
           "Broken": false
+        },
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics"
+          },
+          "Message": "RandoSupplementalMetadata"
         }
       ]
     },
@@ -916,7 +1271,8 @@
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Ruins1_25[left3] + RIGHTFIREBALL + WINGS + LEFTCLAW"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Petra_Overlook-Queen's_Gardens": {
     "ItemType": "Coin",
@@ -932,13 +1288,33 @@
       "name": "BugPrince-Petra_Overlook-Queen's_Gardens",
       "sceneName": "Fungus3_04",
       "flingType": "StraightUp",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Fungus3_04",
+                  "Item2": 36.0,
+                  "Item3": 35.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Fungus3_04[right2]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Puzzle-Ancestral_Mound": {
     "ItemType": "DiceTotem",
@@ -950,13 +1326,23 @@
       "name": "BugPrince-Puzzle-Ancestral_Mound",
       "sceneName": "Crossroads_ShamanTemple",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Crossroads_ShamanTemple[left1] + Viewed_Torch_Puzzle + (UPSLASH | WINGS | LEFTCLAW + RIGHTSUPERDASH | LEFTSUPERDASH)"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Puzzle-Overgrown_Mound": {
     "ItemType": "DiceTotem",
@@ -968,13 +1354,23 @@
       "name": "BugPrince-Puzzle-Overgrown_Mound",
       "sceneName": "Room_Fungus_Shaman",
       "flingType": "StraightUp",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Room_Fungus_Shaman[left1] + (FULLDASH | WINGS)"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Quirrel-Crystal_Peak": {
     "ItemType": "Gem",
@@ -990,13 +1386,33 @@
       "name": "BugPrince-Quirrel-Crystal_Peak",
       "sceneName": "Mines_13",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Mines_13",
+                  "Item2": 21.75,
+                  "Item3": 22.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Mines_13[right1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Rafters-Vault": {
     "ItemType": "Coin",
@@ -1012,13 +1428,33 @@
       "name": "BugPrince-Rafters-Vault",
       "sceneName": "BugPrince_Vault",
       "flingType": "DirectDeposit",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "BugPrince_Vault",
+                  "Item2": 56.0,
+                  "Item3": 75.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "BugPrince_Vault[left1] + WINGS + ANYCLAW"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Secret_Lamp-City_Fountain": {
     "ItemType": "Gem",
@@ -1035,13 +1471,23 @@
       "name": "BugPrince-Secret_Lamp-City_Fountain",
       "sceneName": "Ruins1_27",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys"
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Ruins1_27[left1] + RIGHTCLAW + WINGS + LEFTSUPERDASH"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Storerooms_Ledge-City": {
     "ItemType": "Coin",
@@ -1057,13 +1503,33 @@
       "name": "BugPrince-Storerooms_Ledge-City",
       "sceneName": "Ruins1_17",
       "flingType": "StraightUp",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Ruins1_17",
+                  "Item2": 6.3,
+                  "Item3": 31.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Ruins1_17[top1]"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Upper_Alcove_Outside_Galien": {
     "ItemType": "DiceTotem",
@@ -1083,6 +1549,24 @@
         {
           "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
           "fling": "Left"
+        },
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Relics",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Deepnest_35",
+                  "Item2": 34.5,
+                  "Item3": 80.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
         }
       ]
     },
@@ -1090,7 +1574,8 @@
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "(LANTERN | DARKROOMS) + (Deepnest_35[top1] | Deepnest_35[left1] + ANYCLAW)"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-Upper_Crossroads_Platform": {
     "ItemType": "Gem",
@@ -1106,13 +1591,33 @@
       "name": "BugPrince-Upper_Crossroads_Platform",
       "sceneName": "Crossroads_39",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "Crossroads_39",
+                  "Item2": 68.5,
+                  "Item3": 17.5
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "Crossroads_39[left1] + (RIGHTSHARPSHADOW | RIGHTDASH + SPELLAIRSTALL + $CASTSPELL[2,before:ROOMSOUL,after:ROOMSOUL] | WINGS | RIGHTCLAW)"
-    }
+    },
+    "PinLocationOverride": null
   },
   "BugPrince-UpperGem-GemstoneCavern": {
     "ItemType": "Gem",
@@ -1128,12 +1633,32 @@
       "name": "BugPrince-UpperGem-GemstoneCavern",
       "sceneName": "BugPrince_GemstoneCavern",
       "flingType": "Everywhere",
-      "tags": null
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+          "Properties": {
+            "ModSource": "BugPrinceMod",
+            "PinSpriteKey": "Keys",
+            "WorldMapLocations": {
+              "$type": "System.ValueTuple`3[[System.String, System.Private.CoreLib],[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]][], System.Private.CoreLib",
+              "$values": [
+                {
+                  "Item1": "BugPrince_GemstoneCavern",
+                  "Item2": 123.0,
+                  "Item3": 42.0
+                }
+              ]
+            }
+          },
+          "Message": "RandoSupplementalMetadata"
+        }
+      ]
     },
     "FullFlexible": false,
     "Logic": {
       "$type": "ItemChanger.BoxedString, ItemChanger",
       "Value": "BugPrince_GemstoneCavern[left1] + RIGHTSUPERDASH"
-    }
+    },
+    "PinLocationOverride": null
   }
 }

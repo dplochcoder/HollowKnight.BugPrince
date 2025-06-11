@@ -14,7 +14,7 @@ public static class DataUpdater
         UpdateJson(CostGroup.GetProducers(), root, "cost_groups");
 
         var locations = Locations.GetLocations();
-        foreach (var e in locations) UpdateNames(e.Key, e.Value.Location!);
+        foreach (var e in locations) e.Value.Update(e.Key);
         UpdateJson(Locations.GetLocations(), root, "locations");
 
         UpdateJson(Transitions.GetTransitions(), root, "transitions");
@@ -31,16 +31,6 @@ public static class DataUpdater
     {
         var path = $"{root}/BugPrince/Resources/Data/{name}.json";
         JsonUtil.RewriteJsonFile(obj, path);
-    }
-
-    private static void UpdateNames(string name, AbstractLocation loc)
-    {
-        loc.name = name;
-        if (loc is DualLocation dloc)
-        {
-            UpdateNames(name, dloc.falseLocation);
-            UpdateNames(name, dloc.trueLocation);
-        }
     }
 
     private static void CopyDlls(string root) => CopyDll(root, "UnityScriptShims/bin/Debug/net472/BugPrince.dll", "BugPrince/Unity/Assets/Assemblies/BugPrince.dll");

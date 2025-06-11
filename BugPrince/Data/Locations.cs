@@ -2,6 +2,8 @@
 using BugPrince.IC.Items;
 using BugPrince.Util;
 using ItemChanger;
+using ItemChanger.Locations;
+using Newtonsoft.Json;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
@@ -28,6 +30,15 @@ internal static class ItemTypeExtensions
         ItemType.PushPin => PushPinItem.ITEM_NAME,
         _ => throw self.InvalidEnum()
     };
+
+    internal static string PoolName(this ItemType selF) => selF switch
+    {
+        ItemType.Coin => "Keys",
+        ItemType.Gem => "Keys",
+        ItemType.DiceTotem => "Relics",
+        ItemType.PushPin => "Relics",
+        _ => throw selF.InvalidEnum()
+    };
 }
 
 internal enum LocationState
@@ -35,6 +46,22 @@ internal enum LocationState
     Skip,
     Preplaced,
     Randomized
+}
+
+internal record PinLocation
+{
+    public string SceneName = "";
+    public float X;
+    public float Y;
+
+    public PinLocation(string SceneName, float X, float Y)
+    {
+        this.SceneName = SceneName;
+        this.X = X;
+        this.Y = Y;
+    }
+
+    public (string, float, float)[] AsTupleList() => [(SceneName, X, Y)];
 }
 
 internal record LocationData
@@ -45,6 +72,30 @@ internal record LocationData
     public AbstractLocation? Location;
     public bool FullFlexible;
     public IString Logic = new BoxedString("");
+    public PinLocation? PinLocationOverride;
+
+    private static void UpdateNames(string name, AbstractLocation loc)
+    {
+        loc.name = name;
+        if (loc is DualLocation dloc)
+        {
+            UpdateNames(name, dloc.falseLocation);
+            UpdateNames(name, dloc.trueLocation);
+        }
+    }
+
+    private static PinLocation? DerivePinLocation(AbstractLocation location)
+    {
+        if (location is CoordinateLocation loc) return new(loc.sceneName!, loc.x, loc.y);
+        if (location is DualLocation dual) return DerivePinLocation(dual.falseLocation) ?? DerivePinLocation(dual.trueLocation);
+        return null;
+    }
+
+    internal void Update(string name)
+    {
+        UpdateNames(name, Location!);
+        Location!.AddInteropPinData(ItemType.PoolName(), PinLocationOverride ?? DerivePinLocation(Location!));
+    }
 
     internal LocationDef LocationDef() => new()
     {

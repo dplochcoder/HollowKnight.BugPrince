@@ -32,6 +32,7 @@ public class GemItem : AbstractItem
             shopDesc = new BoxedString("Sparkling, bright, beautifully cut... I should charge at least five times more for this."),
             sprite = Sprite,
         };
+        this.AddInteropPoolGroup("Keys");
     }
 
     public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().Gems++;
