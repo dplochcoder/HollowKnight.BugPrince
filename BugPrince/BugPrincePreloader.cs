@@ -13,6 +13,9 @@ internal class BugPrincePreloader : Preloader
 {
     internal static readonly BugPrincePreloader Instance = new();
 
+    [Preload("Fungus2_03", "Area Title Controller")]
+    public GameObject? AreaTitleController { get; private set; }
+
     [Preload(SceneNames.Ruins1_05, "ruind_dressing_light_03 (4)")]
     public GameObject? CityLamp { get; private set; }
 
