@@ -78,7 +78,7 @@ public record RandomizationSettings
     public int GemDuplicates = 2;
 
     [LocationSetting(LocationPool.MapShop)]
-    public bool MapShop = true;
+    public bool MapShop = false;
     [MapShopSetting]
     [DynamicBound(nameof(MaximumMaps), true)]
     public int MinimumMaps = 1;
@@ -92,15 +92,15 @@ public record RandomizationSettings
     private int MaximumMapsLimit() => 13 - MapTolerance;
 
     [LocationSetting(LocationPool.BasicLocations)]
-    public bool BasicLocations = true;
+    public bool BasicLocations = false;
     [LocationSetting(LocationPool.AdvancedLocations)]
-    public bool AdvancedLocations = true;
+    public bool AdvancedLocations = false;
     [LocationSetting(LocationPool.ShamanPuzzles)]
-    public bool ShamanPuzzles = true;
+    public bool ShamanPuzzles = false;
     [LocationSetting(LocationPool.TheVault)]
-    public bool TheVault = true;
+    public bool TheVault = false;
     [LocationSetting(LocationPool.GemstoneCavern)]
-    public bool GemstoneCavern = true;
+    public bool GemstoneCavern = false;
 
     static RandomizationSettings()
     {
