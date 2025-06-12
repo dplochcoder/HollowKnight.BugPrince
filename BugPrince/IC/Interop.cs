@@ -6,7 +6,7 @@ namespace BugPrince.IC;
 
 internal static class Interop
 {
-    internal static void AddInteropPoolGroup(this AbstractItem self, string pool)
+    internal static void AddInteropData(this AbstractItem self, string pool)
     {
         var interop = self.GetOrAddTag<InteropTag>();
         interop.Message = "RandoSupplementalMetadata";
@@ -14,17 +14,23 @@ internal static class Interop
         interop.Properties["PoolGroup"] = pool;
     }
 
-    internal static void AddInteropPinData(this AbstractLocation self, string pool, PinLocation? pinLocation = null)
+    internal static void AddInteropData(this AbstractLocation self, string pool, PinLocation? pinLocation, string? displaySource)
     {
-        var interop = self.GetOrAddTag<InteropTag>();
-        interop.Message = "RandoSupplementalMetadata";
-        interop.Properties["ModSource"] = nameof(BugPrinceMod);
-        interop.Properties["PinSpriteKey"] = pool;
-
+        var rsmTag = self.AddTag<InteropTag>();
+        rsmTag.Message = "RandoSupplementalMetadata";
+        rsmTag.Properties["ModSource"] = nameof(BugPrinceMod);
+        rsmTag.Properties["PinSpriteKey"] = pool;
         if (pinLocation != null)
         {
-            if (pinLocation.IsWorld) interop.Properties["WorldMapLocation"] = pinLocation.AsTuple();
-            else interop.Properties["MapLocations"] = pinLocation.AsTupleArray();
+            if (pinLocation.IsWorld) rsmTag.Properties["WorldMapLocation"] = pinLocation.AsTuple();
+            else rsmTag.Properties["MapLocations"] = pinLocation.AsTupleArray();
+        }
+
+        if (displaySource != null)
+        {
+            var riTag = self.AddTag<InteropTag>();
+            riTag.Message = "RecentItems";
+            riTag.Properties["DisplaySource"] = displaySource;
         }
     }
 }

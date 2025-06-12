@@ -32,7 +32,7 @@ public class CoinItem : AbstractItem
             shopDesc = new BoxedString("This doesn't look like it's from around here, some kind of... plated Geo? Must be worth something, right?"),
             sprite = Sprite,
         };
-        this.AddInteropPoolGroup("Keys");
+        this.AddInteropData("Keys");
     }
 
     public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().Coins++;

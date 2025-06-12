@@ -31,7 +31,7 @@ public class PushPinItem : AbstractItem
             shopDesc = new BoxedString("I could really use a dozen more of these to organize all the clutter."),
             sprite = Sprite,
         };
-        this.AddInteropPoolGroup("Relics");
+        this.AddInteropData("Relics");
     }
 
     public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().PushPins++;

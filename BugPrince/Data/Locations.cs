@@ -79,6 +79,7 @@ internal record LocationData
     public bool FullFlexible;
     public IString Logic = new BoxedString("");
     public PinLocation? PinLocationOverride;
+    public string? DisplaySource;
 
     private static void UpdateNames(string name, AbstractLocation loc)
     {
@@ -98,7 +99,7 @@ internal record LocationData
         return null;
     }
 
-    internal void AddInteropPinData() => Location!.AddInteropPinData(ItemType.PoolName(), PinLocationOverride ?? DerivePinLocation(Location!));
+    internal void AddInteropData() => Location!.AddInteropData(ItemType.PoolName(), PinLocationOverride ?? DerivePinLocation(Location!), DisplaySource);
 
     internal void Update(string name)
     {

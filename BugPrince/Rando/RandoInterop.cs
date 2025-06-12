@@ -63,7 +63,7 @@ internal static class RandoInterop
 
     private static void DefineCustomLocations() => Locations.GetLocations().Values.ForEach(l =>
     {
-        l.AddInteropPinData();
+        l.AddInteropData();
         Finder.DefineCustomLocation(l.Location!);
     });
 

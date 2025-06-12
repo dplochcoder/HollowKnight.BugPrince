@@ -31,7 +31,7 @@ public class DiceTotemItem : AbstractItem
             shopDesc = new BoxedString("A monument to chance, to persistence! Just one more, surely."),
             sprite = Sprite,
         };
-        this.AddInteropPoolGroup("Relics");
+        this.AddInteropData("Relics");
     }
 
     public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().DiceTotems++;
