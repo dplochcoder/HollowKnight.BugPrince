@@ -107,6 +107,15 @@
     "Cost": 1,
     "SkewedAverage": 0.5
   },
+  "Gemstone Cavern": {
+    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "SceneNames": [
+      "BugPrince_GemstoneCavern"
+    ],
+    "Type": "Gems",
+    "Cost": 2,
+    "SkewedAverage": 0.5
+  },
   "Grubfather": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
     "SceneNames": [
