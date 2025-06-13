@@ -103,3 +103,7 @@ MultiWorld will likely never be supported due to its architecture. Because BugPr
 You may at times encounter a selection menu with _no_ options, or at least, no _affordable_ options, in which case the screen will fade to red after a few seconds and boot you back to your last bench.
 
 This is a consequence of the safety promise, and generally means that the only _safe_ option for that transition is one you can't purchase, either because (a) you haven't acquired the logically accessible coins/gems to afford it, or (b) you must purchase a different transition first to avoid hard-locking the save.
+
+## Credits
+
+Custom art assets done by by [Kadala](https://ko-fi.com/kadala_ka)!
