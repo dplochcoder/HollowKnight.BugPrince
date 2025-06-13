@@ -54,6 +54,9 @@
     <EmbeddedResource Include="Resources\**\*.wav" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="unity\.gitignore" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>
     </Reference>
