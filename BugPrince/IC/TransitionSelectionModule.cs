@@ -491,11 +491,29 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         Seed += scene.GetStableHashCode() ^ 0x37270AFE;
     }
 
+    private bool MapToPlacement(ref Transition src, ref Transition target)
+    {
+        foreach (var p in RandoTransitionPlacements())
+        {
+            var cSrc = p.Source.ToStruct();
+            var cTarget = p.Target.ToStruct();
+
+            if (target == cTarget)
+            {
+                // Handle Jiji-jinn bridge.
+                src = cSrc;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void SelectRandomizedTransition(On.GameManager.orig_BeginSceneTransition orig, GameManager self, GameManager.SceneLoadInfo info)
     {
         if (RoomSelectionUI.uiPresent) return;
 
-        if (!TransitionInferenceUtil.GetSrcTarget(self, info, out var src, out var target) || ResolvedEnteredTransitions.Contains(src))
+        if (!TransitionInferenceUtil.GetSrcTarget(self, info, out var src, out var target) || !MapToPlacement(ref src, ref target) || ResolvedEnteredTransitions.Contains(src))
         {
             orig(self, info);
             return;
