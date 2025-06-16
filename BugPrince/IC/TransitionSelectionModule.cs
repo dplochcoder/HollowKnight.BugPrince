@@ -508,7 +508,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
         return false;
     }
-
+    
     private void SelectRandomizedTransition(On.GameManager.orig_BeginSceneTransition orig, GameManager self, GameManager.SceneLoadInfo info)
     {
         if (RoomSelectionUI.uiPresent) return;

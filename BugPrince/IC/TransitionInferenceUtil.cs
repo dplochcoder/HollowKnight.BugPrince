@@ -106,10 +106,10 @@ internal static class TransitionInferenceUtil
 
     internal static GateDirection GetDirection(this Transition self)
     {
-        if (self.GateName.StartsWith("l")) return GateDirection.Left;
-        else if (self.GateName.StartsWith("r")) return GateDirection.Right;
-        else if (self.GateName.StartsWith("t")) return GateDirection.Top;
-        else if (self.GateName.StartsWith("b")) return GateDirection.Bot;
+        if (self.GateName.StartsWith("left")) return GateDirection.Left;
+        else if (self.GateName.StartsWith("right")) return GateDirection.Right;
+        else if (self.GateName.StartsWith("top")) return GateDirection.Top;
+        else if (self.GateName.StartsWith("bot")) return GateDirection.Bot;
         else return GateDirection.Door;
     }
 
