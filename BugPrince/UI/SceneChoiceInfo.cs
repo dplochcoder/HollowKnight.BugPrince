@@ -7,10 +7,18 @@ namespace BugPrince.UI;
 
 internal record SceneChoiceInfo
 {
-    public Transition OrigSrc;
-    public Transition Target;
-    public (CostType, int)? Cost;
-    public bool Pinned;
+    public Transition OrigSrc { get; }
+    public Transition Target { get; }
+    public (CostType, int)? Cost { get; }
+    public bool Pinned { get; }
+
+    public SceneChoiceInfo(Transition OrigSrc, Transition Target, (CostType, int)? Cost, bool Pinned)
+    {
+        this.OrigSrc = OrigSrc;
+        this.Target = Target;
+        this.Cost = Cost;
+        this.Pinned = Pinned;
+    }
 
     public bool CanAfford(TransitionSelectionModule module)
     {

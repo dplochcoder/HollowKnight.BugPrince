@@ -350,7 +350,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
     {
         // Decrement refresh counters
         Dictionary<string, int> newDict = [];
-        foreach (var e in RefreshCounters) newDict[e.Key] = e.Value - 1;
+        foreach (var e in RefreshCounters)
+        {
+            if (e.Value > 1) newDict[e.Key] = e.Value - 1;
+        }
         RefreshCounters = newDict;
 
         List<(Transition, Transition)> potentialTargets = [];
@@ -406,13 +409,9 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         {
             if (!CanSwapTransitions(src, target, newSrc, newTarget)) { illogicalSwaps.Value++; return false; }
 
-            SceneChoiceInfo info = new()
-            {
-                OrigSrc = newSrc,
-                Pinned = newTarget.SceneName == PinnedScene,
-                Target = newTarget
-            };
-            if (GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName)) info.Cost = (group.Type, group.Cost);
+            (CostType, int)? cost = null;
+            if (GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName)) cost = (group.Type, group.Cost);
+            SceneChoiceInfo info = new(newSrc, newTarget, cost, newTarget.SceneName == PinnedScene);
 
             choices.Add(info);
             chosenScenes.Add(newTarget.SceneName);

@@ -204,7 +204,7 @@ internal class RoomSelectionUI : MonoBehaviour
         }
 
         var info = choiceInfos[selection];
-        if (newPinSelection.HasValue && PinIsUsed && selection != newPinSelection.Value && !choiceInfos[selection].Pinned)
+        if (newPinSelection.HasValue && PinIsUsed && selection != newPinSelection.Value && !info.Pinned)
         {
             // Can't make 2 pins.
             ShakePinIndicators();
