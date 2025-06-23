@@ -136,7 +136,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
         bool oneWay1 = IsExitOnly(dst1);
         bool oneWay2 = IsExitOnly(dst2);
-        if (oneWay1 != oneWay2) return false;
+        if (TransitionSettings().Coupled && oneWay1 != oneWay2) return false;
         if (oneWay1 && oneWay2) return true;
 
         var matchingMode = TransitionSettings().TransitionMatching;
