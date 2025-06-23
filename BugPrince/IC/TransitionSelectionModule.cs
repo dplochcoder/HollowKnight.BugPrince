@@ -190,7 +190,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         if (GetCostGroupByScene(dst1.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName) && CostGroupProgression[PaidCostGroups.Count] != groupName)
         {
             // Check that we can bump this shop forward in progression order.
-            if (!lm.VariableResolver.TryGetInner<BugPrinceVariableResolver>(out var inner)) throw new ArgumentException("Missing CostGroupVariableResolver");
+            if (!lm.VariableResolver.TryGetInner<BugPrinceVariableResolver>(out var inner)) throw new ArgumentException("Missing BugPrinceVariableResolver");
 
             List<string> reordered = [.. CostGroupProgression];
             reordered.Remove(groupName);
@@ -311,8 +311,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         var icOverrides = ItemChanger.Internal.Ref.Settings.TransitionOverrides;
         foreach (var e in icOverrides)
         {
-            var orig = e.Value.ToStruct();
-            if (icUpdates.TryGetValue(orig, out var newTarget) && orig != newTarget) newKVs.Add((e.Key, newTarget));
+            var origTarget = e.Value.ToStruct();
+            if (icUpdates.TryGetValue(origTarget, out var newTarget)) newKVs.Add((e.Key, newTarget));
         }
         foreach (var (k, v) in newKVs) icOverrides[k] = v;
 
