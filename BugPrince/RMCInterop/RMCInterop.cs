@@ -1,8 +1,8 @@
 ﻿using Modding;
 
-namespace BugPrince.RMMInterop;
+namespace BugPrince.RMCInterop;
 
-internal static class RMMInterop
+internal static class RMCInterop
 {
     internal static void MaybeUpdateRandoMapMod()
     {

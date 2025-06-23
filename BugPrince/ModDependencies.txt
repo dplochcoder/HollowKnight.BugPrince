@@ -6,7 +6,6 @@ MenuChanger
 MoreLocations
 PurenailCore
 RandoMapCore
-RandoMapMod
 RandomizerCore
 Randomizer 4
 RandoPlus

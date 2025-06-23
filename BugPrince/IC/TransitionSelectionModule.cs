@@ -14,6 +14,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BugPrince.IC;
 
@@ -49,9 +52,16 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     public static TransitionSelectionModule Get() => ItemChangerMod.Modules.Get<TransitionSelectionModule>()!;
 
+    private Thread? precomputeThread;
+
     public override void Initialize()
     {
         Events.OnEnterGame += DoLateInitialization;
+        Events.OnSceneChange += ResetPrecomputers;
+
+        precomputeThread = new(UpdatePrecomputers);
+        precomputeThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        precomputeThread.Start();
 
         BugPrinceMod.StartDebugLog();
     }
@@ -59,6 +69,9 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     public override void Unload()
     {
         Events.OnEnterGame -= DoLateInitialization;
+        Events.OnSceneChange -= ResetPrecomputers;
+        precomputeThread?.Abort();
+
         On.GameManager.BeginSceneTransition -= SelectRandomizedTransition;
     }
 
@@ -271,8 +284,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             }
         }
 
-        RMMInterop.RMMInterop.MaybeUpdateRandoMapMod();
+        RMCInterop.RMCInterop.MaybeUpdateRandoMapMod();
     }
+
+    public int Seed = 0;
 
     private void SwapTransitions(Transition src1, Transition src2)
     {
@@ -341,9 +356,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         ResetTracker(rs.TrackerDataWithoutSequenceBreaks);
     }
 
-    public int Seed = 0;
-
-    private IEnumerator<List<SceneChoiceInfo>?> CalculateSceneChoicesImpl(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
+    private IEnumerator<List<SceneChoiceInfo>?> CalculateSceneChoicesIterator(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
     {
         Dictionary<string, int> tempRefreshCounters = [];
         foreach (var e in RefreshCounters)
@@ -486,7 +499,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private List<SceneChoiceInfo> CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
     {
-        var iter = CalculateSceneChoicesImpl(src, target, previous);
+        var iter = CalculateSceneChoicesIterator(src, target, previous);
         
         while (true)
         {
@@ -561,26 +574,45 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         return false;
     }
 
-    private Dictionary<Transition, ChoicePrecomputer> precomputers = [];
+    private AutoResetEvent precomputersEvent = new(false);
+    private readonly Dictionary<Transition, ChoicePrecomputer> precomputers = [];
 
-    private void AdvancePrecomputeDict()
+    private void ResetPrecomputers(Scene scene)
     {
-        var start = DateTime.Now.Ticks;
+        lock (precomputers) { precomputers.Clear(); }
+        if (!BugPrinceMod.GS.EnablePrecomputation) return;
 
-        List<ChoicePrecomputer> list = [.. precomputers.Values];
-        list.OrderBy(p => p.Tests());
+        Dictionary<Transition, ChoicePrecomputer> newPrecomputers = [];
+        Dictionary<Transition, Transition> targetToSrc = [];
+        foreach (var p in RandoTransitionPlacements()) targetToSrc[p.Target.ToStruct()] = p.Source.ToStruct();
 
-        bool anyUpdate = true;
-        while (anyUpdate)
+        foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides)
         {
-            anyUpdate = false;
-            foreach (var p in list)
-            {
-                if (!p.Advance()) continue;
+            if (e.Key.SceneName != scene.name) continue;
 
-                anyUpdate = true;
-                TimeSpan span = new(DateTime.Now.Ticks - start);
-                if (span.TotalMilliseconds > 5) return;
+            var target = e.Value.ToStruct();
+            if (targetToSrc.TryGetValue(target, out var src) && !ResolvedEnteredTransitions.Contains(src) && !ResolvedExitedTransitions.Contains(target)) newPrecomputers.Add(src, new(CalculateSceneChoicesIterator(src, target)));
+        }
+
+        lock (precomputers)
+        {
+            foreach (var e in newPrecomputers) precomputers.Add(e.Key, e.Value);
+            if (precomputers.Count > 0) precomputersEvent.Set();
+        }
+    }
+
+    private void UpdatePrecomputers()
+    {
+        while (true)
+        {
+            List<ChoicePrecomputer> candidates = [];
+            lock (precomputers) { candidates = [.. precomputers.Values]; }
+
+            if (candidates.Count == 0) precomputersEvent.WaitOne();
+            else
+            {
+                candidates.OrderBy(p => p.Tests());
+                candidates[0].Advance();
             }
         }
     }
@@ -595,8 +627,13 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             return;
         }
 
-        var choices = precomputers.TryGetValue(src, out var precomputer) ? precomputer.GetResult() : CalculateSceneChoices(src, target);
-        precomputers.Clear();
+        ChoicePrecomputer? precomputer;
+        lock (precomputers)
+        {
+            precomputers.TryGetValue(src, out precomputer);
+            precomputers.Clear();
+        }
+        var choices = precomputer?.GetResult() ?? CalculateSceneChoices(src, target);
 
         UpdateRefreshCounters(choices);
 
@@ -659,22 +696,38 @@ internal class ChoicePrecomputer
 
     internal ChoicePrecomputer(IEnumerator<List<SceneChoiceInfo>?> generator) => this.generator = generator;
 
-    internal int Tests() => tests;
+    internal int Tests()
+    {
+        lock (this) { return tests; }
+    }
 
     internal bool Advance()
     {
-        if (result != null) return false;
+        lock (this)
+        {
+            if (result != null) return false;
 
-        generator.MoveNext();
-        tests++;
+            generator.MoveNext();
+            tests++;
 
-        if (generator.Current != null) result = generator.Current;
-        return true;
+            if (generator.Current != null) result = generator.Current;
+            return true;
+        }
     }
 
     internal List<SceneChoiceInfo> GetResult()
     {
-        while (result == null) Advance();
-        return result;
+        lock (this)
+        {
+            while (result == null)
+            {
+                generator.MoveNext();
+                tests++;
+
+                if (generator.Current != null) result = generator.Current;
+            }
+
+            return result;
+        }
     }
 }
