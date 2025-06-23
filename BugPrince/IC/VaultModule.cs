@@ -33,11 +33,14 @@ internal class VaultModule : ItemChanger.Modules.Module
         interiorCopy.transform.position = new(71, 22.8f, 2.04f);
 
         // Grab door transition
-        var transition = Object.Instantiate(scene.FindGameObject("door_Ruin_House_02")!);
-        transition.name = "door_BugPrince_Vault";
-        transition.transform.position = new(70.8f, 19.8f, 0.2f);
-        var fsm = transition.LocateMyFSM("Door Control");
-        fsm.FsmVariables.GetFsmString("Entry Gate").Value = "left1";
+        var transitionObj = Object.Instantiate(scene.FindGameObject("door_Ruin_House_02")!);
+        transitionObj.name = "door_BugPrince_Vault";
+        transitionObj.transform.position = new(70.8f, 19.8f, 0.2f);
+        var fsm = transitionObj.LocateMyFSM("Door Control");
         fsm.FsmVariables.GetFsmString("New Scene").Value = "BugPrince_Vault";
+        fsm.FsmVariables.GetFsmString("Entry Gate").Value = "left1";
+        var transitionPoint = transitionObj.GetComponent<TransitionPoint>();
+        transitionPoint.targetScene = "BugPrince_Vault";
+        transitionPoint.entryPoint = "left1";
     }
 }
