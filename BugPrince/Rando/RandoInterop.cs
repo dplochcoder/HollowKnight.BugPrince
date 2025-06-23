@@ -13,18 +13,21 @@ namespace BugPrince.Rando;
 
 internal record LocalSettings : ICostGroupProgressionProvider
 {
+    public int gen = CostGroupProgressionProviderGeneration.NextGen();
     public Dictionary<string, CostGroup> CostGroups = [];
     public Dictionary<string, string> CostGroupsByScene = [];
     public HashSet<Transition> RandomizedTransitions = [];
     public List<string> CostGroupProgression = [];
 
-    IReadOnlyDictionary<string, CostGroup> ICostGroupProgressionProvider.CostGroups() => CostGroups;
+    int ICostGroupProgressionProvider.Generation() => gen;
 
-    IReadOnlyDictionary<string, string> ICostGroupProgressionProvider.CostGroupsByScene() => CostGroupsByScene;
+    IReadOnlyDictionary<string, CostGroup> ICostGroupProgressionProvider.GetCostGroups() => CostGroups;
+
+    IReadOnlyDictionary<string, string> ICostGroupProgressionProvider.GetCostGroupsByScene() => CostGroupsByScene;
 
     public bool IsRandomizedTransition(Transition transition) => RandomizedTransitions.Contains(transition);
 
-    IReadOnlyList<string> ICostGroupProgressionProvider.CostGroupProgression() => CostGroupProgression;
+    IReadOnlyList<string> ICostGroupProgressionProvider.GetCostGroupProgression() => CostGroupProgression;
 }
 
 internal static class RandoInterop

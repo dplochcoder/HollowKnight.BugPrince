@@ -10,14 +10,23 @@ namespace BugPrince.Rando;
 // Instances must never observably changed once accessed under this interface.
 internal interface ICostGroupProgressionProvider
 {
-    IReadOnlyDictionary<string, CostGroup> CostGroups();
-    IReadOnlyDictionary<string, string> CostGroupsByScene();
+    int Generation();
+    IReadOnlyDictionary<string, CostGroup> GetCostGroups();
+    IReadOnlyDictionary<string, string> GetCostGroupsByScene();
     bool IsRandomizedTransition(Transition transition);
-    IReadOnlyList<string> CostGroupProgression();
+    IReadOnlyList<string> GetCostGroupProgression();
+}
+
+internal static class CostGroupProgressionProviderGeneration
+{
+    private static int gen = 0;
+
+    internal static int NextGen() => gen++;
 }
 
 internal class OverlaidCostGroupProgressionProvider : ICostGroupProgressionProvider
 {
+    private readonly int gen = CostGroupProgressionProviderGeneration.NextGen();
     private readonly ICostGroupProgressionProvider impl;
     private readonly List<string> progressionOverride;
 
@@ -27,27 +36,29 @@ internal class OverlaidCostGroupProgressionProvider : ICostGroupProgressionProvi
         this.progressionOverride = [.. progressionOverride];
     }
 
-    public IReadOnlyDictionary<string, CostGroup> CostGroups() => impl.CostGroups();
+    public int Generation() => gen;
 
-    public IReadOnlyDictionary<string, string> CostGroupsByScene() => impl.CostGroupsByScene();
+    public IReadOnlyDictionary<string, CostGroup> GetCostGroups() => impl.GetCostGroups();
+
+    public IReadOnlyDictionary<string, string> GetCostGroupsByScene() => impl.GetCostGroupsByScene();
 
     public bool IsRandomizedTransition(Transition transition) => impl.IsRandomizedTransition(transition);
 
-    public IReadOnlyList<string> CostGroupProgression() => progressionOverride;
+    public IReadOnlyList<string> GetCostGroupProgression() => progressionOverride;
 }
 
 internal static class ICostGroupProgressionProviderExtensions
 {
-    internal static int GetItemCount(this ICostGroupProgressionProvider self, CostType costType) => self.CostGroups().Values.Where(g => g.Type == costType).Select(g => g.Cost).Sum();
+    internal static int GetItemCount(this ICostGroupProgressionProvider self, CostType costType) => self.GetCostGroups().Values.Where(g => g.Type == costType).Select(g => g.Cost).Sum();
 
     internal static bool GetCostGroupByScene(this ICostGroupProgressionProvider self, string scene, out string groupName, out CostGroup costGroup)
     {
-        if (!self.CostGroupsByScene().TryGetValue(scene, out groupName))
+        if (!self.GetCostGroupsByScene().TryGetValue(scene, out groupName))
         {
             costGroup = default;
             return false;
         }
-        return self.CostGroups().TryGetValue(groupName, out costGroup);
+        return self.GetCostGroups().TryGetValue(groupName, out costGroup);
     }
 
     internal static bool GetProgressiveCostByScene(this ICostGroupProgressionProvider self, string sceneName, out CostType costType, out int cost)
@@ -59,9 +70,9 @@ internal static class ICostGroupProgressionProviderExtensions
         costType = group.Type;
 
         // Add progressive costs
-        foreach (var previousName in self.CostGroupProgression())
+        foreach (var previousName in self.GetCostGroupProgression())
         {
-            if (!self.CostGroups().TryGetValue(previousName, out var previousGroup)) throw new ArgumentException("Bad cost group progression data");
+            if (!self.GetCostGroups().TryGetValue(previousName, out var previousGroup)) throw new ArgumentException("Bad cost group progression data");
 
             if (previousGroup.Type == group.Type) cost += previousGroup.Cost;
             if (previousName == groupName) return true;

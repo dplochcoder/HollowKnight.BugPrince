@@ -12,12 +12,13 @@ using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 
 namespace BugPrince.IC;
 
-public class TransitionSelectionModule : ItemChanger.Modules.Module
+public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupProgressionProvider
 {
     // Setup
     public RandomizationSettings Settings = new();
@@ -72,11 +73,6 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
     internal bool MatchingTransitions() => TransitionSettings().TransitionMatching != RandomizerMod.Settings.TransitionSettings.TransitionMatchingSetting.NonmatchingDirections;
 
-    private ICostGroupProgressionProvider? cachedProvider;
-    internal ICostGroupProgressionProvider AsProgressionProvider() => cachedProvider ??= new ModuleCostGroupProgressionProvider(this);
-
-    private bool GetCostGroupByScene(string scene, out string groupName, out CostGroup costGroup) => AsProgressionProvider().GetCostGroupByScene(scene, out groupName, out costGroup);
-
     private void DoLateInitialization()
     {
         RandoInterop.LS = null;
@@ -101,7 +97,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
     private void PayCosts(string scene)
     {
-        if (!GetCostGroupByScene(scene, out var groupName, out var group)) return;
+        if (!this.GetCostGroupByScene(scene, out var groupName, out var group)) return;
         if (PaidCostGroups.Contains(groupName)) return;
 
         if (CostGroupProgression[PaidCostGroups.Count] != groupName)
@@ -110,7 +106,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
             CostGroupProgression.Remove(groupName);
             CostGroupProgression.Insert(PaidCostGroups.Count, groupName);
 
-            cachedProvider = null;  // Reset logic variable caches.
+            gen = CostGroupProgressionProviderGeneration.NextGen(); // Reset logic variable caches.
         }
 
         if (group.Type == CostType.Coins) Coins -= group.Cost;
@@ -181,13 +177,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
     private bool CanSwapTransitions(
         Transition src1, Transition dst1, Transition src2, Transition dst2)
     {
-        if (src1 == src2 && dst1 == dst2) return true;
-
         var ctx = RandoCtx();
         var lm = ctx.LM;
 
         Action? onDone = null;
-        if (GetCostGroupByScene(dst1.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName) && CostGroupProgression[PaidCostGroups.Count] != groupName)
+        if (this.GetCostGroupByScene(dst1.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName) && CostGroupProgression[PaidCostGroups.Count] != groupName)
         {
             // Check that we can bump this shop forward in progression order.
             if (!lm.VariableResolver.TryGetInner<BugPrinceVariableResolver>(out var inner)) throw new ArgumentException("Missing BugPrinceVariableResolver");
@@ -196,7 +190,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
             reordered.Remove(groupName);
             reordered.Insert(PaidCostGroups.Count, groupName);
 
-            OverlaidCostGroupProgressionProvider provider = new(AsProgressionProvider(), reordered);
+            OverlaidCostGroupProgressionProvider provider = new(this, reordered);
             inner.OverrideProgressionProvider(provider);
             onDone = () => inner.OverrideProgressionProvider(null);
         }
@@ -212,17 +206,21 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
 
             List<UpdateEntry> updates = [];
             var coupled = TransitionSettings().Coupled;
+            var swap = src1 != src2;
             foreach (var p in RandoTransitionPlacements())
             {
                 var source = p.Source.ToStruct();
                 var target = p.Target.ToStruct();
 
-                if (source == src1) target = dst2;
-                else if (source == src2) target = dst1;
-                else if (coupled)
+                if (swap)
                 {
-                    if (source == dst1) target = src2;
-                    else if (source == dst2) target = src1;
+                    if (source == src1) target = dst2;
+                    else if (source == src2) target = dst1;
+                    else if (coupled)
+                    {
+                        if (source == dst1) target = src2;
+                        else if (source == dst2) target = src1;
+                    }
                 }
 
                 TransitionPlacement t = new()
@@ -407,10 +405,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         Wrapped<int> illogicalSwaps = new(0);
         bool MaybeAdd(Transition newSrc, Transition newTarget)
         {
-            if (!CanSwapTransitions(src, target, newSrc, newTarget)) { illogicalSwaps.Value++; return false; }
+            if (!CanSwapTransitions(src, target, newSrc, newTarget))
+            {
+                illogicalSwaps.Value++;
+                return false;
+            }
 
             (CostType, int)? cost = null;
-            if (GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName)) cost = (group.Type, group.Cost);
+            if (this.GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName)) cost = (group.Type, group.Cost);
             SceneChoiceInfo info = new(newSrc, newTarget, cost, newTarget.SceneName == PinnedScene);
 
             choices.Add(info);
@@ -434,7 +436,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
             else if (choices.Count == Settings.NumRoomChoices) continue;
             if (chosenScenes.Contains(newTarget.SceneName) || tempChosenScenes.Contains(newTarget.SceneName)) { ++dupeScenes; continue; }
 
-            bool isShop = GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName);
+            bool isShop = this.GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName);
             if (!RefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
 
             bool isRedundantShop = haveShop && isShop;
@@ -518,13 +520,13 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
     {
         foreach (var p in RandoTransitionPlacements())
         {
-            var cSrc = p.Source.ToStruct();
-            var cTarget = p.Target.ToStruct();
+            var pSrc = p.Source.ToStruct();
+            var pTarget = p.Target.ToStruct();
 
-            if (target == cTarget)
+            if (target == pTarget)
             {
                 // Handle Jiji-jinn bridge.
-                src = cSrc;
+                src = pSrc;
                 return true;
             }
         }
@@ -578,19 +580,16 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
                 return CalculateSceneChoices(src, target, choices);
             });
     }
-}
 
-internal class ModuleCostGroupProgressionProvider : ICostGroupProgressionProvider
-{
-    private readonly TransitionSelectionModule module;
+    private int gen = CostGroupProgressionProviderGeneration.NextGen();
 
-    internal ModuleCostGroupProgressionProvider(TransitionSelectionModule module) => this.module = module;
+    public int Generation() => gen;
 
-    public IReadOnlyDictionary<string, CostGroup> CostGroups() => module.CostGroups;
+    public IReadOnlyDictionary<string, CostGroup> GetCostGroups() => CostGroups;
 
-    public IReadOnlyDictionary<string, string> CostGroupsByScene() => module.CostGroupsByScene;
+    public IReadOnlyDictionary<string, string> GetCostGroupsByScene() => CostGroupsByScene;
 
-    public bool IsRandomizedTransition(Transition transition) => module.RandomizedTransitions.Contains(transition);
+    public bool IsRandomizedTransition(Transition transition) => RandomizedTransitions.Contains(transition);
 
-    public IReadOnlyList<string> CostGroupProgression() => module.CostGroupProgression;
+    public IReadOnlyList<string> GetCostGroupProgression() => CostGroupProgression;
 }

@@ -23,7 +23,7 @@ internal class BugPrinceVariableResolver : VariableResolver
     {
         if (progressionProviderOverride != null) return progressionProviderOverride;
         if (RandoInterop.LS != null) return RandoInterop.LS;
-        return ItemChangerMod.Modules.Get<TransitionSelectionModule>()?.AsProgressionProvider();
+        return ItemChangerMod.Modules.Get<TransitionSelectionModule>();
     }
 
     internal void OverrideProgressionProvider(ICostGroupProgressionProvider? progressionProvider) => progressionProviderOverride = progressionProvider;
@@ -67,7 +67,7 @@ internal class BugPrinceAccessLogicInt : LogicInt
     public override int GetValue(object? sender, ProgressionManager pm)
     {
         var provider = resolver.GetProgressionProvider() ?? throw new ArgumentException("ProgressionProvider disappeared");
-        if (provider != cachedProvider)
+        if (cachedProvider == null || provider.Generation() != cachedProvider.Generation())
         {
             cachedProvider = provider;
             if (provider.GetProgressiveCostByScene(transition.SceneName, out var costType, out var cost))
@@ -75,11 +75,7 @@ internal class BugPrinceAccessLogicInt : LogicInt
                 cachedTerm = costType == CostType.Coins ? coinsTerm : gemsTerm;
                 cachedCost = cost;
             }
-            else
-            {
-                cachedTerm = coinsTerm;
-                cachedCost = -1;
-            }
+            else cachedCost = -1;
         }
 
         return (cachedCost < 0 || pm.Get(cachedTerm!) >= cachedCost) ? TRUE : FALSE;

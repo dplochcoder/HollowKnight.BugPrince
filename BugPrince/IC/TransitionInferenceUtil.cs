@@ -1,4 +1,5 @@
-﻿using ItemChanger;
+﻿using BugPrince.Util;
+using ItemChanger;
 using RandomizerMod.RC;
 using System.Linq;
 using UnityEngine;
@@ -73,16 +74,8 @@ internal static class TransitionInferenceUtil
         
         source = new(sceneName, gateName);
         if (!ItemChanger.Internal.Ref.Settings.TransitionOverrides.TryGetValue(source, out var modified)) return false;
-            
-        // automatically handle the split Mantis Village transition (while still using a consistent transition value for events)
-        // the original behavior is not possible when the source is a horizontal transition, in which case the gate is not changed.
-        if (info.SceneName == SceneNames.Fungus2_14 && info.EntryGateName == "bot3" && HeroController.SilentInstance?.cState?.facingRight == false
-            && !source.GateName.StartsWith("left") && !source.GateName.StartsWith("right"))
-        {
-            info.EntryGateName = "bot1";
-        }
 
-        target = new(modified.SceneName, modified.GateName);
+        target = modified.ToStruct();
         return true;
     }
 
@@ -119,6 +112,7 @@ internal static class TransitionInferenceUtil
         GateDirection.Right => GateDirection.Left,
         GateDirection.Bot => GateDirection.Top,
         GateDirection.Top => GateDirection.Bot,
-        GateDirection.Door => GateDirection.Door
+        GateDirection.Door => GateDirection.Door,
+        _ => throw self.InvalidEnum()
     };
 }
