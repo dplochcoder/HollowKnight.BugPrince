@@ -125,7 +125,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         var a = src.GetDirection();
         var b = dst.GetDirection();
         if (a == GateDirection.Door && b == GateDirection.Door) return doorToDoor;
-        else if (b == GateDirection.Door) return a == GateDirection.Left || b == GateDirection.Right;
+        else if (b == GateDirection.Door) return a == GateDirection.Left || a == GateDirection.Right;
         else if (a == GateDirection.Door) return b == GateDirection.Left || b == GateDirection.Right;
         else return a == b.Opposite();
     }
