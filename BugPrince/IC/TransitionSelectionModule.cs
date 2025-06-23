@@ -12,7 +12,6 @@ using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 
@@ -344,15 +343,13 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     public int Seed = 0;
 
-    private List<SceneChoiceInfo> CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
+    private IEnumerator<List<SceneChoiceInfo>?> CalculateSceneChoicesImpl(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
     {
-        // Decrement refresh counters
-        Dictionary<string, int> newDict = [];
+        Dictionary<string, int> tempRefreshCounters = [];
         foreach (var e in RefreshCounters)
         {
-            if (e.Value > 1) newDict[e.Key] = e.Value - 1;
+            if (e.Value > 1) tempRefreshCounters[e.Key] = e.Value - 1;
         }
-        RefreshCounters = newDict;
 
         List<(Transition, Transition)> potentialTargets = [];
         foreach (var p in RandoTransitionPlacements())
@@ -437,12 +434,13 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             if (chosenScenes.Contains(newTarget.SceneName) || tempChosenScenes.Contains(newTarget.SceneName)) { ++dupeScenes; continue; }
 
             bool isShop = this.GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName);
-            if (!RefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
+            if (!tempRefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
 
             bool isRedundantShop = haveShop && isShop;
             if ((refreshCount == 0 || startedBackfill.Value) && (!isRedundantShop || startedShopBackfill.Value))
             {
                 if (MaybeAdd(newSrc, newTarget) && isShop) haveShop = true;
+                yield return null;
             }
             else
             {
@@ -473,13 +471,42 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             else return c2.Cost.HasValue ? -1 : 1;
         });
 
-        // Reset refresh count for all selected choices.
-        foreach (var choice in choices) RefreshCounters[choice.Target.SceneName] = Settings.RefreshCycle;
         // Add the pinned scene if we can.
-        foreach (var (newSrc, newTarget) in pinBackfill) if (MaybeAdd(newSrc, newTarget)) break;
+        foreach (var (newSrc, newTarget) in pinBackfill)
+        {
+            bool added = MaybeAdd(newSrc, newTarget);
+            yield return null;
+
+            if (added) break;
+        }
 
         BugPrinceMod.DebugLog($"CALCULATE_SCENE_CHOICES: (illogicalSwaps={illogicalSwaps.Value}, dupeScenes={dupeScenes}, backfills={backfills}, remaining={firstPassRemaining})");
-        return choices;
+        yield return choices;
+    }
+
+    private List<SceneChoiceInfo> CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
+    {
+        var iter = CalculateSceneChoicesImpl(src, target, previous);
+        
+        while (true)
+        {
+            iter.MoveNext();
+            if (iter.Current != null) return iter.Current;
+        }
+    }
+
+    private void UpdateRefreshCounters(List<SceneChoiceInfo> choices)
+    {
+        // Decrement existing counters.
+        Dictionary<string, int> temp = [];
+        foreach (var e in RefreshCounters)
+        {
+            if (e.Value > 1) temp[e.Key] = e.Value - 1;
+        }
+        RefreshCounters = temp;
+
+        // Reset refresh count for all selected choices.
+        foreach (var choice in choices) RefreshCounters[choice.Target.SceneName] = Settings.RefreshCycle;
     }
 
     private void MaybeReleasePin(string targetScene)
@@ -533,6 +560,30 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
         return false;
     }
+
+    private Dictionary<Transition, ChoicePrecomputer> precomputers = [];
+
+    private void AdvancePrecomputeDict()
+    {
+        var start = DateTime.Now.Ticks;
+
+        List<ChoicePrecomputer> list = [.. precomputers.Values];
+        list.OrderBy(p => p.Tests());
+
+        bool anyUpdate = true;
+        while (anyUpdate)
+        {
+            anyUpdate = false;
+            foreach (var p in list)
+            {
+                if (!p.Advance()) continue;
+
+                anyUpdate = true;
+                TimeSpan span = new(DateTime.Now.Ticks - start);
+                if (span.TotalMilliseconds > 5) return;
+            }
+        }
+    }
     
     private void SelectRandomizedTransition(On.GameManager.orig_BeginSceneTransition orig, GameManager self, GameManager.SceneLoadInfo info)
     {
@@ -544,7 +595,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             return;
         }
 
-        var choices = CalculateSceneChoices(src, target)!;
+        var choices = precomputers.TryGetValue(src, out var precomputer) ? precomputer.GetResult() : CalculateSceneChoices(src, target);
+        precomputers.Clear();
+
+        UpdateRefreshCounters(choices);
 
         Wrapped<RoomSelectionUI?> wrapped = new(null);
         wrapped.Value = RoomSelectionUI.Create(
@@ -577,7 +631,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                 BugPrinceMod.DebugLog("USED_DICE_TOTEM");
                 DiceTotems--;
                 MaybeSelectNewPin(decision.newPin?.Target.SceneName);
-                return CalculateSceneChoices(src, target, choices);
+
+                var reroll = CalculateSceneChoices(src, target, choices);
+                UpdateRefreshCounters(reroll);
+                return reroll;
             });
     }
 
@@ -592,4 +649,32 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     public bool IsRandomizedTransition(Transition transition) => RandomizedTransitions.Contains(transition);
 
     public IReadOnlyList<string> GetCostGroupProgression() => CostGroupProgression;
+}
+
+internal class ChoicePrecomputer
+{
+    private readonly IEnumerator<List<SceneChoiceInfo>?> generator;
+    private List<SceneChoiceInfo>? result;
+    private int tests = 0;
+
+    internal ChoicePrecomputer(IEnumerator<List<SceneChoiceInfo>?> generator) => this.generator = generator;
+
+    internal int Tests() => tests;
+
+    internal bool Advance()
+    {
+        if (result != null) return false;
+
+        generator.MoveNext();
+        tests++;
+
+        if (generator.Current != null) result = generator.Current;
+        return true;
+    }
+
+    internal List<SceneChoiceInfo> GetResult()
+    {
+        while (result == null) Advance();
+        return result;
+    }
 }

@@ -6,11 +6,8 @@ internal static class RMMInterop
 {
     internal static void MaybeUpdateRandoMapMod()
     {
-        if (ModHooks.GetMod("RandoMapCoreMod") is not null) UpdateRandoMapCoreModImpl();
-        if (ModHooks.GetMod("RandoMapMod") is not null) UpdateRandoMapModImpl();
+        if (ModHooks.GetMod("RandoMapCoreMod") is Mod) UpdateRandoMapCoreModImpl();
     }
 
-    private static void UpdateRandoMapCoreModImpl() => RandoMapCore.RandoMapCoreMod.RebuildModules();
-
-    private static void UpdateRandoMapModImpl() => RandoMapMod.RandoMapMod.RebuildModules();
+    private static void UpdateRandoMapCoreModImpl() => RandoMapCore.RandoMapCoreMod.Rebuild();
 }

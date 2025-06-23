@@ -8,6 +8,7 @@ namespace BugPrince;
 
 public record GlobalSettings
 {
+    public bool EnablePrecomputation = true;
     public RandomizationSettings RandoSettings = new();
 }
 

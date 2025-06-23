@@ -1,5 +1,6 @@
 using BugPrince.Data;
 using BugPrince.Rando;
+using ItemChanger.Internal.Menu;
 using Modding;
 using RandomizerMod.Logging;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace BugPrince;
 
-public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>
+public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>, ICustomMenuMod
 {
     public static BugPrinceMod? Instance;
     public static GlobalSettings GS = new();
@@ -40,10 +41,25 @@ public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>
         if (ModHooks.GetMod("RandoSettingsManager") is Mod) SetupRandoSettingsManager();
     }
 
+    public bool ToggleButtonInsideMenu => false;
+
+    public MenuScreen GetMenuScreen(MenuScreen modListMenu, ModToggleDelegates? toggleDelegates)
+    {
+        ModMenuScreenBuilder builder = new("Bug Prince", modListMenu);
+        builder.AddHorizontalOption(new()
+        {
+            Name = "Enable Precomputation",
+            Description = "If yes, BugPrince will precompute room choices when entering a scene to save time.",
+            Values = ["No", "Yes"],
+            Saver = i => GS.EnablePrecomputation = i == 1,
+            Loader = () => GS.EnablePrecomputation ? 1 : 0
+        });
+        return builder.CreateMenuScreen();
+    }
+
     private const string DEBUG_LOG_FILENAME = "BugPrinceDebug.txt";
 
-    internal static void StartDebugLog() { }
-    // internal static void StartDebugLog() => LogManager.Write("--- BugPrinceDebugLog ---\n", DEBUG_LOG_FILENAME);
+    internal static void StartDebugLog() => LogManager.Write("--- BugPrinceDebugLog ---\n", DEBUG_LOG_FILENAME);
     internal static void DebugLog(string message) => LogManager.Append($"{message}\n", DEBUG_LOG_FILENAME);
 
     // Public API
