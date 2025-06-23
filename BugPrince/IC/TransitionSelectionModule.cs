@@ -481,6 +481,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         return choices;
     }
 
+    private void MaybeReleasePin(string targetScene)
+    {
+        if (PinnedScene == targetScene) PinnedScene = null;
+    }
+
     private void MaybeSelectNewPin(string? scene)
     {
         if (scene == null || PinnedScene != null || PushPins < 1) return;
@@ -489,6 +494,25 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
         PushPins--;
 
         Seed += scene.GetStableHashCode() ^ 0x37270AFE;
+    }
+
+    private void MaybeReleaseObsoletePin(string targetScene)
+    {
+        if (PinnedScene == null) return;
+
+        // If transitions are coupled and we unlocked all reverse transitions, free the pin.
+        bool anyTransition = false;
+        foreach (var p in RandoTransitionPlacements())
+        {
+            var dst = p.Target.ToStruct();
+            if (dst.SceneName != targetScene) continue;
+            if (ResolvedExitedTransitions.Contains(dst)) continue;
+
+            anyTransition = true;
+            break;
+        }
+
+        if (!anyTransition) PinnedScene = null;
     }
 
     private bool MapToPlacement(ref Transition src, ref Transition target)
@@ -532,12 +556,15 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
                 {
                     UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
                     Benchwarp.ChangeScene.WarpToRespawn();
+                    BugPrinceMod.DebugLog($"NO_CHOICES: {src}");
                     return;
                 }
 
+                MaybeReleasePin(choice.Target.SceneName);
                 MaybeSelectNewPin(decision.newPin?.Target.SceneName);
                 PayCosts(choice.Target.SceneName);
                 SwapTransitions(src, choice.OrigSrc);
+                MaybeReleaseObsoletePin(choice.Target.SceneName);
                 ResetTrackers();
 
                 BugPrinceMod.DebugLog($"CHOSE: {src} -> {UnsyncedRandoPlacements[src]}");
@@ -546,6 +573,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module
             },
             decision =>
             {
+                BugPrinceMod.DebugLog("USED_DICE_TOTEM");
                 DiceTotems--;
                 MaybeSelectNewPin(decision.newPin?.Target.SceneName);
                 return CalculateSceneChoices(src, target, choices);
