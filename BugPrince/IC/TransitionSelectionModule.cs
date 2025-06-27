@@ -59,8 +59,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         Events.OnEnterGame += DoLateInitialization;
         Events.OnSceneChange += ResetPrecomputers;
 
-        precomputeThread = new(UpdatePrecomputers);
-        precomputeThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        precomputeThread = new(UpdatePrecomputers) { Priority = System.Threading.ThreadPriority.BelowNormal };
         precomputeThread.Start();
 
         BugPrinceMod.StartDebugLog();
@@ -574,7 +573,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         return false;
     }
 
-    private AutoResetEvent precomputersEvent = new(false);
+    private readonly AutoResetEvent precomputersEvent = new(false);
     private readonly Dictionary<Transition, ChoicePrecomputer> precomputers = [];
 
     private void ResetPrecomputers(Scene scene)
