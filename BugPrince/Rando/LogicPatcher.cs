@@ -39,7 +39,7 @@ internal static class LogicPatcher
     {
         foreach (var transition in Transitions.GetTransitions())
         {
-            if (!RandoInterop.RS.IsEnabled(transition.Value.LocationPool)) continue;
+            if (!RandoInterop.RS.IsLocationPoolEnabled(transition.Value.LocationPool)) continue;
 
             lmb.AddTransition(new(transition.Key, transition.Value.Logic));
             transition.Value.LogicEdits.ForEach(lmb.DoLogicEdit);

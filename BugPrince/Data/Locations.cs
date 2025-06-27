@@ -117,7 +117,7 @@ internal record LocationData
 
     private LocationState GetLocationState(GenerationSettings gs, RandomizationSettings rs)
     {
-        if (!rs.IsEnabled(LocationPool)) return LocationState.Skip;
+        if (!rs.IsLocationPoolEnabled(LocationPool)) return LocationState.Skip;
 
         return ItemType switch
         {

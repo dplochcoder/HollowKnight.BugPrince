@@ -36,9 +36,9 @@ internal static class RandoInterop
 
     internal static RandomizationSettings RS => BugPrinceMod.GS.RandoSettings;
 
-    internal static bool IsEnabled => RS.EnableTransitionChoices || RS.IsAnyLocationPoolEnabled() || RS.TheVault || RS.GemstoneCavern;
+    internal static bool IsEnabled => RS.IsEnabled;
 
-    internal static bool AreCostsEnabled => RS.EnableTransitionChoices && RS.EnableCoinsAndGems;
+    internal static bool AreCostsEnabled => RS.AreCostsEnabled;
 
     internal static void Setup()
     {

@@ -48,7 +48,7 @@ internal class RequestModifier
     {
         foreach (var e in Transitions.GetTransitions())
         {
-            if (!RandoInterop.RS.IsEnabled(e.Value.LocationPool)) continue;
+            if (!RandoInterop.RS.IsLocationPoolEnabled(e.Value.LocationPool)) continue;
             yield return (e.Key, e.Value.Def!);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using MenuChanger.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,15 +104,18 @@ public record RandomizationSettings
     [LocationSetting(LocationPool.GemstoneCavern)]
     public bool GemstoneCavern = false;
 
+    internal bool IsLocationPoolEnabled(LocationPool locationPool) => poolFields.TryGetValue(locationPool, out var field) && field.GetValue(this) is true;
+
+    [JsonIgnore]
+    internal bool IsEnabled => EnableTransitionChoices || poolFields.Values.Any(f => f.GetValue(this) is true);
+
+    [JsonIgnore]
+    internal bool AreCostsEnabled => EnableTransitionChoices && EnableCoinsAndGems;
+
+    private static readonly Dictionary<LocationPool, FieldInfo> poolFields = [];
     static RandomizationSettings()
     {
         foreach (var field in typeof(RandomizationSettings).GetFields())
             if (field.GetCustomAttribute<LocationSettingAttribute>() is LocationSettingAttribute attr) poolFields.Add(attr.LocationPool, field);
     }
-
-    private static readonly Dictionary<LocationPool, FieldInfo> poolFields = [];
-
-    internal bool IsEnabled(LocationPool locationPool) => poolFields.TryGetValue(locationPool, out var field) && field.GetValue(this) is true;
-
-    internal bool IsAnyLocationPoolEnabled() => poolFields.Values.Any(f => f.GetValue(this) is true);
 }
