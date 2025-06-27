@@ -49,7 +49,7 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
         if (pd.GetInt(nameof(pd.nailSmithUpgrades)) < currentPlacement.Location.NailUpgradesThreshold)
         {
             shakeRange = SMALL_SHAKE_RANGE;
-            audioSource?.PlayOneShot(SoundCache.failed_menu);
+            audioSource?.PlayOneShot(SoundCache.FailedMenu);
             return;
         }
 

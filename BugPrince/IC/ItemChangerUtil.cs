@@ -100,7 +100,9 @@ internal class ItemSummoner : MonoBehaviour
             if (delay <= 0)
             {
                 time -= delay;
-                particleSystem!.emissionRate = 0;
+                var emission = particleSystem!.emission;
+                emission.rateOverTime = 0;
+                emission.rateOverDistance = 0;
                 particleSystem.Play();
 
                 shinyMarker = GameObjectUtil.MakeShinyDecorator();
@@ -120,7 +122,8 @@ internal class ItemSummoner : MonoBehaviour
             }
             else
             {
-                particleSystem!.emissionRate = MIN_PARTICLES + (MAX_PARTICLES - MIN_PARTICLES) * (EASE_TIME - ease);
+                var emission = particleSystem!.emission;
+                emission.rateOverTime = MIN_PARTICLES + (MAX_PARTICLES - MIN_PARTICLES) * (EASE_TIME - ease);
 
                 var pct = (EASE_TIME - ease) / EASE_TIME;
                 var scale = (1 - Mathf.Sin((pct + 1) * Mathf.PI / 2)) * 0.75f;

@@ -48,7 +48,7 @@ internal class CostGroupProducer : ICostGroupProducer
 
     public virtual bool ProduceCostGroup(GenerationSettings gs, Func<string, bool> sceneFilter, out CostGroup costGroup)
     {
-        costGroup = default;
+        costGroup = new();
         if (!SceneNames.Any(sceneFilter)) return false;
 
         costGroup = new()
@@ -70,7 +70,7 @@ internal class ConstrainedCostGroupProducer : CostGroupProducer
 
     public override bool ProduceCostGroup(GenerationSettings gs, Func<string, bool> sceneFilter, out CostGroup costGroup)
     {
-        costGroup = default;
+        costGroup = new();
         return (Constraint?.Applies(gs) ?? true) && base.ProduceCostGroup(gs, sceneFilter, out costGroup);
     }
 }
@@ -90,7 +90,7 @@ internal class TieredCostGroupProducer : ICostGroupProducer
 
     public bool ProduceCostGroup(GenerationSettings gs, Func<string, bool> sceneFilter, out CostGroup costGroup)
     {
-        costGroup = default;
+        costGroup = new();
         if (!SceneNames.Any(sceneFilter)) return false;
 
         foreach (var tier in Tiers)

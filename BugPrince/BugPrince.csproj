@@ -9,7 +9,7 @@
     <Description>Rando connection mod with Blue Prince mechanics</Description>
     <Copyright>Copyright © dplochcoder 2025</Copyright>
     <Authors>dplochcoder</Authors>
-    <NoWarn>7035</NoWarn>
+    <NoWarn>649,7035</NoWarn>
     <AssemblyVersion>1.3.0.0</AssemblyVersion>
     <FileVersion>1.3.0.0</FileVersion>
     <Deterministic>false</Deterministic>

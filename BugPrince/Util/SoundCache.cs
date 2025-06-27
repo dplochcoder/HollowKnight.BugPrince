@@ -31,22 +31,22 @@ internal static class SoundCache
     }
 
     [SoundCachePreload]
-    internal static AudioClip change_selection => GetAudioClip("change_selection");
+    internal static AudioClip ChangeSelection => GetAudioClip("change_selection");
 
     [SoundCachePreload]
-    internal static AudioClip confirm => GetAudioClip("confirm");
+    internal static AudioClip Confirm => GetAudioClip("confirm");
 
     [SoundCachePreload]
-    internal static AudioClip damage => GetAudioClip("damage");
+    internal static AudioClip Damage => GetAudioClip("damage");
 
     [SoundCachePreload]
-    internal static AudioClip locked_out => GetAudioClip("locked_out");
+    internal static AudioClip LockedOut => GetAudioClip("locked_out");
 
     [SoundCachePreload]
-    internal static AudioClip roll_totem => GetAudioClip("roll_totem");
+    internal static AudioClip RollTotem => GetAudioClip("roll_totem");
 
     [SoundCachePreload]
-    internal static AudioClip spend_resources => GetAudioClip("spend_resources");
+    internal static AudioClip SpendResources => GetAudioClip("spend_resources");
 
-    internal static AudioClip failed_menu => BugPrincePreloader.Instance.TinkEffectClip;
+    internal static AudioClip FailedMenu => BugPrincePreloader.Instance.TinkEffectClip;
 }

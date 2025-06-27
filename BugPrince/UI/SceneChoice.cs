@@ -58,7 +58,7 @@ internal class SceneChoice : MonoBehaviour
                 costIco.transform.localScale = new(scale, scale, scale);
 
                 var costRenderer = costIco.AddComponent<SpriteRenderer>();
-                costRenderer.sprite = costType.GetSprite();
+                costRenderer.sprite = costType switch { Data.CostType.Coins => CoinItem.LargeSprite.Value, Data.CostType.Gems => GemItem.LargeSprite.Value, _ => throw costType.InvalidEnum() };
                 costRenderer.SetUILayer(UISortingOrder.CostIcons);
                 costIco.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
             }

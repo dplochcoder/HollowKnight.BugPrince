@@ -174,11 +174,11 @@ internal class RoomSelectionUI : MonoBehaviour
         {
             selection = target.Value;
             selectionCorners!.UpdateTarget(layout![target.Value].Pos);
-            audioSource!.PlayOneShot(SoundCache.change_selection);
+            audioSource!.PlayOneShot(SoundCache.ChangeSelection);
         }
         else
         {
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
             selectionCorners?.Shake();
         }
     }
@@ -208,7 +208,7 @@ internal class RoomSelectionUI : MonoBehaviour
         {
             // Can't make 2 pins.
             ShakePinIndicators();
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
             return;
         }
 
@@ -216,7 +216,7 @@ internal class RoomSelectionUI : MonoBehaviour
         {
             choiceObjects[selection].ShakeCosts();
             GetInvSlot(info)?.Shake();
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
             return;
         }
 
@@ -231,10 +231,10 @@ internal class RoomSelectionUI : MonoBehaviour
 
         IEnumerator LockIn()
         {
-            audioSource!.PlayOneShot(SoundCache.confirm);
+            audioSource!.PlayOneShot(SoundCache.Confirm);
             if (info.Cost.HasValue)
             {
-                audioSource!.PlayOneShot(SoundCache.spend_resources);
+                audioSource!.PlayOneShot(SoundCache.SpendResources);
                 GetInvSlot(info)?.Take(info.Cost.Value.Item2);
             }
 
@@ -280,7 +280,7 @@ internal class RoomSelectionUI : MonoBehaviour
         if (hiddenPin)
         {
             pushPinSlot?.Shake();
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
             return;
         }
 
@@ -289,7 +289,7 @@ internal class RoomSelectionUI : MonoBehaviour
         {
             selectionCorners?.Shake();
             choiceObjects[selection].ShakePin();
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
         }
         else if (newPinSelection.HasValue)
         {
@@ -299,27 +299,27 @@ internal class RoomSelectionUI : MonoBehaviour
                 pushPinSlot?.Give(1);
                 choiceObjects[selection].SetPinned(false);
                 // TODO: Maybe undim eligible.
-                audioSource!.PlayOneShot(SoundCache.confirm);
+                audioSource!.PlayOneShot(SoundCache.Confirm);
             }
             else
             {
                 selectionCorners?.Shake();
                 choiceObjects[newPinSelection.Value].ShakePin();
-                audioSource!.PlayOneShot(SoundCache.failed_menu);
+                audioSource!.PlayOneShot(SoundCache.FailedMenu);
             }
         }
         else if (module!.PushPins == 0)
         {
             pushPinSlot?.Shake();
             selectionCorners?.Shake();
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
         }
         else
         {
             pushPinSlot?.Take(1);
             newPinSelection = selection;
             choiceObjects[selection].SetPinned(true);
-            audioSource!.PlayOneShot(SoundCache.confirm);
+            audioSource!.PlayOneShot(SoundCache.Confirm);
             // TODO: Maybe dim ineligible.
         }
     }
@@ -334,13 +334,13 @@ internal class RoomSelectionUI : MonoBehaviour
         if (rerolled || module!.DiceTotems == 0)
         {
             diceTotemSlot?.Shake();
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
             return;
         }
         if (PinIsUsed && newPinSelection.HasValue)
         {
             ShakePinIndicators();
-            audioSource!.PlayOneShot(SoundCache.failed_menu);
+            audioSource!.PlayOneShot(SoundCache.FailedMenu);
             return;
         }
 
@@ -349,8 +349,8 @@ internal class RoomSelectionUI : MonoBehaviour
         var newChoices = rerollCb(new() { newPin = newPinSelection.HasValue ? choiceInfos[newPinSelection.Value] : null });
         IEnumerator DoReroll()
         {
-            audioSource!.PlayOneShot(SoundCache.roll_totem);
-            audioSource!.PlayOneShot(SoundCache.spend_resources);
+            audioSource!.PlayOneShot(SoundCache.RollTotem);
+            audioSource!.PlayOneShot(SoundCache.SpendResources);
             diceTotemSlot?.Take(1);
             selectionCorners?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
             selectionCorners = null;
