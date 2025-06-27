@@ -34,12 +34,6 @@ internal static class RandoInterop
 {
     internal static LocalSettings? LS;
 
-    internal static RandomizationSettings RS => BugPrinceMod.GS.RandoSettings;
-
-    internal static bool IsEnabled => RS.IsEnabled;
-
-    internal static bool AreCostsEnabled => RS.AreCostsEnabled;
-
     internal static void Setup()
     {
         ConnectionMenu.Setup();
@@ -53,7 +47,7 @@ internal static class RandoInterop
 
         RandomizerMod.Logging.SettingsLog.AfterLogSettings += LogSettings;
         RandomizerMod.Logging.LogManager.AddLogger(new BugPrinceLogger());
-        CondensedSpoilerLogger.AddCategory("BugPrince Currency", _ => IsEnabled, [CoinItem.ITEM_NAME, GemItem.ITEM_NAME]);
+        CondensedSpoilerLogger.AddCategory("BugPrince Currency", _ => BugPrinceMod.RS.IsEnabled, [CoinItem.ITEM_NAME, GemItem.ITEM_NAME]);
     }
 
     private static void DefineCustomItems()
@@ -72,7 +66,7 @@ internal static class RandoInterop
 
     private static void OnExportCompleted(RandoController rc)
     {
-        if (RS.EnableTransitionChoices)
+        if (BugPrinceMod.RS.EnableTransitionChoices)
         {
             var module = ItemChangerMod.Modules.Add<TransitionSelectionModule>();
             module.CostGroups = LS!.CostGroups;
@@ -80,24 +74,24 @@ internal static class RandoInterop
             module.RandomizedTransitions = LS.RandomizedTransitions;
             module.CostGroupProgression = LS.CostGroupProgression;
             module.Seed = rc.gs.Seed;
-            module.DiceTotems = RS.StartingDiceTotems;
-            module.PushPins = RS.StartingPushPins;
+            module.DiceTotems = BugPrinceMod.RS.StartingDiceTotems;
+            module.PushPins = BugPrinceMod.RS.StartingPushPins;
         }
-        if (RS.AdvancedLocations) ItemChangerMod.Modules.Add<BreakablesModule>();
-        if (RS.MapShop)
+        if (BugPrinceMod.RS.AdvancedLocations) ItemChangerMod.Modules.Add<BreakablesModule>();
+        if (BugPrinceMod.RS.MapShop)
         {
             ItemChangerMod.Modules.Add<MapShopModule>();
             if (!rc.gs.PoolSettings.Maps) MapShopModule.PlaceVanillaMaps();
         }
-        if (RS.GemstoneCavern) ItemChangerMod.Modules.Add<GemstoneCavernModule>();
-        if (RS.TheVault) ItemChangerMod.Modules.Add<VaultModule>();
+        if (BugPrinceMod.RS.GemstoneCavern) ItemChangerMod.Modules.Add<GemstoneCavernModule>();
+        if (BugPrinceMod.RS.TheVault) ItemChangerMod.Modules.Add<VaultModule>();
 
-        Locations.GetLocations().Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, RS));
+        Locations.GetLocations().Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, BugPrinceMod.RS));
     }
 
     private static void LogSettings(RandomizerMod.Logging.LogArguments args, TextWriter tw)
     {
-        if (!IsEnabled) return;
+        if (!BugPrinceMod.RS.IsEnabled) return;
 
         tw.WriteLine("Logging BugPrince Settings:");
         using JsonTextWriter jtw = new(tw) { CloseOutput = false };

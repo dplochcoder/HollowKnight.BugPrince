@@ -12,6 +12,7 @@ public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>, ICustomMenuMod
 {
     public static BugPrinceMod? Instance;
     public static GlobalSettings GS = new();
+    public static RandomizationSettings RS => GS.RandoSettings;
 
     private static readonly string version = PurenailCore.ModUtil.VersionUtil.ComputeVersion<BugPrinceMod>();
 

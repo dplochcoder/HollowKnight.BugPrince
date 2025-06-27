@@ -7,7 +7,7 @@ internal class BugPrinceLogger : RandoLogger
 {
     public override void Log(LogArguments args)
     {
-        if (!RandoInterop.IsEnabled) return;
+        if (!BugPrinceMod.RS.IsEnabled) return;
 
         var ls = RandoInterop.LS;
         if (ls == null) return;

@@ -48,7 +48,7 @@ internal class RequestModifier
     {
         foreach (var e in Transitions.GetTransitions())
         {
-            if (!RandoInterop.RS.IsLocationPoolEnabled(e.Value.LocationPool)) continue;
+            if (!BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) continue;
             yield return (e.Key, e.Value.Def!);
         }
     }
@@ -72,7 +72,7 @@ internal class RequestModifier
                     info.onRandoLocationCreation += (randoFactory, randoLocation) =>
                     {
                         randoLocation.AddCost(new LogicGeoCost(randoFactory.lm, -1));
-                        randoLocation.AddCost(new SimpleCost(randoFactory.lm.GetTermStrict("MAPS"), randoFactory.rng.Next(RandoInterop.RS.MinimumMaps, RandoInterop.RS.MaximumMaps + 1)));
+                        randoLocation.AddCost(new SimpleCost(randoFactory.lm.GetTermStrict("MAPS"), randoFactory.rng.Next(BugPrinceMod.RS.MinimumMaps, BugPrinceMod.RS.MaximumMaps + 1)));
                     };
                     info.onRandomizerFinish += placement =>
                     {
@@ -111,7 +111,7 @@ internal class RequestModifier
 
     private static void AddItemsAndLocations(RequestBuilder rb)
     {
-        if (!RandoInterop.IsEnabled) return;
+        if (!BugPrinceMod.RS.IsEnabled) return;
 
         ProvideRequestInfo(rb);
 
@@ -130,7 +130,7 @@ internal class RequestModifier
             foreach (var location in Locations.GetLocations())
             {
                 var (name, loc) = (location.Key, location.Value);
-                loc.AddToRequestBuilder(RandoInterop.RS, rb);
+                loc.AddToRequestBuilder(BugPrinceMod.RS, rb);
             }
             return;
         }
@@ -175,9 +175,9 @@ internal class RequestModifier
         WeightedRandomSort(ordered, r);
         RandoInterop.LS.CostGroupProgression = [.. ordered.Select(p => p.Item1)];
 
-        Locations.GetLocations().Values.ForEach(loc => loc.AddToRequestBuilder(RandoInterop.RS, rb));
+        Locations.GetLocations().Values.ForEach(loc => loc.AddToRequestBuilder(BugPrinceMod.RS, rb));
 
-        var RS = RandoInterop.RS;
+        var RS = BugPrinceMod.RS;
         if (rb.gs.PoolSettings.Relics)
         {
             rb.AddItemByName(DiceTotemItem.ITEM_NAME, RS.TotalDiceTotems - RS.StartingDiceTotems);
@@ -189,27 +189,27 @@ internal class RequestModifier
             var neededCoins = RandoInterop.LS.GetItemCount(CostType.Coins);
             if (neededCoins > 0)
             {
-                rb.AddItemByName(CoinItem.ITEM_NAME, neededCoins + RandoInterop.RS.CoinTolerance);
-                rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}", RandoInterop.RS.CoinDuplicates);
+                rb.AddItemByName(CoinItem.ITEM_NAME, neededCoins + BugPrinceMod.RS.CoinTolerance);
+                rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}", BugPrinceMod.RS.CoinDuplicates);
             }
 
             var neededGems = RandoInterop.LS.GetItemCount(CostType.Gems);
             if (neededGems > 0)
             {
-                rb.AddItemByName(GemItem.ITEM_NAME, neededGems + RandoInterop.RS.GemTolerance);
-                rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}", RandoInterop.RS.GemDuplicates);
+                rb.AddItemByName(GemItem.ITEM_NAME, neededGems + BugPrinceMod.RS.GemTolerance);
+                rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}", BugPrinceMod.RS.GemDuplicates);
             }
         }
     }
 
     private static void AddTolerances(LogicManager lm, GenerationSettings gs, ProgressionInitializer pi)
     {
-        if (RandoInterop.AreCostsEnabled)
+        if (BugPrinceMod.RS.AreCostsEnabled)
         {
-            pi.Setters.Add(new(CostType.Coins.GetTerm(lm), -RandoInterop.RS.CoinTolerance));
-            pi.Setters.Add(new(CostType.Gems.GetTerm(lm), -RandoInterop.RS.GemTolerance));
+            pi.Setters.Add(new(CostType.Coins.GetTerm(lm), -BugPrinceMod.RS.CoinTolerance));
+            pi.Setters.Add(new(CostType.Gems.GetTerm(lm), -BugPrinceMod.RS.GemTolerance));
         }
-        if (RandoInterop.RS.MapShop) pi.Setters.Add(new(lm.GetTermStrict("MAPS"), -RandoInterop.RS.MapTolerance));
+        if (BugPrinceMod.RS.MapShop) pi.Setters.Add(new(lm.GetTermStrict("MAPS"), -BugPrinceMod.RS.MapTolerance));
     }
 
     private static void WeightedRandomSort(List<(string, CostGroup)> list, Random r)

@@ -84,11 +84,11 @@ internal class ConnectionMenu
 
     private void UpdateColorsAndVisibility()
     {
-        entryButton.Text.color = RandoInterop.IsEnabled ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
+        entryButton.Text.color = BugPrinceMod.RS.IsEnabled ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
         transitionSettings.SetShown(Settings.EnableTransitionChoices);
         relicSettings.SetShown(Settings.EnableTransitionChoices);
         enableCoinsAndGems.SetShown(Settings.EnableTransitionChoices);
-        costSettings.SetShown(RandoInterop.AreCostsEnabled);
+        costSettings.SetShown(BugPrinceMod.RS.AreCostsEnabled);
         mapShopSettings.SetShown(Settings.MapShop);
     }
 

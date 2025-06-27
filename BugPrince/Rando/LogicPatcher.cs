@@ -20,7 +20,7 @@ internal static class LogicPatcher
 
     private static void AddDefinitions(GenerationSettings gs, LogicManagerBuilder lmb)
     {
-        if (!RandoInterop.IsEnabled) return;
+        if (!BugPrinceMod.RS.IsEnabled) return;
 
         RandoInterop.LS = new();
 
@@ -39,13 +39,13 @@ internal static class LogicPatcher
     {
         foreach (var transition in Transitions.GetTransitions())
         {
-            if (!RandoInterop.RS.IsLocationPoolEnabled(transition.Value.LocationPool)) continue;
+            if (!BugPrinceMod.RS.IsLocationPoolEnabled(transition.Value.LocationPool)) continue;
 
             lmb.AddTransition(new(transition.Key, transition.Value.Logic));
             transition.Value.LogicEdits.ForEach(lmb.DoLogicEdit);
         }
 
-        if (!RandoInterop.RS.EnableTransitionChoices) return;
+        if (!BugPrinceMod.RS.EnableTransitionChoices) return;
 
         HashSet<string> costScenes = [];
         foreach (var cgp in CostGroup.GetProducers().Values) costScenes.AddRange(cgp.RelevantSceneNames());
