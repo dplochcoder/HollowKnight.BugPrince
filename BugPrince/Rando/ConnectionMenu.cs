@@ -26,11 +26,11 @@ internal class ConnectionMenu
 
     private readonly SmallButton entryButton;
     private readonly MenuElementFactory<RandomizationSettings> factory;
-    private GridItemPanel transitionSettings;
-    private GridItemPanel relicSettings;
-    private MenuItem<bool> enableCoinsAndGems;
-    private GridItemPanel costSettings;
-    private GridItemPanel mapShopSettings;
+    private readonly GridItemPanel transitionSettings;
+    private readonly GridItemPanel relicSettings;
+    private readonly MenuItem<bool> enableCoinsAndGems;
+    private readonly GridItemPanel costSettings;
+    private readonly GridItemPanel mapShopSettings;
 
     private static List<IValueElement> GetElements<T>(MenuElementFactory<RandomizationSettings> factory) where T : Attribute
     {
