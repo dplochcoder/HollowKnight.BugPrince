@@ -49,7 +49,9 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     private readonly Dictionary<Transition, RandoModTransition> sourceRandoTransitions = [];
     private readonly Dictionary<Transition, RandoModTransition> targetRandoTransitions = [];
 
-    public static TransitionSelectionModule Get() => ItemChangerMod.Modules.Get<TransitionSelectionModule>()!;
+    private static TransitionSelectionModule? instance;
+
+    public static TransitionSelectionModule? Get() => instance;
 
     private Thread? precomputeThread;
 
@@ -62,15 +64,19 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         precomputeThread.Start();
 
         BugPrinceMod.StartDebugLog();
+
+        instance = this;
     }
 
     public override void Unload()
     {
         Events.OnEnterGame -= DoLateInitialization;
         Events.OnSceneChange -= ResetPrecomputers;
+        On.GameManager.BeginSceneTransition -= SelectRandomizedTransition;
+
         precomputeThread?.Abort();
 
-        On.GameManager.BeginSceneTransition -= SelectRandomizedTransition;
+        instance = null;
     }
 
     private static RandomizerSettings RS() => RandomizerMod.RandomizerMod.RS;

@@ -34,7 +34,7 @@ public class DiceTotemItem : AbstractItem
         this.AddInteropData("Relics");
     }
 
-    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get().DiceTotems++;
+    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get()!.DiceTotems++;
 
     public override AbstractItem Clone() => new DiceTotemItem();
 }
