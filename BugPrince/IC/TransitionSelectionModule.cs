@@ -14,10 +14,12 @@ using RandomizerMod.IC;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace BugPrince.IC;
@@ -833,6 +835,23 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         LaunchUI(src, () => orig(self, info));
     }
 
+    private void TinkTinkTink()
+    {
+        IEnumerator Routine()
+        {
+            GameObject obj = new("oops");
+            var audio = obj.AddComponent<AudioSource>();
+            obj.transform.position = HeroController.instance.transform.position;
+
+            audio.PlayOneShot(SoundCache.FailedMenu);
+            yield return new WaitForSeconds(0.35f);
+            audio.PlayOneShot(SoundCache.FailedMenu);
+            yield return new WaitForSeconds(0.35f);
+            audio.PlayOneShot(SoundCache.FailedMenu);
+        }
+        GameManager.instance.StartCoroutine(Routine());
+    }
+
     private void LaunchUI(Transition src, Action done)
     {
         ChoicePrecomputer? precomputer;
@@ -888,6 +907,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                         // Selection failed; retry.
                         RoomSelectionUI.uiPresent = false;
                         UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
+
+                        TinkTinkTink();
                         LaunchUI(src, done);
                     }
 
@@ -907,7 +928,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             {
                 // Check if we can reroll anymore.
                 newChoices = [];
-                if (ResolvedEnteredTransitions.Contains(src)) return false;
+                if (ResolvedEnteredTransitions.Contains(src))
+                {
+                    TinkTinkTink();
+                    return false;
+                }
 
                 BugPrinceMod.DebugLog("USED_DICE_TOTEM");
                 DiceTotems--;
