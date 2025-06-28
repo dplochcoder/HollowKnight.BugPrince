@@ -34,6 +34,10 @@ Push Pins are also a _shared_ resource, but the pinned scenes are not. This mean
 
 Dice Totems are the exception, and are an _instanced_ resource like Simple Keys are traditionally. Any player who obtains a dice totem increases everyone's total, but when used, only the spending player loses a totem.
 
+#### Auto Save
+
+To prevent irreversible breakage, BugPrince will auto-save your game every time a transition selection is made if you are the _host_ in a multiplayer ItemSync save.
+
 #### Race Conditions
 
 Whether you are host or not, you may encounter a situation where you enter a new transition, but another player makes a transition selection before you do. BugPrince will do its best to preserve your decision transparently, but this is not always possible.

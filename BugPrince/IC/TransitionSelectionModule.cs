@@ -687,7 +687,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     private static bool ItemSyncIsHost(bool real)
     {
         var s = ItemSyncMod.ItemSyncMod.ISSettings;
-        return real ? (s.IsItemSync && s.MWPlayerId == 0) : (!s.IsItemSync || s.MWPlayerId == 0);
+        return real ? (s.IsItemSync && s.MWPlayerId == 0 && s.nicknames.Count > 1) : (!s.IsItemSync || s.MWPlayerId == 0);
     }
     private bool IsHost => !IsItemSyncInstalled || ItemSyncIsHost(false);
     private bool IsRealHost => IsItemSyncInstalled && ItemSyncIsHost(true);
@@ -706,7 +706,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         needRandoMapModUpdate = true;
 
         TransitionSyncUpdates.Add(update);
-        if (IsRealHost) Send(update);
+        if (IsRealHost)
+        {
+            if (BugPrinceMod.GS.AutoSaveChoices) GameManager.instance.SaveGame();
+            Send(update);
+        }
         MaybeReleaseObsoletePin(update.Target2.SceneName);
 
         BugPrinceMod.DebugLog($"CHOSE: {update.Source1} -> {UnsyncedRandoPlacements[update.Source1]}");
