@@ -210,14 +210,16 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         return true;
     }
 
-    private bool CanSwapTransitions(
-        Transition src1, Transition dst1, Transition src2, Transition dst2)
+    private bool CanSwapTransitions(Transition src1, Transition src2)
     {
+        var target1 = UnsyncedRandoPlacements[src1];
+        var target2 = UnsyncedRandoPlacements[src2];
+
         var ctx = RandoCtx();
         var lm = ctx.LM;
 
         Action? onDone = null;
-        if (this.GetCostGroupByScene(dst1.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName) && CostGroupProgression[PaidCostGroups.Count] != groupName)
+        if (this.GetCostGroupByScene(target1.SceneName, out var groupName, out var group) && !PaidCostGroups.Contains(groupName) && CostGroupProgression[PaidCostGroups.Count] != groupName)
         {
             // Check that we can bump this shop forward in progression order.
             if (!lm.VariableResolver.TryGetInner<BugPrinceVariableResolver>(out var inner)) throw new ArgumentException("Missing BugPrinceVariableResolver");
@@ -250,12 +252,12 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
                 if (swap)
                 {
-                    if (source == src1) target = dst2;
-                    else if (source == src2) target = dst1;
+                    if (source == src1) target = target2;
+                    else if (source == src2) target = target1;
                     else if (coupled)
                     {
-                        if (source == dst1) target = src2;
-                        else if (source == dst2) target = src1;
+                        if (source == target1) target = src2;
+                        else if (source == target2) target = src1;
                     }
                 }
 
@@ -378,8 +380,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         ResetTracker(rs.TrackerDataWithoutSequenceBreaks);
     }
 
-    private IEnumerator<List<SceneChoiceInfo>?> CalculateSceneChoicesIterator(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
+    private IEnumerator<List<SceneChoiceInfo>?> CalculateSceneChoicesIterator(Transition src, List<SceneChoiceInfo>? previous = null)
     {
+        var target = UnsyncedRandoPlacements[src];
+
         Dictionary<string, int> tempRefreshCounters = [];
         foreach (var e in RefreshCounters)
         {
@@ -437,7 +441,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         Wrapped<int> illogicalSwaps = new(0);
         bool MaybeAdd(Transition newSrc, Transition newTarget)
         {
-            if (!CanSwapTransitions(src, target, newSrc, newTarget))
+            if (!CanSwapTransitions(src, newSrc))
             {
                 illogicalSwaps.Value++;
                 return false;
@@ -519,9 +523,9 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         yield return choices;
     }
 
-    private List<SceneChoiceInfo> CalculateSceneChoices(Transition src, Transition target, List<SceneChoiceInfo>? previous = null)
+    private List<SceneChoiceInfo> CalculateSceneChoices(Transition src, List<SceneChoiceInfo>? previous = null)
     {
-        var iter = CalculateSceneChoicesIterator(src, target, previous);
+        var iter = CalculateSceneChoicesIterator(src, previous);
         
         while (true)
         {
@@ -621,15 +625,15 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             if (e.Key.SceneName != scene.name) continue;
 
             var target = e.Value.ToStruct();
-            if (targetToSrc.TryGetValue(target, out var src) && !ResolvedEnteredTransitions.Contains(src) && !ResolvedExitedTransitions.Contains(target)) newPrecomputers.Add(src, new(CalculateSceneChoicesIterator(src, target)));
+            if (targetToSrc.TryGetValue(target, out var src) && !ResolvedEnteredTransitions.Contains(src) && !ResolvedExitedTransitions.Contains(target)) newPrecomputers.Add(src, new(CalculateSceneChoicesIterator(src)));
         }
 
         RebuildActivePrecomputers(newPrecomputers);
     }
 
-    private void ResetPrecomputersSameScene()
+    private Action DeferredResetPrecomputersSameScene()
     {
-        if (!BugPrinceMod.GS.EnablePrecomputation) return;
+        if (!BugPrinceMod.GS.EnablePrecomputation) return () => { };
 
         HashSet<Transition> updatedTransitions = [];
         lock (precomputers)
@@ -638,10 +642,13 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             precomputers.Clear();
         }
 
-        Dictionary<Transition, ChoicePrecomputer> updatedPrecomputers = [];
-        foreach (var src in updatedTransitions) updatedPrecomputers.Add(src, new(CalculateSceneChoicesIterator(src, UnsyncedRandoPlacements[src])));
+        return () =>
+        {
+            Dictionary<Transition, ChoicePrecomputer> updatedPrecomputers = [];
+            foreach (var src in updatedTransitions) updatedPrecomputers.Add(src, new(CalculateSceneChoicesIterator(src)));
 
-        RebuildActivePrecomputers(updatedPrecomputers);
+            RebuildActivePrecomputers(updatedPrecomputers);
+        };
     }
 
     private void UpdatePrecomputers()
@@ -675,8 +682,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private void ForceApplyUpdate(TransitionSyncUpdate update, bool updateIndices)
     {
-        PayCosts(update.target2.SceneName);
-        SwapTransitions(update.source1, update.source2);
+        PayCosts(update.Target2.SceneName);
+        SwapTransitions(update.Source1, update.Source2);
         update.RefreshCounterUpdates.ForEach(UpdateRefreshCounters);
         if (update.UsedPin && PushPins > 0) --PushPins;
 
@@ -688,9 +695,9 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
         TransitionSyncUpdates.Add(update);
         if (IsRealHost) Send(update);
-        MaybeReleaseObsoletePin(update.target2.SceneName);
+        MaybeReleaseObsoletePin(update.Target2.SceneName);
 
-        BugPrinceMod.DebugLog($"CHOSE: {update.source1} -> {UnsyncedRandoPlacements[update.source1]}");
+        BugPrinceMod.DebugLog($"CHOSE: {update.Source1} -> {UnsyncedRandoPlacements[update.Source1]}");
     }
 
     // Attempt to apply a transiton swap update. Returns true if successful, false if rejected.
@@ -707,22 +714,21 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         var coupled = TransitionSettings().Coupled;
 
         // Check if the transition has been chosen already.
-        if (ResolvedEnteredTransitions.Contains(update.source1) || (coupled && ResolvedExitedTransitions.Contains(update.target2))) return false;
+        if (ResolvedEnteredTransitions.Contains(update.Source1) || (coupled && ResolvedExitedTransitions.Contains(update.Target2))) return false;
 
         // Check if we can still afford it.
-        if (!CanPayCosts(update.target2.SceneName)) return false;
+        if (!CanPayCosts(update.Target2.SceneName)) return false;
 
         // Check if this transition is still logically permissible.
-        update.target1 = UnsyncedRandoPlacements[update.source1];
         foreach (var p in RandoTransitionPlacements())
         {
-            if (p.Target.ToStruct() == update.target2)
+            if (p.Target.ToStruct() == update.Target2)
             {
-                update.source2 = p.Source.ToStruct();
+                update.Source2 = p.Source.ToStruct();
                 break;
             }
         }
-        if (!CanSwapTransitions(update.source1, update.target1, update.source2, update.target2)) return false;
+        if (!CanSwapTransitions(update.Source1, update.Source2)) return false;
 
         // We're good! Clean up pin usage and commit.
         update.UsedPin &= PushPins > 0;
@@ -776,7 +782,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         if (IsHost) return;
 
-        bool anyUpdate = false;
+        Action deferred = updates.Any(u => u.SequenceNumber == TransitionSyncUpdates.Count) ? DeferredResetPrecomputersSameScene() : () => { };
         foreach (var update in updates)
         {
             if (update.SequenceNumber > TransitionSyncUpdates.Count)
@@ -786,14 +792,9 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                     response => ApplyUpdates(response.Updates));
                 break;
             }
-            else if (update.SequenceNumber == TransitionSyncUpdates.Count)
-            {
-                ForceApplyUpdate(update, update.SequenceNumber == updates[updates.Count - 1].SequenceNumber);
-                anyUpdate = true;
-            }
+            else if (update.SequenceNumber == TransitionSyncUpdates.Count) ForceApplyUpdate(update, update.SequenceNumber == updates[updates.Count - 1].SequenceNumber);
         }
-
-        if (anyUpdate) ResetPrecomputersSameScene();
+        deferred();
     }
 
     private void SelectRandomizedTransition(On.GameManager.orig_BeginSceneTransition orig, GameManager self, GameManager.SceneLoadInfo info)
@@ -806,10 +807,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             return;
         }
 
-        LaunchUI(src, target, () => orig(self, info));
+        LaunchUI(src, () => orig(self, info));
     }
 
-    private void LaunchUI(Transition src, Transition target, Action done)
+    private void LaunchUI(Transition src, Action done)
     {
         ChoicePrecomputer? precomputer;
         lock (precomputers)
@@ -820,15 +821,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             // Keep this here in to retrigger our next roll if selection fails.
             if (precomputer != null) precomputers.Add(src, precomputer);
         }
-        var choices = precomputer?.GetResult() ?? CalculateSceneChoices(src, target);
+        var choices = precomputer?.GetResult() ?? CalculateSceneChoices(src);
 
         Wrapped<RoomSelectionDecision?> selectionDecision = new(null);
 
         SwapTransitionsRequest swapRequest = new();
         var update = swapRequest.Update;
         update.SequenceNumber = TransitionSyncUpdates.Count;
-        update.source1 = src;
-        update.target1 = target;
+        update.Source1 = src;
         update.RefreshCounterUpdates.Add([.. choices.Select(i => i.Target.SceneName)]);
 
         Wrapped<RoomSelectionUI?> wrapped = new(null);
@@ -846,8 +846,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                     return;
                 }
 
-                update.source2 = choice.OrigSrc;
-                update.target2 = choice.Target;
+                update.Source2 = choice.OrigSrc;
+                update.Target2 = choice.Target;
                 update.UsedPin = decision.newPin != null;
                 selectionDecision.Value = decision;
 
@@ -865,7 +865,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                         // Selection failed; retry.
                         RoomSelectionUI.uiPresent = false;
                         UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
-                        LaunchUI(src, target, done);
+                        LaunchUI(src, done);
                     }
 
                     MaybeReleaseObsoletePin(choice.Target.SceneName);
@@ -889,7 +889,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                 BugPrinceMod.DebugLog("USED_DICE_TOTEM");
                 DiceTotems--;
 
-                newChoices = CalculateSceneChoices(src, target, choices);
+                newChoices = CalculateSceneChoices(src, choices);
                 update.SequenceNumber = TransitionSyncUpdates.Count;
                 update.RefreshCounterUpdates.Add([.. newChoices.Select(i => i.Target.SceneName)]);
 
