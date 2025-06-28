@@ -81,6 +81,9 @@
     <Reference Include="ItemSync">
       <HintPath>$(HollowKnightRefs)/Mods/ItemSync/ItemSync.dll</HintPath>
     </Reference>
+    <Reference Include="MapChanger">
+      <HintPath>$(HollowKnightRefs)/Mods/MapChanger/MapChanger.dll</HintPath>
+    </Reference>
     <Reference Include="MenuChanger">
       <HintPath>$(HollowKnightRefs)/Mods/MenuChanger/MenuChanger.dll</HintPath>
     </Reference>

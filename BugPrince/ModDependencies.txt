@@ -16,3 +16,4 @@ TheRealJournalRando
 
 ItemSync
 MultiWorldLib
+MapChanger

@@ -3,6 +3,7 @@ using BugPrince.ItemSyncInterop;
 using BugPrince.Rando;
 using BugPrince.UI;
 using BugPrince.Util;
+using GlobalEnums;
 using ItemChanger;
 using Modding;
 using Newtonsoft.Json;
@@ -50,6 +51,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     // Caches.
     private readonly Dictionary<Transition, RandoModTransition> sourceRandoTransitions = [];
     private readonly Dictionary<Transition, RandoModTransition> targetRandoTransitions = [];
+    private bool needMapModUpdate = false;
 
     private static TransitionSelectionModule? instance;
 
@@ -61,6 +63,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         Events.OnEnterGame += DoLateInitialization;
         Events.OnSceneChange += ResetPrecomputersNewScene;
+        if (ModHooks.GetMod("RandoMapMod") is Mod) HookMapChanger();
 
         precomputeThread = new(UpdatePrecomputers) { Priority = ThreadPriority.BelowNormal };
         precomputeThread.Start();
@@ -75,11 +78,34 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         Events.OnEnterGame -= DoLateInitialization;
         Events.OnSceneChange -= ResetPrecomputersNewScene;
         On.GameManager.BeginSceneTransition -= SelectRandomizedTransition;
+        if (ModHooks.GetMod("RandoMapMod") is Mod) UnhookMapChanger();
 
         precomputeThread?.Abort();
 
         instance = null;
     }
+
+    private void HookMapChanger()
+    {
+        MapChanger.Events.OnWorldMap += MaybeRebuildMap;
+        MapChanger.Events.OnQuickMap += MaybeRebuildMap;
+    }
+
+    private void UnhookMapChanger()
+    {
+        MapChanger.Events.OnWorldMap -= MaybeRebuildMap;
+        MapChanger.Events.OnQuickMap -= MaybeRebuildMap;
+    }
+
+    private void MaybeRebuildMap(GameMap worldMap)
+    {
+        if (needMapModUpdate)
+        {
+            RMCInterop.RMCInterop.MaybeUpdateRandoMapMod();
+            needMapModUpdate = false;
+        }
+    }
+    private void MaybeRebuildMap(GameMap gameMap, MapZone mapZone) => MaybeRebuildMap(gameMap);
 
     private static RandomizerSettings RS() => RandomizerMod.RandomizerMod.RS;
 
@@ -680,18 +706,15 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     // Permanent record of all updates chronologically.
     public List<TransitionSyncUpdate> TransitionSyncUpdates = [];
 
-    private void ForceApplyUpdate(TransitionSyncUpdate update, bool updateIndices)
+    private void ForceApplyUpdate(TransitionSyncUpdate update, bool resetTrackers)
     {
         PayCosts(update.Target2.SceneName);
         SwapTransitions(update.Source1, update.Source2);
         update.RefreshCounterUpdates.ForEach(UpdateRefreshCounters);
         if (update.UsedPin && PushPins > 0) --PushPins;
 
-        if (updateIndices)
-        {
-            ResetTrackers();
-            RMCInterop.RMCInterop.MaybeUpdateRandoMapMod();
-        }
+        if (resetTrackers) ResetTrackers();
+        needMapModUpdate = true;
 
         TransitionSyncUpdates.Add(update);
         if (IsRealHost) Send(update);
