@@ -903,7 +903,12 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                 var choice = selectionDecision.Value!.chosen!;
                 if (!response.Accepted)
                 {
-                    if (!ResolvedEnteredTransitions.Contains(src))
+                    if (ResolvedEnteredTransitions.Contains(src))
+                    {
+                        MaybeReleaseObsoletePin(choice.Target.SceneName);
+                        done();
+                    }
+                    else
                     {
                         // Selection failed; retry.
                         RoomSelectionUI.uiPresent = false;
@@ -912,9 +917,6 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                         TinkTinkTink();
                         LaunchUI(src, done);
                     }
-
-                    MaybeReleaseObsoletePin(choice.Target.SceneName);
-                    done();
                     return;
                 }
 
