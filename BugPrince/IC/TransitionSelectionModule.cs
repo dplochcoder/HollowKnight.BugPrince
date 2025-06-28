@@ -103,7 +103,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         if (needRandoMapModUpdate && BugPrinceMod.GS.EnablePathfinderUpdates)
         {
-            RMCInterop.RMCInterop.MaybeUpdateRandoMapMod();
+            RandoMapCore.RandoMapCoreMod.Rebuild();
             needRandoMapModUpdate = false;
         }
     }
