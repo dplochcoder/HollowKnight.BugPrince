@@ -13,3 +13,6 @@ RandoSettingsManager
 Randomizable Levers
 SFCore
 TheRealJournalRando
+
+ItemSync
+MultiWorldLib

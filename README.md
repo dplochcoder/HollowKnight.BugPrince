@@ -20,6 +20,31 @@ The matching and coupled settings are also respected. In Coupled mode, selecting
 
 If connected areas are specified, you will be very likely to see at least 1 connected area scene whenever making a choice, but it is of course not guaranteed.
 
+### ItemSync Integration
+
+Bug Prince can be played with ItemSync, allowing multiple players to share choices within the same world. Since different choices made at the same time could cause _conflicts_, Bug Prince uses a 'host' model to resolve them.
+
+Whoever is the first player to join the ItemSync room (first in the names list) is permanently deemed the host for the save; whomever has the strongest internet connection should likely be the host. The host will always be able to choose transitions, but other players will be unable to if they can't speak to the host.
+
+#### Resource Sharing
+
+Coins and Gems are _shared_ resources in an item sync save. If any player makes a transition purchase that costs resources, all players lose those resources.
+
+Push Pins are also a _shared_ resource, but the pinned scenes are not. This means that two players can have two difference scenes pinned at the same time, but it costs 2 pins to do so.
+
+Dice Totems are the exception, and are an _instanced_ resource like Simple Keys are traditionally. Any player who obtains a dice totem increases everyone's total, but when used, only the spending player loses a totem.
+
+#### Race Conditions
+
+Whether you are host or not, you may encounter a situation where you enter a new transition, but another player makes a transition selection before you do. BugPrince will do its best to preserve your decision transparently, but this is not always possible.
+
+-   You might both have entered the same transition and made different choices; in this case, the first choice wins.
+-   Your choice might no longer be available because your partner used it elsewhere.
+-   Your choice may have become logically invalid due to a choice made by your partner.
+-   Your choice may have become financially invalid due to your partner spending coins/gems first.
+
+If any of these apply, you'll either be spat out anyway (because your partner made a choice for your transition first), or you'll hear three 'tinks' indicating the conflict, followed by a new selection UI. In both cases, any dice totems you rolled will be refunded, and any pins you placed returned.
+
 ### Choices and Refresh Cycle
 
 For different experiences, you can set the number of offered rooms anywhere between 2 and 5. The default is 3 and should be good for most modes.
@@ -92,9 +117,7 @@ There is a built-in tolerance of 1 randomized nail upgrade (for RandoPlus), or 1
 
 This mod introduces a lot of complexity to Hollow Knight randomizer and in some sense strains its capabilities. Some issues and shortcomings may be encountered.
 
-### ItemSync/MultiWorld
-
-ItemSync is not currently supported. It is theoretically possible to implement, but it is complicated and challenging. Some mechanism will need to prevent two or more players from making transition decisions simultaneously, to avoid conflicts and corruption.
+### MultiWorld
 
 MultiWorld will likely never be supported due to its architecture. Because BugPrince does not, and cannot know the logical structure of _other_ players' worlds, it must ensure all remote items never move into higher progression spheres, which severely limits options.
 

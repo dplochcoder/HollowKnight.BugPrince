@@ -78,6 +78,9 @@
     <Reference Include="ItemChanger">
       <HintPath>$(HollowKnightRefs)/Mods/ItemChanger/ItemChanger.dll</HintPath>
     </Reference>
+    <Reference Include="ItemSync">
+      <HintPath>$(HollowKnightRefs)/Mods/ItemSync/ItemSync.dll</HintPath>
+    </Reference>
     <Reference Include="MenuChanger">
       <HintPath>$(HollowKnightRefs)/Mods/MenuChanger/MenuChanger.dll</HintPath>
     </Reference>
@@ -101,6 +104,9 @@
     </Reference>
     <Reference Include="MoreLocations">
       <HintPath>$(HollowKnightRefs)/Mods/MoreLocations/MoreLocations.dll</HintPath>
+    </Reference>
+    <Reference Include="MultiWorldLib">
+      <HintPath>$(HollowKnightRefs)/Mods/MultiWorldLib/MultiWorldLib.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>$(HollowKnightRefs)/netstandard.dll</HintPath>

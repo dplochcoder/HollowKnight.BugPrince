@@ -1,13 +1,14 @@
 ﻿using BugPrince.Util;
 using ItemChanger.Extensions;
 using PurenailCore.GOUtil;
+using System;
 using UnityEngine;
 
 namespace BugPrince.UI;
 
 internal class InventorySlot : MonoBehaviour
 {
-    internal static InventorySlot Create(GameObject parent, Vector2 pos, int value, Sprite sprite, float spriteScale, bool hiddenPin = false)
+    internal static InventorySlot Create(GameObject parent, Vector2 pos, Func<int> sourceValue, Sprite sprite, float spriteScale, bool hiddenPin = false)
     {
         var localParent = parent.AddNewChild("InvSlot");
         localParent.transform.localPosition = pos;
@@ -22,7 +23,7 @@ internal class InventorySlot : MonoBehaviour
         text.alignment = TextAlignment.Center;
         text.anchor = TextAnchor.MiddleCenter;
         text.color = Color.white;
-        text.text = $"{value}";
+        text.text = $"{sourceValue()}";
         textObj.GetOrAddComponent<MeshRenderer>().SetUILayer(UISortingOrder.InventoryText);
 
         var spriteObj = shaker.gameObject.AddNewChild("Sprite");
@@ -47,8 +48,10 @@ internal class InventorySlot : MonoBehaviour
         }
 
         var slot = localParent.AddComponent<InventorySlot>();
-        slot.displayAmount = value;
-        slot.targetAmount = value;
+        slot.sourceValue = sourceValue;
+        slot.prevSourceValue = sourceValue();
+        slot.displayAmount = sourceValue();
+        slot.targetAmount = sourceValue();
         slot.shaker = shaker;
         slot.text = text;
         return slot;
@@ -56,6 +59,8 @@ internal class InventorySlot : MonoBehaviour
 
     private Shaker? shaker;
     private TextMesh? text;
+    private Func<int>? sourceValue;
+    private int prevSourceValue;
     private int displayAmount;
     private int targetAmount;
     private float ticker;
@@ -74,6 +79,13 @@ internal class InventorySlot : MonoBehaviour
 
     private void Update()
     {
+        int newValue = sourceValue!();
+        if (newValue != prevSourceValue)
+        {
+            targetAmount += (newValue - prevSourceValue);
+            prevSourceValue = newValue;
+        }
+
         if (displayAmount == targetAmount) return;
 
         ticker += Time.deltaTime;
