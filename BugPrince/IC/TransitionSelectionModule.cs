@@ -576,19 +576,6 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         scenes.ForEach(s => RefreshCounters[s] = Settings.RefreshCycle);
     }
 
-    private void MaybeReleasePin(string targetScene)
-    {
-        if (PinnedScene == targetScene) PinnedScene = null;
-    }
-
-    private bool MaybeSelectNewPin(string? scene)
-    {
-        if (scene == null || PinnedScene != null) return false;
-
-        PinnedScene = scene;
-        return true;
-    }
-
     private void MaybeReleaseObsoletePin(string targetScene)
     {
         if (PinnedScene == null) return;
@@ -903,11 +890,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                 var choice = selectionDecision.Value!.chosen!;
                 if (!response.Accepted)
                 {
-                    if (ResolvedEnteredTransitions.Contains(src))
-                    {
-                        MaybeReleaseObsoletePin(choice.Target.SceneName);
-                        done();
-                    }
+                    if (ResolvedEnteredTransitions.Contains(src)) done();
                     else
                     {
                         // Selection failed; retry.
@@ -920,9 +903,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                     return;
                 }
 
-                MaybeReleasePin(choice.Target.SceneName);
-                if (response.AcceptedPin) MaybeSelectNewPin(selectionDecision.Value.newPin?.Target.SceneName);
-                MaybeReleaseObsoletePin(choice.Target.SceneName);
+                if (PinnedScene == choice.Target.SceneName) PinnedScene = null;
+                if (response.AcceptedPin && PinnedScene == null) PinnedScene = selectionDecision.Value.newPin?.Target.SceneName;
 
                 UnityEngine.Object.Destroy(wrapped.Value?.gameObject);
                 done();
