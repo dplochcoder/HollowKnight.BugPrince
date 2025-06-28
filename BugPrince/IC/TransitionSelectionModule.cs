@@ -53,7 +53,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     // Caches.
     private readonly Dictionary<Transition, RandoModTransition> sourceRandoTransitions = [];
     private readonly Dictionary<Transition, RandoModTransition> targetRandoTransitions = [];
-    private bool needMapModUpdate = false;
+    private bool needRandoMapModUpdate = false;
 
     private static TransitionSelectionModule? instance;
 
@@ -101,10 +101,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private void MaybeRebuildMap(GameMap worldMap)
     {
-        if (needMapModUpdate)
+        if (needRandoMapModUpdate && BugPrinceMod.GS.EnablePathfinderUpdates)
         {
             RMCInterop.RMCInterop.MaybeUpdateRandoMapMod();
-            needMapModUpdate = false;
+            needRandoMapModUpdate = false;
         }
     }
     private void MaybeRebuildMap(GameMap gameMap, MapZone mapZone) => MaybeRebuildMap(gameMap);
@@ -716,7 +716,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         if (update.UsedPin && PushPins > 0) --PushPins;
 
         if (resetTrackers) ResetTrackers();
-        needMapModUpdate = true;
+        needRandoMapModUpdate = true;
 
         TransitionSyncUpdates.Add(update);
         if (IsRealHost) Send(update);

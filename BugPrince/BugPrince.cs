@@ -55,6 +55,14 @@ public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>, ICustomMenuMod
             Saver = i => GS.EnablePrecomputation = i == 1,
             Loader = () => GS.EnablePrecomputation ? 1 : 0
         });
+        builder.AddHorizontalOption(new()
+        {
+            Name = "Enable Pathfinder Updates",
+            Description = "If yes, BugPrince will update rando map mod with transition choices whenever you open the map.",
+            Values = ["No", "Yes"],
+            Saver = i => GS.EnablePathfinderUpdates = i == 1,
+            Loader = () => GS.EnablePathfinderUpdates ? 1 : 0
+        });
         return builder.CreateMenuScreen();
     }
 

@@ -121,6 +121,12 @@ This mod introduces a lot of complexity to Hollow Knight randomizer and in some 
 
 MultiWorld will likely never be supported due to its architecture. Because BugPrince does not, and cannot know the logical structure of _other_ players' worlds, it must ensure all remote items never move into higher progression spheres, which severely limits options.
 
+### Map Mod Lag
+
+[Rando Map Mod](<https://github.com/syyePhenomenol/RandoMapMod>) has an advanced search algorithm to help you navigate the twisted labyrinth that is transition randomizer. Unfortunately, it largely assumes that the map does not change, an assumption that BugPrince violates.
+
+You may notice some game lag when opening the map; this is caused by BugPrince "rebuilding" Rando Map Mod's search indices so it becomes aware of all the transition choices you have made. You can disable this feature to reduce lag at the expense of breaking pathfinder.
+
 ### Empty Selections
 
 You may at times encounter a selection menu with _no_ options, or at least, no _affordable_ options, in which case the screen will fade to red after a few seconds and boot you back to your last bench.

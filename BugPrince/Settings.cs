@@ -10,6 +10,7 @@ namespace BugPrince;
 public record GlobalSettings
 {
     public bool EnablePrecomputation = true;
+    public bool EnablePathfinderUpdates = true;
     public RandomizationSettings RandoSettings = new();
 }
 
