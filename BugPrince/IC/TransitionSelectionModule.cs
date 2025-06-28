@@ -67,7 +67,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         Events.OnSceneChange += ResetPrecomputersNewScene;
         if (ModHooks.GetMod("RandoMapMod") is Mod) HookMapChanger();
 
-        precomputeThread = new(UpdatePrecomputers) { Priority = ThreadPriority.BelowNormal };
+        precomputeThread = new(UpdatePrecomputers) { Priority = System.Threading.ThreadPriority.BelowNormal };
         precomputeThread.Start();
 
         BugPrinceMod.StartDebugLog();
@@ -837,7 +837,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private void TinkTinkTink()
     {
-        IEnumerator Routine()
+        static IEnumerator Routine()
         {
             GameObject obj = new("oops");
             var audio = obj.AddComponent<AudioSource>();
@@ -849,6 +849,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             yield return new WaitForSeconds(0.35f);
             audio.PlayOneShot(SoundCache.FailedMenu);
         }
+
         GameManager.instance.StartCoroutine(Routine());
     }
 
