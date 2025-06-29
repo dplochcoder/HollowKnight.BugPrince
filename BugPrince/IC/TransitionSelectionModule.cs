@@ -39,6 +39,7 @@ public record MutableTransitionState
     public List<string> CostGroupProgression = [];  // List of all cost groups, in progression order.
     public Dictionary<string, int> RefreshCounters = [];  // Scene -> num picks until refresh
 
+    public int Seed;
     // Permanent record of all transition sync updates chronologically.
     public List<TransitionSwapUpdate> TransitionSwapUpdates = [];
     // Permanent record of push pin usages, keyed by player id.
@@ -60,6 +61,7 @@ public record MutableTransitionState
         CostGroupProgression = [.. CostGroupProgression],
         RefreshCounters = RefreshCounters.ToDictionary(e => e.Key, e => e.Value),
 
+        Seed = Seed,
         TransitionSwapUpdates = [.. TransitionSwapUpdates],
         NumPinReceipts = NumPinReceipts.ToDictionary(e => e.Key, e => e.Value),
 
@@ -78,6 +80,7 @@ public record MutableTransitionStateDelta : IDelta<MutableTransitionState>
     public ListDelta<string> CostGroupProgressionDelta = new();
     public DictionaryDelta<string, int> RefreshCountersDelta = new();
 
+    public int Seed;
     public AppendOnlyListDelta<TransitionSwapUpdate> TransitionSwapUpdatesDelta = new();
     public DictionaryDelta<int, int> NumPinReceiptsDelta = new();
 
@@ -94,6 +97,7 @@ public record MutableTransitionStateDelta : IDelta<MutableTransitionState>
         CostGroupProgressionDelta.Calculate(after.CostGroupProgression, before.CostGroupProgression);
         RefreshCountersDelta.Calculate(after.RefreshCounters, before.RefreshCounters);
 
+        Seed = after.Seed;
         TransitionSwapUpdatesDelta.Calculate(after.TransitionSwapUpdates, before.TransitionSwapUpdates);
         NumPinReceiptsDelta.Calculate(after.NumPinReceipts, before.NumPinReceipts);
 
@@ -112,6 +116,7 @@ public record MutableTransitionStateDelta : IDelta<MutableTransitionState>
         CostGroupProgressionDelta.Apply(src.CostGroupProgression);
         RefreshCountersDelta.Apply(src.RefreshCounters);
 
+        src.Seed = Seed;
         TransitionSwapUpdatesDelta.Apply(src.TransitionSwapUpdates);
         NumPinReceiptsDelta.Apply(src.NumPinReceipts);
 
@@ -535,8 +540,6 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         }
     }
 
-    public int Seed = 0;
-
     private void SwapTransitions(Transition src1, Transition src2)
     {
         needRandoMapModUpdate |= src1 != src2;
@@ -583,8 +586,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         }
 
         // Update seed.
-        Seed += dst1.ToString().GetStableHashCode() ^ 0x5CCBB22C;
-        Seed += dst2.ToString().GetStableHashCode() ^ 0x2FDBD6F4;
+        MutableState.Seed += dst1.ToString().GetStableHashCode() ^ 0x5CCBB22C;
+        MutableState.Seed += dst2.ToString().GetStableHashCode() ^ 0x2FDBD6F4;
     }
 
     private void ResetTracker(TrackerData tracker)
@@ -643,8 +646,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             rerollBackfill.Add((info.OrigSrc, info.Target));
         }
 
-        rerollBackfill.Shuffle(new(Seed + 93));
-        potentialTargets.Shuffle(new(Seed + 17));
+        rerollBackfill.Shuffle(new(MutableState.Seed + 93));
+        potentialTargets.Shuffle(new(MutableState.Seed + 17));
 
         SortedDictionary<int, List<(Transition, Transition)>> backfillDict = [];
         SortedDictionary<int, List<(Transition, Transition)>> shopBackfillDict = [];
@@ -720,7 +723,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         }
 
         // Shuffle to hide the default transition.
-        choices.Shuffle(new(Seed + 23));
+        choices.Shuffle(new(MutableState.Seed + 23));
 
         // Sort the shops last.
         choices.StableSort((c1, c2) =>
