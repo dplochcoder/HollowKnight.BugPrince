@@ -143,7 +143,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     // Caches.
     private readonly Dictionary<Transition, RandoModTransition> sourceRandoTransitions = [];
     private readonly Dictionary<Transition, RandoModTransition> targetRandoTransitions = [];
-    private bool needRandoMapModUpdate = false;
+    private bool needRandoMapModUpdate = true;
 
     private static TransitionSelectionModule? instance;
 
