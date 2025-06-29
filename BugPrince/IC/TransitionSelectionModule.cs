@@ -393,6 +393,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private bool IsValidSwap(Transition src1, Transition dst1, Transition src2, Transition dst2)
     {
+        if (src1 == dst2 || src2 == dst1) return false;  // No self loops.
         if (src1 == src2 && dst1 == dst2) return true;
 
         bool oneWay1 = IsExitOnly(dst1);
