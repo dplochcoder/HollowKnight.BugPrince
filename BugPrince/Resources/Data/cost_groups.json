@@ -190,11 +190,11 @@
     "Type": "Coins",
     "Tiers": [
       {
-        "Constraint": "LemmShop",
+        "Constraint": "RoomRando + LemmShop",
         "Cost": 2
       },
       {
-        "Constraint": "None",
+        "Constraint": "RoomRando",
         "Cost": 1
       }
     ],
