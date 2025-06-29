@@ -75,7 +75,7 @@ internal static class RandoInterop
             module.CostGroupsByScene = LS.CostGroupsByScene;
             module.RandomizedTransitions = LS.RandomizedTransitions;
             module.MutableState.CostGroupProgression = LS.CostGroupProgression;
-            module.Seed = rc.gs.Seed;
+            module.MutableState.Seed = rc.gs.Seed;
             module.DiceTotems = BugPrinceMod.RS.StartingDiceTotems;
             module.TotalPushPins = BugPrinceMod.RS.StartingPushPins;
         }

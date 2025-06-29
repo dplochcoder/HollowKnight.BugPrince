@@ -24,7 +24,6 @@ internal static class GameObjectUtil
 
     internal static IEnumerable<GameObject> Children(this GameObject self)
     {
-        List<GameObject> ret = [];
         foreach (Transform transform in self.transform) yield return transform.gameObject;
     }
 
