@@ -29,6 +29,9 @@ namespace BugPrince.IC;
 
 public record MutableTransitionState
 {
+    // Unique sequence number for saves.
+    public int DeltaSequenceNumber = 0;
+
     // Progression
     public HashSet<Transition> ResolvedEnteredTransitions = [];
     public HashSet<Transition> ResolvedExitedTransitions = [];
@@ -46,6 +49,75 @@ public record MutableTransitionState
     public Dictionary<Transition, Transition> UnsyncedRandoPlacements = [];
     [JsonConverter(typeof(Transition.TransitionDictConverter<Transition>))]
     public Dictionary<Transition, Transition> ItemChangerTransitions = [];
+
+    public MutableTransitionState DeepCopy() => new()
+    {
+        DeltaSequenceNumber = DeltaSequenceNumber,
+
+        ResolvedEnteredTransitions = [.. ResolvedEnteredTransitions],
+        ResolvedExitedTransitions = [.. ResolvedExitedTransitions],
+        PaidCostGroups = [.. PaidCostGroups],
+        CostGroupProgression = [.. CostGroupProgression],
+        RefreshCounters = RefreshCounters.ToDictionary(e => e.Key, e => e.Value),
+
+        TransitionSwapUpdates = [.. TransitionSwapUpdates],
+        NumPinReceipts = NumPinReceipts.ToDictionary(e => e.Key, e => e.Value),
+
+        UnsyncedRandoPlacements = UnsyncedRandoPlacements.ToDictionary(e => e.Key, e => e.Value),
+        ItemChangerTransitions = ItemChangerTransitions.ToDictionary(e => e.Key, e => e.Value)
+    };
+}
+
+public record MutableTransitionStateDelta : IDelta<MutableTransitionState>
+{
+    public int DeltaSequenceNumber;
+
+    public HashSetDelta<Transition> ResolvedEnteredTransitionsDelta = new();
+    public HashSetDelta<Transition> ResolvedExitedTransitionsDelta = new();
+    public HashSetDelta<string> PaidCostGroupsDelta = new();
+    public ListDelta<string> CostGroupProgressionDelta = new();
+    public DictionaryDelta<string, int> RefreshCountersDelta = new();
+
+    public AppendOnlyListDelta<TransitionSwapUpdate> TransitionSwapUpdatesDelta = new();
+    public DictionaryDelta<int, int> NumPinReceiptsDelta = new();
+
+    public DictionaryDelta<Transition, Transition> UnsyncedRandoPlacementsDelta = new();
+    public DictionaryDelta<Transition, Transition> ItemChangerTransitionsDelta = new();
+
+    public void Calculate(MutableTransitionState after, MutableTransitionState before)
+    {
+        DeltaSequenceNumber = after.DeltaSequenceNumber;
+
+        ResolvedEnteredTransitionsDelta.Calculate(after.ResolvedEnteredTransitions, before.ResolvedEnteredTransitions);
+        ResolvedExitedTransitionsDelta.Calculate(after.ResolvedExitedTransitions, before.ResolvedExitedTransitions);
+        PaidCostGroupsDelta.Calculate(after.PaidCostGroups, before.PaidCostGroups);
+        CostGroupProgressionDelta.Calculate(after.CostGroupProgression, before.CostGroupProgression);
+        RefreshCountersDelta.Calculate(after.RefreshCounters, before.RefreshCounters);
+
+        TransitionSwapUpdatesDelta.Calculate(after.TransitionSwapUpdates, before.TransitionSwapUpdates);
+        NumPinReceiptsDelta.Calculate(after.NumPinReceipts, before.NumPinReceipts);
+
+        UnsyncedRandoPlacementsDelta.Calculate(after.UnsyncedRandoPlacements, before.UnsyncedRandoPlacements);
+        ItemChangerTransitionsDelta.Calculate(after.ItemChangerTransitions, before.ItemChangerTransitions);
+    }
+
+    public void Apply(MutableTransitionState src)
+    {
+        if (DeltaSequenceNumber != src.DeltaSequenceNumber + 1) throw new ArgumentException($"Bad DeltaSequenceNumber");
+        src.DeltaSequenceNumber = DeltaSequenceNumber;
+
+        ResolvedEnteredTransitionsDelta.Apply(src.ResolvedEnteredTransitions);
+        ResolvedExitedTransitionsDelta.Apply(src.ResolvedExitedTransitions);
+        PaidCostGroupsDelta.Apply(src.PaidCostGroups);
+        CostGroupProgressionDelta.Apply(src.CostGroupProgression);
+        RefreshCountersDelta.Apply(src.RefreshCounters);
+
+        TransitionSwapUpdatesDelta.Apply(src.TransitionSwapUpdates);
+        NumPinReceiptsDelta.Apply(src.NumPinReceipts);
+
+        UnsyncedRandoPlacementsDelta.Apply(src.UnsyncedRandoPlacements);
+        ItemChangerTransitionsDelta.Apply(src.ItemChangerTransitions);
+    }
 }
 
 public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupProgressionProvider
@@ -57,7 +129,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     public HashSet<Transition> RandomizedTransitions = [];
 
     // Transition state, relevant to ItemSync. Stored separately for out-of-band saving.
-    public MutableTransitionState State = new();
+    public MutableTransitionState MutableState = new();
 
     // Inventory
     public int DiceTotems = 0;
@@ -80,22 +152,82 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     private Thread? precomputeThread;
 
     private string MutableTransitionStatePath() => Path.Combine(LogManager.UserDirectory, "BugPrinceMutableTransitionState.json");
+    private string MutableTransitionStateDeltaPath() => Path.Combine(LogManager.UserDirectory, "BugPrinceMutableTransitionStateDelta.json");
 
     private void LoadMutableTransitionState()
     {
         var path = MutableTransitionStatePath();
         if (File.Exists(path))
         {
-            State = JsonUtil<BugPrinceMod>.DeserializeFromPath<MutableTransitionState>(MutableTransitionStatePath());
+            MutableState = JsonUtil<BugPrinceMod>.DeserializeFromPath<MutableTransitionState>(path);
+            
+            var deltaPath = MutableTransitionStateDeltaPath();
+            if (File.Exists(deltaPath))
+            {
+                var delta = JsonUtil<BugPrinceMod>.DeserializeFromPath<MutableTransitionStateDelta>(deltaPath);
+                if (delta.DeltaSequenceNumber == MutableState.DeltaSequenceNumber + 1) delta.Apply(MutableState);
+            }
 
             // Apply ItemChanger overrides.
             var icOverrides = ItemChanger.Internal.Ref.Settings.TransitionOverrides;
             icOverrides.Clear();
-            foreach (var e in State.ItemChangerTransitions) icOverrides[e.Key] = e.Value;
+            foreach (var e in MutableState.ItemChangerTransitions) icOverrides[e.Key] = e.Value;
         }
     }
 
-    private void SaveMutableTransitionState() => JsonUtil<BugPrinceMod>.RewriteJsonFile(State, MutableTransitionStatePath());
+    private MutableTransitionState? prevMutableState;
+    private readonly AutoResetEvent savingMutableStateEvent = new(false);
+    private bool savingMutableState = false;
+
+    private void SaveMutableTransitionState()
+    {
+        if (prevMutableState == null)
+        {
+            prevMutableState = MutableState.DeepCopy();
+            JsonUtil<BugPrinceMod>.RewriteJsonFile(MutableState, MutableTransitionStatePath());
+            return;
+        }
+
+        // Wait for previous save to complete.
+        while (true)
+        {
+            lock (this) { if (!savingMutableState) break; }
+            savingMutableStateEvent.WaitOne();
+        }
+
+        // Write delta synchronously.
+        MutableState.DeltaSequenceNumber++;
+
+        MutableTransitionStateDelta delta = new();
+        delta.Calculate(MutableState, prevMutableState);
+        JsonUtil<BugPrinceMod>.RewriteJsonFile(delta, MutableTransitionStateDeltaPath());
+
+        // Write full state asynchronously.
+        var newMutableState = MutableState.DeepCopy();
+        savingMutableState = true;
+        void WriteFull()
+        {
+            try
+            {
+                StringWriter sw = new();
+                RandomizerCore.Json.JsonUtil.GetNonLogicSerializer().Serialize(sw, newMutableState);
+                FileUtil.AtomicWrite(MutableTransitionStatePath(), sw.ToString());
+                prevMutableState = newMutableState;
+            }
+            catch (Exception ex)
+            {
+                BugPrinceMod.Instance!.LogError($"Failed to save mutable state: {ex}");
+            }
+            finally
+            {
+                savingMutableState = false;
+                savingMutableStateEvent.Set();
+            }
+        }
+
+        Thread t = new(WriteFull);
+        t.Start();
+    }
 
     public override void Initialize()
     {
@@ -171,10 +303,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         }
 
         // Set up rando placement storage.
-        if (State.UnsyncedRandoPlacements.Count == 0)
+        if (MutableState.UnsyncedRandoPlacements.Count == 0)
         {
-            State.UnsyncedRandoPlacements = RandoTransitionPlacements().ToDictionary(p => p.Source.ToStruct(), p => p.Target.ToStruct());
-            foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides) State.ItemChangerTransitions[e.Key] = e.Value.ToStruct();
+            MutableState.UnsyncedRandoPlacements = RandoTransitionPlacements().ToDictionary(p => p.Source.ToStruct(), p => p.Target.ToStruct());
+            foreach (var e in ItemChanger.Internal.Ref.Settings.TransitionOverrides) MutableState.ItemChangerTransitions[e.Key] = e.Value.ToStruct();
         }
         else
         {
@@ -186,7 +318,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         {
             EnsureSyncer();
             GetTransitionSwapUpdates(
-                new GetTransitionSwapUpdatesRequest() { LastKnownSequenceNumber = State.TransitionSwapUpdates.Count - 1 },
+                new GetTransitionSwapUpdatesRequest() { LastKnownSequenceNumber = MutableState.TransitionSwapUpdates.Count - 1 },
                 response => ApplyTransitionSwapUpdates(response.Updates));
         }
     }
@@ -195,12 +327,12 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private int GetResourceCount(int total, CostType type, string? tempCostScene = null)
     {
-        foreach (var paid in State.PaidCostGroups)
+        foreach (var paid in MutableState.PaidCostGroups)
         {
             var paidGroup = CostGroups[paid];
             if (paidGroup.Type == type) total -= paidGroup.Cost;
         }
-        if (tempCostScene != null && this.GetCostGroupByScene(tempCostScene, out var groupName, out var group) && group.Type == type && !State.PaidCostGroups.Contains(groupName)) total -= group.Cost;
+        if (tempCostScene != null && this.GetCostGroupByScene(tempCostScene, out var groupName, out var group) && group.Type == type && !MutableState.PaidCostGroups.Contains(groupName)) total -= group.Cost;
         return total;
     }
 
@@ -211,7 +343,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     internal int GetPushPins(PinReceipt? tempPinReceipt = null)
     {
         Dictionary<int, int> spend = [];
-        foreach (var e in State.NumPinReceipts) spend.Add(e.Key, e.Value);
+        foreach (var e in MutableState.NumPinReceipts) spend.Add(e.Key, e.Value);
         if (tempPinReceipt != null) spend[tempPinReceipt.RequestingPlayerID] = Math.Max(spend.GetOrDefault(tempPinReceipt.RequestingPlayerID), tempPinReceipt.ReceiptNumber);
 
         return TotalPushPins - spend.Values.Sum();
@@ -220,7 +352,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     internal bool CanPayCosts(string scene)
     {
         if (!this.GetCostGroupByScene(scene, out var groupName, out var group)) return true;
-        if (State.PaidCostGroups.Contains(groupName)) return true;
+        if (MutableState.PaidCostGroups.Contains(groupName)) return true;
 
         return group.Type switch { CostType.Coins => GetCoins() >= group.Cost, CostType.Gems => GetGems() >= group.Cost, _ => throw group.Type.InvalidEnum() };
     }
@@ -228,21 +360,21 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     private void PayCosts(string scene)
     {
         if (!this.GetCostGroupByScene(scene, out var groupName, out var _)) return;
-        if (State.PaidCostGroups.Contains(groupName)) return;
+        if (MutableState.PaidCostGroups.Contains(groupName)) return;
 
-        if (State.CostGroupProgression[State.PaidCostGroups.Count] != groupName)
+        if (MutableState.CostGroupProgression[MutableState.PaidCostGroups.Count] != groupName)
         {
             // Reorder progression.
-            State.CostGroupProgression.Remove(groupName);
-            State.CostGroupProgression.Insert(State.PaidCostGroups.Count, groupName);
+            MutableState.CostGroupProgression.Remove(groupName);
+            MutableState.CostGroupProgression.Insert(MutableState.PaidCostGroups.Count, groupName);
 
             gen = CostGroupProgressionProviderGeneration.NextGen(); // Reset logic variable caches.
         }
 
-        State.PaidCostGroups.Add(groupName);
+        MutableState.PaidCostGroups.Add(groupName);
     }
 
-    private bool IsExitOnly(Transition transition) => !State.UnsyncedRandoPlacements.ContainsKey(transition);
+    private bool IsExitOnly(Transition transition) => !MutableState.UnsyncedRandoPlacements.ContainsKey(transition);
 
     private static bool IsMatchingPair(Transition src, Transition dst, bool doorToDoor)
     {
@@ -304,21 +436,21 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private bool CanSwapTransitions(Transition src1, Transition src2)
     {
-        var target1 = State.UnsyncedRandoPlacements[src1];
-        var target2 = State.UnsyncedRandoPlacements[src2];
+        var target1 = MutableState.UnsyncedRandoPlacements[src1];
+        var target2 = MutableState.UnsyncedRandoPlacements[src2];
 
         var ctx = RandoCtx();
         var lm = ctx.LM;
 
         Action? onDone = null;
-        if (this.GetCostGroupByScene(target1.SceneName, out var groupName, out var group) && !State.PaidCostGroups.Contains(groupName) && State.CostGroupProgression[State.PaidCostGroups.Count] != groupName)
+        if (this.GetCostGroupByScene(target1.SceneName, out var groupName, out var group) && !MutableState.PaidCostGroups.Contains(groupName) && MutableState.CostGroupProgression[MutableState.PaidCostGroups.Count] != groupName)
         {
             // Check that we can bump this shop forward in progression order.
             if (!lm.VariableResolver.TryGetInner<BugPrinceVariableResolver>(out var inner)) throw new ArgumentException("Missing BugPrinceVariableResolver");
 
-            List<string> reordered = [.. State.CostGroupProgression];
+            List<string> reordered = [.. MutableState.CostGroupProgression];
             reordered.Remove(groupName);
-            reordered.Insert(State.PaidCostGroups.Count, groupName);
+            reordered.Insert(MutableState.PaidCostGroups.Count, groupName);
 
             OverlaidCostGroupProgressionProvider provider = new(this, reordered);
             inner.OverrideProgressionProvider(provider);
@@ -373,8 +505,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private void RecordEnterExit(Transition src, Transition dst)
     {
-        State.ResolvedEnteredTransitions.Add(src);
-        State.ResolvedExitedTransitions.Add(dst);
+        MutableState.ResolvedEnteredTransitions.Add(src);
+        MutableState.ResolvedExitedTransitions.Add(dst);
     }
 
     private static readonly FieldInfo trackerUpdateTransitionLookupField = typeof(TrackerUpdate).GetField("transitionLookup", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -391,7 +523,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             var p = placements[i];
             var source = p.Source.ToStruct();
             var target = p.Target.ToStruct();
-            if (State.UnsyncedRandoPlacements.TryGetValue(source, out var newTarget) && target != newTarget)
+            if (MutableState.UnsyncedRandoPlacements.TryGetValue(source, out var newTarget) && target != newTarget)
             {
                 placements[i] = new()
                 {
@@ -409,10 +541,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         needRandoMapModUpdate |= src1 != src2;
 
-        var dst1 = State.UnsyncedRandoPlacements[src1];
-        var dst2 = State.UnsyncedRandoPlacements[src2];
-        State.UnsyncedRandoPlacements[src1] = dst2;
-        State.UnsyncedRandoPlacements[src2] = dst1;
+        var dst1 = MutableState.UnsyncedRandoPlacements[src1];
+        var dst2 = MutableState.UnsyncedRandoPlacements[src2];
+        MutableState.UnsyncedRandoPlacements[src1] = dst2;
+        MutableState.UnsyncedRandoPlacements[src2] = dst1;
         RecordEnterExit(src1, dst2);
 
         // ItemChanger gets updated differently due to things like JijiJinnPassage.
@@ -422,14 +554,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
         if (TransitionSettings().Coupled)
         {
-            if (State.UnsyncedRandoPlacements.ContainsKey(dst1))
+            if (MutableState.UnsyncedRandoPlacements.ContainsKey(dst1))
             {
-                State.UnsyncedRandoPlacements[dst1] = src2;
+                MutableState.UnsyncedRandoPlacements[dst1] = src2;
                 icUpdates[src1] = src2;
             }
-            if (State.UnsyncedRandoPlacements.ContainsKey(dst2))
+            if (MutableState.UnsyncedRandoPlacements.ContainsKey(dst2))
             {
-                State.UnsyncedRandoPlacements[dst2] = src1;
+                MutableState.UnsyncedRandoPlacements[dst2] = src1;
                 RecordEnterExit(dst2, src1);
                 icUpdates[src2] = src1;
             }
@@ -447,7 +579,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         foreach (var (k, v) in newKVs)
         {
             icOverrides[k] = v;
-            State.ItemChangerTransitions[k] = v;
+            MutableState.ItemChangerTransitions[k] = v;
         }
 
         // Update seed.
@@ -480,10 +612,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private IEnumerator<List<SceneChoiceInfo>?> CalculateSceneChoicesIterator(Transition src, List<SceneChoiceInfo>? previous = null)
     {
-        var target = State.UnsyncedRandoPlacements[src];
+        var target = MutableState.UnsyncedRandoPlacements[src];
 
         Dictionary<string, int> tempRefreshCounters = [];
-        foreach (var e in State.RefreshCounters)
+        foreach (var e in MutableState.RefreshCounters)
         {
             if (e.Value > 1) tempRefreshCounters[e.Key] = e.Value - 1;
         }
@@ -495,8 +627,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             var cTarget = p.Target.ToStruct();
             if (cSource == src && cTarget == target) continue;
 
-            if (State.ResolvedEnteredTransitions.Contains(cSource)) continue;
-            if (State.ResolvedExitedTransitions.Contains(cTarget)) continue;
+            if (MutableState.ResolvedEnteredTransitions.Contains(cSource)) continue;
+            if (MutableState.ResolvedExitedTransitions.Contains(cTarget)) continue;
             if (!IsValidSwap(src, target, cSource, cTarget)) continue;
 
             potentialTargets.Add((cSource, cTarget));
@@ -546,7 +678,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             }
 
             (CostType, int)? cost = null;
-            if (this.GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !State.PaidCostGroups.Contains(groupName)) cost = (group.Type, group.Cost);
+            if (this.GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !MutableState.PaidCostGroups.Contains(groupName)) cost = (group.Type, group.Cost);
             SceneChoiceInfo info = new(newSrc, newTarget, cost, newTarget.SceneName == PinnedScene);
 
             choices.Add(info);
@@ -570,7 +702,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             else if (choices.Count == Settings.NumRoomChoices) continue;
             if (chosenScenes.Contains(newTarget.SceneName) || tempChosenScenes.Contains(newTarget.SceneName)) { ++dupeScenes; continue; }
 
-            bool isShop = this.GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !State.PaidCostGroups.Contains(groupName);
+            bool isShop = this.GetCostGroupByScene(newTarget.SceneName, out var groupName, out var group) && !MutableState.PaidCostGroups.Contains(groupName);
             if (!tempRefreshCounters.TryGetValue(newTarget.SceneName, out int refreshCount)) refreshCount = 0;
 
             bool isRedundantShop = haveShop && isShop;
@@ -636,14 +768,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         // Decrement existing counters.
         Dictionary<string, int> temp = [];
-        foreach (var e in State.RefreshCounters)
+        foreach (var e in MutableState.RefreshCounters)
         {
             if (e.Value > 1) temp[e.Key] = e.Value - 1;
         }
-        State.RefreshCounters = temp;
+        MutableState.RefreshCounters = temp;
 
         // Reset refresh count for all selected choices.
-        scenes.ForEach(s => State.RefreshCounters[s] = Settings.RefreshCycle);
+        scenes.ForEach(s => MutableState.RefreshCounters[s] = Settings.RefreshCycle);
     }
 
     private void MaybeReleaseObsoletePin()
@@ -656,7 +788,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         {
             var dst = p.Target.ToStruct();
             if (dst.SceneName != PinnedScene) continue;
-            if (State.ResolvedExitedTransitions.Contains(dst)) continue;
+            if (MutableState.ResolvedExitedTransitions.Contains(dst)) continue;
 
             anyTransition = true;
             break;
@@ -710,7 +842,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             if (e.Key.SceneName != scene.name) continue;
 
             var target = e.Value.ToStruct();
-            if (targetToSrc.TryGetValue(target, out var src) && !State.ResolvedEnteredTransitions.Contains(src) && !State.ResolvedExitedTransitions.Contains(target)) newPrecomputers.Add(src, new(CalculateSceneChoicesIterator(src)));
+            if (targetToSrc.TryGetValue(target, out var src) && !MutableState.ResolvedEnteredTransitions.Contains(src) && !MutableState.ResolvedExitedTransitions.Contains(target)) newPrecomputers.Add(src, new(CalculateSceneChoicesIterator(src)));
         }
 
         RebuildActivePrecomputers(newPrecomputers);
@@ -723,7 +855,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         HashSet<Transition> updatedTransitions = [];
         lock (precomputers)
         {
-            updatedTransitions = [.. precomputers.Keys.Where(t => !State.ResolvedEnteredTransitions.Contains(t))];
+            updatedTransitions = [.. precomputers.Keys.Where(t => !MutableState.ResolvedEnteredTransitions.Contains(t))];
             precomputers.Clear();
         }
 
@@ -772,7 +904,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         if (update.PinReceipt != null)
         {
-            State.NumPinReceipts[update.PinReceipt.RequestingPlayerID] = update.PinReceipt.ReceiptNumber;
+            MutableState.NumPinReceipts[update.PinReceipt.RequestingPlayerID] = update.PinReceipt.ReceiptNumber;
             BugPrinceMod.DebugLog("SPENT_PIN");
         }
 
@@ -784,7 +916,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         }
         if (resetTrackers) ResetTrackers();
 
-        State.TransitionSwapUpdates.Add(update);
+        MutableState.TransitionSwapUpdates.Add(update);
         if (IsRealHost)
         {
             // Save the module state out of band for performance.  Game save takes too long.
@@ -798,15 +930,15 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         if (update.Swap != null)
         {
             MaybeReleaseObsoletePin();
-            BugPrinceMod.DebugLog($"CHOSE: {update.Swap.Source1} -> {State.UnsyncedRandoPlacements[update.Swap.Source1]}");
+            BugPrinceMod.DebugLog($"CHOSE: {update.Swap.Source1} -> {MutableState.UnsyncedRandoPlacements[update.Swap.Source1]}");
         }
     }
 
     private bool SalvageTransitionSwap(ref TransitionSwap swap)
     {
         // Check if the transition has been chosen already.
-        if (State.ResolvedEnteredTransitions.Contains(swap.Source1)) return false;
-        if (TransitionSettings().Coupled && State.ResolvedExitedTransitions.Contains(swap.Source1)) return false;
+        if (MutableState.ResolvedEnteredTransitions.Contains(swap.Source1)) return false;
+        if (TransitionSettings().Coupled && MutableState.ResolvedExitedTransitions.Contains(swap.Source1)) return false;
 
         // Check if we can still afford it.
         if (!CanPayCosts(swap.Target2.SceneName)) return false;
@@ -831,14 +963,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         // All incoming requests should have swaps.
         if (update.Swap == null) return false;
 
-        if (update.SequenceNumber == State.TransitionSwapUpdates.Count)
+        if (update.SequenceNumber == MutableState.TransitionSwapUpdates.Count)
         {
             ForceApplyTransitionSwapUpdate(update, true);
             return true;
         }
 
         // There's a race condition, yippee!
-        update.SequenceNumber = State.TransitionSwapUpdates.Count;
+        update.SequenceNumber = MutableState.TransitionSwapUpdates.Count;
 
         // Validate the PinReceipt.
         if (update.PinReceipt != null && GetPushPins() <= 0) update.PinReceipt = null;
@@ -879,7 +1011,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     private List<TransitionSwapUpdate> GetTransitionSwapUpdatesSince(int seq)
     {
         List<TransitionSwapUpdate> ret = [];
-        for (int i = seq + 1; i < State.TransitionSwapUpdates.Count; i++) ret.Add(State.TransitionSwapUpdates[i]);
+        for (int i = seq + 1; i < MutableState.TransitionSwapUpdates.Count; i++) ret.Add(MutableState.TransitionSwapUpdates[i]);
         return ret;
     }
 
@@ -898,17 +1030,17 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         if (IsHost) return;
 
-        Action deferred = updates.Any(u => u.SequenceNumber == State.TransitionSwapUpdates.Count) ? DeferredResetPrecomputersSameScene() : () => { };
+        Action deferred = updates.Any(u => u.SequenceNumber == MutableState.TransitionSwapUpdates.Count) ? DeferredResetPrecomputersSameScene() : () => { };
         foreach (var update in updates)
         {
-            if (update.SequenceNumber > State.TransitionSwapUpdates.Count)
+            if (update.SequenceNumber > MutableState.TransitionSwapUpdates.Count)
             {
                 Send(
-                    new GetTransitionSwapUpdatesRequest() { LastKnownSequenceNumber = State.TransitionSwapUpdates.Count - 1 },
+                    new GetTransitionSwapUpdatesRequest() { LastKnownSequenceNumber = MutableState.TransitionSwapUpdates.Count - 1 },
                     response => ApplyTransitionSwapUpdates(response.Updates));
                 break;
             }
-            else if (update.SequenceNumber == State.TransitionSwapUpdates.Count) ForceApplyTransitionSwapUpdate(update, update.SequenceNumber == updates[updates.Count - 1].SequenceNumber);
+            else if (update.SequenceNumber == MutableState.TransitionSwapUpdates.Count) ForceApplyTransitionSwapUpdate(update, update.SequenceNumber == updates[updates.Count - 1].SequenceNumber);
         }
         deferred();
     }
@@ -917,7 +1049,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     {
         if (RoomSelectionUI.uiPresent) return;
 
-        if (!TransitionInferenceUtil.GetSrcTarget(self, info, out var src, out var target) || !MapToPlacement(ref src, ref target) || State.ResolvedEnteredTransitions.Contains(src))
+        if (!TransitionInferenceUtil.GetSrcTarget(self, info, out var src, out var target) || !MapToPlacement(ref src, ref target) || MutableState.ResolvedEnteredTransitions.Contains(src))
         {
             orig(self, info);
             return;
@@ -947,7 +1079,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
     internal PinReceipt NextPinReceipt() => new()
     {
         RequestingPlayerID = PlayerId,
-        ReceiptNumber = State.NumPinReceipts.GetOrDefault(PlayerId) + 1
+        ReceiptNumber = MutableState.NumPinReceipts.GetOrDefault(PlayerId) + 1
     };
 
     private void LaunchUI(Transition src, Action done)
@@ -966,7 +1098,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
         SwapTransitionsRequest swapRequest = new();
         var update = swapRequest.Update;
-        update.SequenceNumber = State.TransitionSwapUpdates.Count;
+        update.SequenceNumber = MutableState.TransitionSwapUpdates.Count;
         var swap = update.Swap!;
         swap.Source1 = src;
         update.RefreshCounterUpdates.Add([.. choices.Select(i => i.Target.SceneName)]);
@@ -1004,10 +1136,10 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                 // See if transition swap was accepted.
                 if (!response.Accepted)
                 {
-                    if (State.ResolvedEnteredTransitions.Contains(src))
+                    if (MutableState.ResolvedEnteredTransitions.Contains(src))
                     {
                         // We lost the race to set this transition's target.
-                        if (State.UnsyncedRandoPlacements[src].SceneName != decision.chosen!.Target.SceneName) TinkTinkTink();
+                        if (MutableState.UnsyncedRandoPlacements[src].SceneName != decision.chosen!.Target.SceneName) TinkTinkTink();
                         done();
                     }
                     else
@@ -1032,7 +1164,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             {
                 // Check if we can reroll anymore.
                 newChoices = [];
-                if (State.ResolvedEnteredTransitions.Contains(src))
+                if (MutableState.ResolvedEnteredTransitions.Contains(src))
                 {
                     TinkTinkTink();
                     return false;
@@ -1042,7 +1174,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
                 DiceTotems--;
 
                 newChoices = CalculateSceneChoices(src, choices);
-                update.SequenceNumber = State.TransitionSwapUpdates.Count;
+                update.SequenceNumber = MutableState.TransitionSwapUpdates.Count;
                 update.RefreshCounterUpdates.Add([.. newChoices.Select(i => i.Target.SceneName)]);
 
                 return true;
@@ -1064,7 +1196,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     public bool IsRandomizedTransition(Transition transition) => RandomizedTransitions.Contains(transition);
 
-    public IReadOnlyList<string> GetCostGroupProgression() => State.CostGroupProgression;
+    public IReadOnlyList<string> GetCostGroupProgression() => MutableState.CostGroupProgression;
 }
 
 internal class ChoicePrecomputer

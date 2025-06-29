@@ -17,3 +17,4 @@ TheRealJournalRando
 ItemSync
 MultiWorldLib
 MapChanger
+RandomizerCore.Json
