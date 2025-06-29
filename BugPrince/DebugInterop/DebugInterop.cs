@@ -25,14 +25,14 @@ public static class DebugInterop
     public static void GiveGem()
     {
         if (!BugPrinceEnabled(out var mod)) return;
-        mod.Gems++;
+        mod.TotalGems++;
     }
 
     [BindableMethod(name = "Give Coin", category = "Bug Prince")]
     public static void GiveCoin()
     {
         if (!BugPrinceEnabled(out var mod)) return;
-        mod.Coins++;
+        mod.TotalCoins++;
     }
 
     [BindableMethod(name = "Give Dice Totem", category = "Bug Prince")]
@@ -46,7 +46,6 @@ public static class DebugInterop
     public static void GivePushPin()
     {
         if (!BugPrinceEnabled(out var mod)) return;
-        mod.PushPins++;
         mod.TotalPushPins++;
     }
 

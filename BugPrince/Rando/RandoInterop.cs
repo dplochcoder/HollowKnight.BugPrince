@@ -74,11 +74,10 @@ internal static class RandoInterop
             module.CostGroups = LS!.CostGroups;
             module.CostGroupsByScene = LS.CostGroupsByScene;
             module.RandomizedTransitions = LS.RandomizedTransitions;
-            module.CostGroupProgression = LS.CostGroupProgression;
+            module.State.CostGroupProgression = LS.CostGroupProgression;
             module.Seed = rc.gs.Seed;
             module.DiceTotems = BugPrinceMod.RS.StartingDiceTotems;
-            module.PushPins = BugPrinceMod.RS.StartingPushPins;
-            module.TotalPushPins = module.PushPins;
+            module.TotalPushPins = BugPrinceMod.RS.StartingPushPins;
         }
         if (BugPrinceMod.RS.AdvancedLocations) ItemChangerMod.Modules.Add<BreakablesModule>();
         if (BugPrinceMod.RS.MapShop)

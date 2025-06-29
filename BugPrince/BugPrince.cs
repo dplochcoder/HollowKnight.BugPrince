@@ -63,14 +63,6 @@ public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>, ICustomMenuMod
             Saver = i => GS.EnablePathfinderUpdates = i == 1,
             Loader = () => GS.EnablePathfinderUpdates ? 1 : 0
         });
-        builder.AddHorizontalOption(new()
-        {
-            Name = "Auto Save Choices",
-            Description = "If yes, BugPrince will automatically save whenever a transition choice is made if you are the hose of a multiplayer ItemSync save.",
-            Values = ["No", "Yes"],
-            Saver = i => GS.AutoSaveChoices = i == 1,
-            Loader = () => GS.AutoSaveChoices ? 1 : 0
-        });
         return builder.CreateMenuScreen();
     }
 

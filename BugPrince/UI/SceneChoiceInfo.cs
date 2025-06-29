@@ -27,8 +27,8 @@ internal record SceneChoiceInfo
         var (costType, cost) = Cost.Value;
         return costType switch
         {
-            CostType.Coins => module.Coins >= cost,
-            CostType.Gems => module.Gems >= cost,
+            CostType.Coins => module.GetCoins() >= cost,
+            CostType.Gems => module.GetGems() >= cost,
             _ => throw new System.ArgumentException($"Unknown cost type: {costType}")
         };
     }

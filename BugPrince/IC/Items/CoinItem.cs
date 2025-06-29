@@ -35,12 +35,7 @@ public class CoinItem : AbstractItem
         this.AddInteropData("Keys");
     }
 
-    public override void GiveImmediate(GiveInfo info)
-    {
-        var mod = TransitionSelectionModule.Get()!;
-        mod.Coins++;
-        mod.TotalCoins++;
-    }
+    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get()!.TotalCoins++;
 
     public override AbstractItem Clone() => new CoinItem();
 }

@@ -6,7 +6,6 @@ using MultiWorldLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using ItemChanger;
 
 namespace BugPrince.ItemSyncInterop;
 

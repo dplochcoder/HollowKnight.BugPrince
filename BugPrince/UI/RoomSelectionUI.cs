@@ -329,7 +329,7 @@ internal class RoomSelectionUI : MonoBehaviour
                 audioSource!.PlayOneShot(SoundCache.FailedMenu);
             }
         }
-        else if (module!.PushPins == 0)
+        else if (module!.GetPushPins() <= 0)
         {
             pushPinSlot?.Shake();
             selectionCorners?.Shake();

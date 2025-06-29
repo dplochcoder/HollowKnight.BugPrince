@@ -34,12 +34,7 @@ public class PushPinItem : AbstractItem
         this.AddInteropData("Relics");
     }
 
-    public override void GiveImmediate(GiveInfo info)
-    {
-        var mod = TransitionSelectionModule.Get()!;
-        mod.PushPins++;
-        mod.TotalPushPins++;
-    }
+    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get()!.TotalPushPins++;
 
     public override AbstractItem Clone() => new PushPinItem();
 }
