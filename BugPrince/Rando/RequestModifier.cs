@@ -115,7 +115,7 @@ internal class RequestModifier
         if (!BugPrinceMod.RS.IsEnabled) return;
 
         // Prevent self-loops, which break the swap mechanism.
-        if (BugPrinceMod.RS.EnableTransitionChoices)
+        if (BugPrinceMod.RS.EnableTransitionChoices && rb.gs.TransitionSettings.Coupled)
         {
             DefaultGroupPlacementStrategy.Constraint noSelfLoops = new(
                 (item, location) => item.Name != location.Name,
