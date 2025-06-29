@@ -27,9 +27,9 @@ internal class PlayerLocker : MonoBehaviour
 
     private void OnDestroy()
     {
-        On.CameraController.LateUpdate -= LockCamera;
+        rb2d!.simulated = true;
 
-        knight!.GetComponent<Rigidbody2D>().simulated = true;
+        On.CameraController.LateUpdate -= LockCamera;
     }
 
     private Vector3? origCameraPos;
