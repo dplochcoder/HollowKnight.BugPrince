@@ -4,6 +4,7 @@ using BugPrince.Rando;
 using BugPrince.UI;
 using BugPrince.Util;
 using GlobalEnums;
+using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
 using Modding;
@@ -374,6 +375,8 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private void SwapTransitions(Transition src1, Transition src2)
     {
+        needRandoMapModUpdate |= src1 != src2;
+
         var dst1 = UnsyncedRandoPlacements[src1];
         var dst2 = UnsyncedRandoPlacements[src2];
         UnsyncedRandoPlacements[src1] = dst2;
@@ -749,7 +752,6 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         {
             PayCosts(update.Swap.Target2.SceneName);
             SwapTransitions(update.Swap.Source1, update.Swap.Source2);
-            if (update.Swap.Source1 != update.Swap.Source2) needRandoMapModUpdate = true;
         }
         if (resetTrackers) ResetTrackers();
 
