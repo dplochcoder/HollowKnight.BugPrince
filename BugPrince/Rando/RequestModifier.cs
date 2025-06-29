@@ -114,8 +114,9 @@ internal class RequestModifier
     {
         if (!BugPrinceMod.RS.IsEnabled) return;
 
-        // Prevent self-loops, which break the swap mechanism.
-        if (BugPrinceMod.RS.EnableTransitionChoices && rb.gs.TransitionSettings.Coupled)
+        ProvideRequestInfo(rb);
+
+        if (BugPrinceMod.RS.EnableTransitionChoices)
         {
             DefaultGroupPlacementStrategy.Constraint noSelfLoops = new(
                 (item, location) => item.Name != location.Name,
@@ -123,8 +124,6 @@ internal class RequestModifier
                 "BugPrince-NoSelfLoops");
             foreach (var group in rb.EnumerateTransitionGroups()) if (group.strategy is DefaultGroupPlacementStrategy dgps) dgps.ConstraintList.Add(noSelfLoops);
         }
-
-        ProvideRequestInfo(rb);
 
         HashSet<string> randomizedScenes = [];
         foreach (var transition in GetRandomizedTransitions(rb))
