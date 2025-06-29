@@ -64,8 +64,6 @@ internal static class RandoInterop
         Finder.DefineCustomLocation(l.Location!);
     });
 
-    private static bool IsItemSyncImpl() => ItemSyncMod.ItemSyncMod.ISSettings.IsItemSync;
-
     private static void OnExportCompleted(RandoController rc)
     {
         if (BugPrinceMod.RS.EnableTransitionChoices)
