@@ -5,6 +5,7 @@ using ItemChanger;
 using PurenailCore.SystemUtil;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
+using RandomizerCore.Randomization;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
@@ -112,6 +113,16 @@ internal class RequestModifier
     private static void AddItemsAndLocations(RequestBuilder rb)
     {
         if (!BugPrinceMod.RS.IsEnabled) return;
+
+        // Prevent self-loops, which break the swap mechanism.
+        if (BugPrinceMod.RS.EnableTransitionChoices)
+        {
+            DefaultGroupPlacementStrategy.Constraint noSelfLoops = new(
+                (item, location) => item.Name != location.Name,
+                (_, _) => throw new RandomizerCore.Exceptions.OutOfLocationsException("BugPrince: No self-loops"),
+                "BugPrince-NoSelfLoops");
+            foreach (var group in rb.EnumerateTransitionGroups()) if (group.strategy is DefaultGroupPlacementStrategy dgps) dgps.ConstraintList.Add(noSelfLoops);
+        }
 
         ProvideRequestInfo(rb);
 
