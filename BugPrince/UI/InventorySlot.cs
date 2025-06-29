@@ -71,9 +71,6 @@ internal class InventorySlot : MonoBehaviour
 
     internal void FadeOut(float duration) => gameObject.Recursively(go => go.FadeColor(Color.white.WithAlpha(0), duration));
 
-    internal void Give(int amount) => targetAmount += amount;
-    internal void Take(int amount) => targetAmount -= amount;
-
     private static readonly Color lossColor = new(0.8f, 0, 0);
     private static readonly Color gainColor = new(0.8f, 0.8f, 0.8f);
 

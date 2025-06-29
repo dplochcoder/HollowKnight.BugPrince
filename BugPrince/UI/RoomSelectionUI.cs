@@ -98,9 +98,9 @@ internal class RoomSelectionUI : MonoBehaviour
         Vector2 InvPos(int idx) => new((idx * 2 - 3) * UIConstants.INV_SLOT_BAR_X_SPACE / 2, invY);
 
         diceTotemSlot = InventorySlot.Create(gameObject, InvPos(0), () => module!.DiceTotems, DiceTotemItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-        coinSlot = InventorySlot.Create(gameObject, InvPos(1), () => module!.Coins, CoinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-        gemSlot = InventorySlot.Create(gameObject, InvPos(2), () => module!.Gems, GemItem.LargeSprite.Value, UIConstants.INV_SLOT_GEM_ITEM_SCALE);
-        pushPinSlot = InventorySlot.Create(gameObject, InvPos(3), () => module!.PushPins, PushPinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE, hiddenPin);
+        coinSlot = InventorySlot.Create(gameObject, InvPos(1), () => module!.GetCoins(tempCostScene), CoinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
+        gemSlot = InventorySlot.Create(gameObject, InvPos(2), () => module!.GetGems(tempCostScene), GemItem.LargeSprite.Value, UIConstants.INV_SLOT_GEM_ITEM_SCALE);
+        pushPinSlot = InventorySlot.Create(gameObject, InvPos(3), () => module!.GetPushPins(tempPinReceipt), PushPinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE, hiddenPin);
         dashIco = MakeSprite(gameObject, InvPos(0) - new Vector2(0, 1.75f), dash_ico.Value);
         spellIco = MakeSprite(gameObject, InvPos(3) - new Vector2(0, 1.75f), spell_ico.Value);
 
@@ -166,7 +166,9 @@ internal class RoomSelectionUI : MonoBehaviour
     private InventorySlot? diceTotemSlot;
     private InventorySlot? coinSlot;
     private InventorySlot? gemSlot;
+    private string? tempCostScene;
     private InventorySlot? pushPinSlot;
+    private PinReceipt? tempPinReceipt;
     private GameObject? dashIco;
     private GameObject? spellIco;
     private bool acceptingInput = false;
@@ -240,7 +242,7 @@ internal class RoomSelectionUI : MonoBehaviour
             // Return the pin if immediately selected.
             choiceObjects[selection].SetPinned(false);
             newPinSelection = null;
-            pushPinSlot?.Give(1);
+            tempPinReceipt = null;
         }
 
         IEnumerator LockIn()
@@ -253,10 +255,11 @@ internal class RoomSelectionUI : MonoBehaviour
             }, resp => response.Value = resp);
 
             audioSource!.PlayOneShot(SoundCache.Confirm);
+
             if (info.Cost.HasValue)
             {
-                audioSource!.PlayOneShot(SoundCache.SpendResources);
-                GetInvSlot(info)?.Take(info.Cost.Value.Item2);
+                audioSource.PlayOneShot(SoundCache.SpendResources);
+                tempCostScene = info.Target.SceneName;
             }
 
             List<int> fadeOuts = [];
@@ -314,7 +317,7 @@ internal class RoomSelectionUI : MonoBehaviour
             if (newPinSelection.Value == selection)
             {
                 newPinSelection = null;
-                pushPinSlot?.Give(1);
+                tempPinReceipt = null;
                 choiceObjects[selection].SetPinned(false);
                 // TODO: Maybe undim eligible.
                 audioSource!.PlayOneShot(SoundCache.Confirm);
@@ -334,8 +337,8 @@ internal class RoomSelectionUI : MonoBehaviour
         }
         else
         {
-            pushPinSlot?.Take(1);
             newPinSelection = selection;
+            tempPinReceipt = module.NextPinReceipt();
             choiceObjects[selection].SetPinned(true);
             audioSource!.PlayOneShot(SoundCache.Confirm);
             // TODO: Maybe dim ineligible.
@@ -370,11 +373,7 @@ internal class RoomSelectionUI : MonoBehaviour
             audioSource!.PlayOneShot(SoundCache.RollTotem);
             selectionCorners?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
             selectionCorners = null;
-            if (success)
-            {
-                audioSource!.PlayOneShot(SoundCache.SpendResources);
-                diceTotemSlot?.Take(1);
-            }
+            if (success) audioSource!.PlayOneShot(SoundCache.SpendResources);
 
             List<int> indices = [];
             for (int i = 0; i < choiceInfos.Count; i++) indices.Add(i);

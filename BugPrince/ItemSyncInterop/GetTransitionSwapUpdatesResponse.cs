@@ -2,9 +2,9 @@
 
 namespace BugPrince.ItemSyncInterop;
 
-public record GetTransitionUpdatesResponse : IIdentifiedRequest
+public record GetTransitionSwapUpdatesResponse : IIdentifiedRequest
 {
     public int RequestingPlayerID { get; set; }
     public int Nonce { get; set; }
-    public List<TransitionSyncUpdate> Updates = [];
+    public List<TransitionSwapUpdate> Updates = [];
 }

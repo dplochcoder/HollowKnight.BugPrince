@@ -9,7 +9,9 @@ public static class DebugInterop
 
     private static bool BugPrinceEnabled(out TransitionSelectionModule mod)
     {
+#pragma warning disable CS8601 // Possible null reference assignment.
         mod = ItemChanger.ItemChangerMod.Modules.Get<TransitionSelectionModule>();
+#pragma warning restore CS8601 // Possible null reference assignment.
         if (mod == null)
         {
             Console.AddLine("Bug Prince not enabled in this save; doing nothing");
@@ -45,6 +47,7 @@ public static class DebugInterop
     {
         if (!BugPrinceEnabled(out var mod)) return;
         mod.PushPins++;
+        mod.TotalPushPins++;
     }
 
     [BindableMethod(name = "Give Nail Upgrade", category = "Bug Prince")]

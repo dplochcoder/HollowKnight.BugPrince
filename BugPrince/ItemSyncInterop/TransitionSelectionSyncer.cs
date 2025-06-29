@@ -56,10 +56,10 @@ internal class TransitionSelectionSyncer : Module
     {
         AddHandler<SwapTransitionsRequest>(Handle);
         AddHandler<SwapTransitionsResponse>(Handle);
-        AddHandler<TransitionSyncUpdate>(Handle);
-        AddHandler<TransitionSyncUpdates>(Handle);
-        AddHandler<GetTransitionUpdatesRequest>(Handle);
-        AddHandler<GetTransitionUpdatesResponse>(Handle);
+        AddHandler<TransitionSwapUpdate>(Handle);
+        AddHandler<TransitionSwapUpdates>(Handle);
+        AddHandler<GetTransitionSwapUpdatesRequest>(Handle);
+        AddHandler<GetTransitionSwapUpdatesResponse>(Handle);
 
         ISConnection.OnDataReceived += HandleMessages;
 
@@ -141,39 +141,39 @@ internal class TransitionSelectionSyncer : Module
 
     internal void Send(SwapTransitionsRequest request, Action<SwapTransitionsResponse> callback) => SendImpl(swapTransitionsCallbacks, request, callback);
 
-    private void Handle(TransitionSyncUpdate update)
+    private void Handle(TransitionSwapUpdate update)
     {
         if (IsHost) return;
-        TransitionSelectionModule.Get()!.ApplyUpdates([update]);
+        TransitionSelectionModule.Get()!.ApplyTransitionSwapUpdates([update]);
     }
 
-    internal void Send(TransitionSyncUpdate update)
+    internal void Send(TransitionSwapUpdate update)
     {
         if (!IsHost) return;
         SendDataToAll(update);
     }
 
-    private void Handle(TransitionSyncUpdates updates)
+    private void Handle(TransitionSwapUpdates updates)
     {
         if (IsHost) return;
-        TransitionSelectionModule.Get()!.ApplyUpdates(updates.Updates);
+        TransitionSelectionModule.Get()!.ApplyTransitionSwapUpdates(updates.Updates);
     }
 
-    internal void Send(TransitionSyncUpdates updates)
+    internal void Send(TransitionSwapUpdates updates)
     {
         if (!IsHost) return;
         SendDataToAll(updates);
     }
 
-    private readonly Dictionary<int, Action<GetTransitionUpdatesResponse>> getTransitionUpdatesCallbacks = [];
+    private readonly Dictionary<int, Action<GetTransitionSwapUpdatesResponse>> getTransitionUpdatesCallbacks = [];
 
-    private void Handle(GetTransitionUpdatesRequest request)
+    private void Handle(GetTransitionSwapUpdatesRequest request)
     {
         if (!IsHost) return;
-        TransitionSelectionModule.Get()!.GetTransitionUpdates(request, response => SendData(response, request.RequestingPlayerID));
+        TransitionSelectionModule.Get()!.GetTransitionSwapUpdates(request, response => SendData(response, request.RequestingPlayerID));
     }
 
-    private void Handle(GetTransitionUpdatesResponse response) => HandleResponseImpl(getTransitionUpdatesCallbacks, response);
+    private void Handle(GetTransitionSwapUpdatesResponse response) => HandleResponseImpl(getTransitionUpdatesCallbacks, response);
 
-    internal void Send(GetTransitionUpdatesRequest request, Action<GetTransitionUpdatesResponse> callback) => SendImpl(getTransitionUpdatesCallbacks, request, callback);
+    internal void Send(GetTransitionSwapUpdatesRequest request, Action<GetTransitionSwapUpdatesResponse> callback) => SendImpl(getTransitionUpdatesCallbacks, request, callback);
 }

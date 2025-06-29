@@ -78,6 +78,7 @@ internal static class RandoInterop
             module.Seed = rc.gs.Seed;
             module.DiceTotems = BugPrinceMod.RS.StartingDiceTotems;
             module.PushPins = BugPrinceMod.RS.StartingPushPins;
+            module.TotalPushPins = module.PushPins;
         }
         if (BugPrinceMod.RS.AdvancedLocations) ItemChangerMod.Modules.Add<BreakablesModule>();
         if (BugPrinceMod.RS.MapShop)

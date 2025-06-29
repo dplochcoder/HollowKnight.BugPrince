@@ -35,7 +35,12 @@ public class GemItem : AbstractItem
         this.AddInteropData("Keys");
     }
 
-    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get()!.Gems++;
+    public override void GiveImmediate(GiveInfo info)
+    {
+        var mod = TransitionSelectionModule.Get()!;
+        mod.Gems++;
+        mod.TotalGems++;
+    }
 
     public override AbstractItem Clone() => new GemItem();
 }

@@ -10,5 +10,5 @@ public class SwapTransitionsResponse : IIdentifiedRequest
     // False if we lost the pin to a race condition.
     public bool AcceptedPin;
     // The actual updates applied. This may include new updates and/or changes to the requested update.
-    public TransitionSyncUpdates Updates = new();
+    public TransitionSwapUpdates Updates = new();
 }
