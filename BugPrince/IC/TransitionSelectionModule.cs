@@ -1084,6 +1084,9 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
 
     private void LaunchUI(Transition src, Action done)
     {
+        // Close inventory.
+        GameObject.Find("_GameCameras/HudCamera/Inventory").LocateMyFSM("Inventory Control").SendEvent("INVENTORY CANCEL");
+
         ChoicePrecomputer? precomputer;
         lock (precomputers)
         {
