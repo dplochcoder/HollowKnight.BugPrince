@@ -22,7 +22,7 @@ internal class SceneChoice : MonoBehaviour
         var renderer = sceneSprite.AddComponent<SpriteRenderer>();
         renderer.sprite = info.GetSceneSprite();
         renderer.SetUILayer(UISortingOrder.ScenePicture);
-        sceneSprite.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+        sceneSprite.FadeAlpha(0, 1, UIConstants.SCENE_ASCEND_TIME);
 
         if (renderer.sprite.bounds.size.x < 1)
         {
@@ -60,7 +60,7 @@ internal class SceneChoice : MonoBehaviour
                 var costRenderer = costIco.AddComponent<SpriteRenderer>();
                 costRenderer.sprite = costType switch { Data.CostType.Coins => CoinItem.LargeSprite.Value, Data.CostType.Gems => GemItem.LargeSprite.Value, _ => throw costType.InvalidEnum() };
                 costRenderer.SetUILayer(UISortingOrder.CostIcons);
-                costIco.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+                costIco.FadeAlpha(0, 1, UIConstants.SCENE_ASCEND_TIME);
             }
         }
 
@@ -93,7 +93,7 @@ internal class SceneChoice : MonoBehaviour
     internal void FadeOut(float duration)
     {
         particleFactory = null;
-        gameObject.Recursively(go => go.FadeColor(Color.white.WithAlpha(0), duration));
+        gameObject.Recursively(go => go.FadeAlpha(0, duration));
     }
 
     private const float FLY_VELOCITY = 28;

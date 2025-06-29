@@ -108,8 +108,8 @@ internal class RoomSelectionUI : MonoBehaviour
         coinSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
         gemSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
         pushPinSlot.FadeIn(UIConstants.SCENE_ASCEND_TIME);
-        dashIco.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
-        spellIco.FadeColor(Color.white.WithAlpha(0), Color.white, UIConstants.SCENE_ASCEND_TIME);
+        dashIco.FadeAlpha(0, 1, UIConstants.SCENE_ASCEND_TIME);
+        spellIco.FadeAlpha(0, 1, UIConstants.SCENE_ASCEND_TIME);
     }
 
     private void Awake() => StartCoroutine(LoadChoiceInfos());
@@ -203,12 +203,12 @@ internal class RoomSelectionUI : MonoBehaviour
     private void FadeOutAll()
     {
         selectionCorners?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
-        dashIco?.FadeColor(Color.white.WithAlpha(0), UIConstants.SCENE_FADE_OUT_DURATION);
+        dashIco?.FadeAlpha(0, UIConstants.SCENE_FADE_OUT_DURATION);
         diceTotemSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
         coinSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
         gemSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
         pushPinSlot?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
-        spellIco?.FadeColor(Color.white.WithAlpha(0), UIConstants.SCENE_FADE_OUT_DURATION);
+        spellIco?.FadeAlpha(0, UIConstants.SCENE_FADE_OUT_DURATION);
     }
 
     private void TrySelectIndex(int selection)

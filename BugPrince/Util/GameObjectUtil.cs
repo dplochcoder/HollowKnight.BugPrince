@@ -2,6 +2,7 @@
 using ItemChanger.Extensions;
 using ItemChanger.Internal;
 using ItemChanger.Util;
+using PurenailCore.GOUtil;
 using PurenailCore.SystemUtil;
 using System;
 using System.Collections.Generic;
@@ -52,16 +53,42 @@ internal static class GameObjectUtil
 
     internal static void DoOnDestroy(this GameObject self, Action action) => self.GetOrAddComponent<OnDestroyHook>().Action += action;
 
+    private static bool GetColor(this GameObject self, out Color color)
+    {
+        if (self.GetComponent<SpriteRenderer>() is SpriteRenderer sr)
+        {
+            color = sr.color;
+            return true;
+        }
+        if (self.GetComponent<TextMesh>() is TextMesh textMesh)
+        {
+            color = textMesh.color;
+            return true;
+        }
+
+        color = default;
+        return false;
+    }
+
     internal static void FadeColor(this GameObject self, Color from, Color to, float duration)
     {
         if (self.GetComponent<SpriteRenderer>() == null && self.GetComponent<TextMesh>() == null) return;
         self.GetOrAddComponent<Fader>().StartFade(from, to, duration);
     }
 
+    internal static void FadeAlpha(this GameObject self, float from, float to, float duration)
+    {
+        if (self.GetColor(out var color)) self.GetOrAddComponent<Fader>().StartFade(color.WithAlpha(from), color.WithAlpha(to), duration);
+    }
+
     internal static void FadeColor(this GameObject self, Color to, float duration)
     {
-        if (self.GetComponent<SpriteRenderer>() is SpriteRenderer sr) self.GetOrAddComponent<Fader>().StartFade(sr.color, to, duration);
-        if (self.GetComponent<TextMesh>() is TextMesh tm) self.GetOrAddComponent<Fader>().StartFade(tm.color, to, duration);
+        if (self.GetColor(out var color)) self.GetOrAddComponent<Fader>().StartFade(color, to, duration);
+    }
+
+    internal static void FadeAlpha(this GameObject self, float to, float duration)
+    {
+        if (self.GetColor(out var color)) self.GetOrAddComponent<Fader>().StartFade(color, color.WithAlpha(to), duration);
     }
 
     internal static GameObject MakeShinyDecorator()
@@ -113,9 +140,7 @@ internal class Fader : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null) spriteRenderer.color = from;
         textMesh = GetComponent<TextMesh>();
-        if (textMesh != null) textMesh.color = from;
     }
 
     private void Update()
