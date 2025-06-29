@@ -19,17 +19,6 @@
     "Cost": 1,
     "SkewedAverage": 0.5
   },
-  "Ancient Basin": {
-    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "MapAreaRando | FullAreaRando",
-    "SceneNames": [
-      "Abyss_03",
-      "Abyss_04"
-    ],
-    "Type": "Gems",
-    "Cost": 2,
-    "SkewedAverage": 0.5
-  },
   "Black Egg Temple": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
     "SceneNames": [
@@ -211,6 +200,19 @@
     ],
     "SkewedAverage": 0.5
   },
+  "Lower Tram": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "MapAreaRando | FullAreaRando",
+    "SceneNames": [
+      "Abyss_03",
+      "Abyss_03c",
+      "Abyss_04",
+      "Deepnest_East_02"
+    ],
+    "Type": "Gems",
+    "Cost": 2,
+    "SkewedAverage": 0.5
+  },
   "Lurien": {
     "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
     "SceneNames": [
@@ -288,9 +290,9 @@
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "MapAreaRando | FullAreaRando",
     "SceneNames": [
+      "Deepnest_43",
       "Fungus3_22",
-      "Fungus3_34",
-      "Fungus3_39"
+      "Fungus3_34"
     ],
     "Type": "Gems",
     "Cost": 1,
