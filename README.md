@@ -30,13 +30,9 @@ Whoever is the first player to join the ItemSync room (first in the names list) 
 
 Coins and Gems are _shared_ resources in an item sync save. If any player makes a transition purchase that costs resources, all players lose those resources.
 
-Push Pins are also a _shared_ resource, but the pinned scenes are not. This means that two players can have two difference scenes pinned at the same time, but it costs 2 pins to do so.
+Push Pins are also a _shared_ resource, but the pinned scenes are not. This means that two players can have two different scenes pinned at the same time, but it costs 2 pins to do so.
 
 Dice Totems are the exception, and are an _instanced_ resource like Simple Keys are traditionally. Any player who obtains a dice totem increases everyone's total, but when used, only the spending player loses a totem.
-
-#### Auto Save
-
-To prevent irreversible breakage, BugPrince will auto-save your game every time a transition selection is made if you are the _host_ in a multiplayer ItemSync save.
 
 #### Race Conditions
 
@@ -47,7 +43,7 @@ Whether you are host or not, you may encounter a situation where you enter a new
 -   Your choice may have become logically invalid due to a choice made by your partner.
 -   Your choice may have become financially invalid due to your partner spending coins/gems first.
 
-If any of these apply, you'll either be spat out anyway (because your partner made a choice for your transition first), or you'll hear three 'tinks' indicating the conflict, followed by a new selection UI. In both cases, any dice totems you rolled will be refunded, and any pins you placed returned.
+If any of these apply, you'll either be spat out anyway (because your partner made a choice for your transition first), or you'll hear three 'tinks' indicating the conflict, followed by a new selection UI.
 
 ### Choices and Refresh Cycle
 
