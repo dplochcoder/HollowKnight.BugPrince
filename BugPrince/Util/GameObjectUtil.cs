@@ -130,16 +130,16 @@ internal class Fader : MonoBehaviour
 
     internal void StartFade(Color from, Color to, float duration)
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        textMesh = GetComponent<TextMesh>();
+
         this.from = from;
         this.to = to;
         this.duration = duration;
         timer = 0;
-    }
 
-    private void Awake()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        textMesh = GetComponent<TextMesh>();
+        if (spriteRenderer != null) spriteRenderer.color = from;
+        if (textMesh != null) textMesh.color = from;
     }
 
     private void Update()
