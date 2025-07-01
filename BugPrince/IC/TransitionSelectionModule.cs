@@ -24,6 +24,7 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.GraphicsBuffer;
 
 namespace BugPrince.IC;
 
@@ -938,6 +939,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         }
     }
 
+    private bool MatchesSelection(Transition alt, Transition orig)
+    {
+        if (alt.SceneName != orig.SceneName) return false;
+
+        if (TransitionSettings().TransitionMatching == RandomizerMod.Settings.TransitionSettings.TransitionMatchingSetting.NonmatchingDirections) return alt.GetDirection() == orig.GetDirection();
+        else return true;
+    }
+
     private bool SalvageTransitionSwap(ref TransitionSwap swap)
     {
         // Check if the transition has been chosen already.
@@ -948,17 +957,35 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         if (!CanPayCosts(swap.Target2.SceneName)) return false;
 
         // Check if this transition is still logically permissible.
+        var origTarget = MutableState.UnsyncedRandoPlacements[swap.Source1];
+        List<(Transition, Transition)> alternates = [];
         foreach (var p in RandoTransitionPlacements())
         {
-            if (p.Target.ToStruct() == swap.Target2)
+            var src2 = p.Source.ToStruct();
+            var target2 = p.Target.ToStruct();
+            if (MutableState.ResolvedExitedTransitions.Contains(target2)) continue;
+
+            if (target2 == swap.Target2)
             {
-                swap.Source2 = p.Source.ToStruct();
+                swap.Source2 = src2;
                 break;
             }
+            else if (MatchesSelection(target2, swap.Target2) && IsValidSwap(swap.Source1, origTarget, src2, target2)) alternates.Add((src2, target2));
         }
-        if (!CanSwapTransitions(swap.Source1, swap.Source2)) return false;
+        if (CanSwapTransitions(swap.Source1, swap.Source2)) return true;
 
-        return true;
+        // The original doesn't work, but maybe an equivalent alternative does.
+        foreach (var (src2, target2) in alternates)
+        {
+            if (CanSwapTransitions(swap.Source1, src2))
+            {
+                swap.Source2 = src2;
+                swap.Target2 = target2;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Attempt to apply a transiton swap update. Returns true if successful, false if rejected.
