@@ -24,7 +24,7 @@ If connected areas are specified, you will be very likely to see at least 1 conn
 
 Bug Prince can be played with ItemSync, allowing multiple players to share choices within the same world. Since different choices made at the same time could cause _conflicts_, Bug Prince uses a 'host' model to resolve them.
 
-Whoever is the first player to join the ItemSync room (first in the names list) is permanently deemed the host for the save; whomever has the strongest internet connection should likely be the host. The host will always be able to choose transitions, but other players will be unable to if they can't speak to the host.
+Whoever is the first player to join the ItemSync room (first in the names list) is permanently deemed the host for the save; whomever has the strongest internet connection should likely be the host. The host will always be able to choose transitions, but other players will be unable to if they lose connection to the ItemSync server _or_ if the host loses connection to the ItemSync server.
 
 #### Resource Sharing
 
