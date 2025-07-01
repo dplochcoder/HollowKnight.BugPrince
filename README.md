@@ -16,7 +16,7 @@ Bug Prince supports all types of transition rando, including room rando, map are
 
 Since the number of randomized transitions varies considerably with settings, you should ensure to set appropriate numbers of collectibles and tolerances for those settings. The installed defaults are intended for room rando.
 
-The matching and coupled settings are also respected. In Coupled mode, selecting one direction of a transition pair also locks in the opposite pair. Only matching direction (left<->right, top<->bot) are offered if matching is requested.
+The matching and coupled settings are also respected. In Coupled mode, selecting one direction of a transition pair also locks in the opposite pair. Only matching directions (left<->right, top<->bot) are offered if matching is requested.
 
 If connected areas are specified, you will be very likely to see at least 1 connected area scene whenever making a choice, but it is of course not guaranteed.
 
