@@ -24,15 +24,21 @@ internal static class LogicPatcher
 
         RandoInterop.LS = new();
 
-        lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
-        lmb.AddCostTypeTerms();
-        lmb.AddItem(CoinItem.LogicItem());
-        lmb.AddItem(DiceTotemItem.LogicItem());
-        lmb.AddItem(GemItem.LogicItem());
-        lmb.AddItem(PushPinItem.LogicItem());
+        if (BugPrinceMod.RS.EnableTransitionChoices)
+        {
+            lmb.AddItem(DiceTotemItem.LogicItem());
+            lmb.AddItem(PushPinItem.LogicItem());
+            if (BugPrinceMod.RS.EnableCoinsAndGems)
+            {
+                lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
+                lmb.AddCostTypeTerms();
+                lmb.AddItem(CoinItem.LogicItem());
+                lmb.AddItem(GemItem.LogicItem());
+            }
+        }
 
-        foreach (var e in Locations.GetLocations()) lmb.AddLogicDef(new(e.Key, e.Value.Logic.Value));
-        foreach (var e in Waypoints.GetWaypoints()) lmb.AddWaypoint(new(e.Key, e.Value, true));
+        foreach (var e in Locations.GetLocations()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddLogicDef(new(e.Key, e.Value.Logic.Value));
+        foreach (var e in Waypoints.GetWaypoints()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddWaypoint(new(e.Key, e.Value.Logic, true));
     }
 
     private static void ModifyTransitions(GenerationSettings gs, LogicManagerBuilder lmb)
@@ -45,7 +51,7 @@ internal static class LogicPatcher
             transition.Value.LogicEdits.ForEach(lmb.DoLogicEdit);
         }
 
-        if (!BugPrinceMod.RS.EnableTransitionChoices) return;
+        if (!BugPrinceMod.RS.EnableTransitionChoices || !BugPrinceMod.RS.EnableCoinsAndGems) return;
 
         HashSet<string> costScenes = [];
         foreach (var cgp in CostGroup.GetProducers().Values) costScenes.AddRange(cgp.RelevantSceneNames());

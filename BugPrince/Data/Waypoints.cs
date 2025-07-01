@@ -2,8 +2,14 @@
 
 namespace BugPrince.Data;
 
+internal record Waypoint
+{
+    public LocationPool LocationPool;
+    public string Logic = "";
+}
+
 internal class Waypoints
 {
-    private static SortedDictionary<string, string>? data;
-    public static IReadOnlyDictionary<string, string> GetWaypoints() => (data ??= PurenailCore.SystemUtil.JsonUtil<BugPrinceMod>.DeserializeEmbedded<SortedDictionary<string, string>>("BugPrince.Resources.Data.waypoints.json"));
+    private static SortedDictionary<string, Waypoint>? data;
+    public static IReadOnlyDictionary<string, Waypoint> GetWaypoints() => (data ??= PurenailCore.SystemUtil.JsonUtil<BugPrinceMod>.DeserializeEmbedded<SortedDictionary<string, Waypoint>>("BugPrince.Resources.Data.waypoints.json"));
 }
