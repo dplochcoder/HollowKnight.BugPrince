@@ -450,7 +450,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         var lm = ctx.LM;
 
         Action? onDone = null;
-        if (this.GetCostGroupByScene(target1.SceneName, out var groupName, out var group) && !MutableState.PaidCostGroups.Contains(groupName) && MutableState.CostGroupProgression[MutableState.PaidCostGroups.Count] != groupName)
+        if (this.GetCostGroupByScene(target2.SceneName, out var groupName, out var group) && !MutableState.PaidCostGroups.Contains(groupName) && MutableState.CostGroupProgression[MutableState.PaidCostGroups.Count] != groupName)
         {
             // Check that we can bump this shop forward in progression order.
             if (!lm.VariableResolver.TryGetInner<BugPrinceVariableResolver>(out var inner)) throw new ArgumentException("Missing BugPrinceVariableResolver");
