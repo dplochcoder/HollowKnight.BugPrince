@@ -1094,7 +1094,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         static IEnumerator Routine()
         {
             GameObject obj = new("oops");
-            var audio = obj.AddComponent<AudioSource>();
+            var audio = obj.GetOrAddComponent<AudioSource>();
             obj.transform.position = HeroController.instance.transform.position;
 
             audio.PlayOneShot(SoundCache.FailedMenu);
