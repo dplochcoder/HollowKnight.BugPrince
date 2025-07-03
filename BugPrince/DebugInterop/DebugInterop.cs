@@ -1,5 +1,9 @@
 ﻿using BugPrince.IC;
+using BugPrince.ItemSyncInterop;
+using BugPrince.Util;
 using DebugMod;
+using System;
+using System.Collections.Generic;
 
 namespace BugPrince.DebugInterop;
 
@@ -7,14 +11,14 @@ public static class DebugInterop
 {
     internal static void Setup() => DebugMod.DebugMod.AddToKeyBindList(typeof(DebugInterop));
 
-    private static bool BugPrinceEnabled(out TransitionSelectionModule mod)
+    private static bool TransitionSelectionEnabled(out TransitionSelectionModule mod)
     {
 #pragma warning disable CS8601 // Possible null reference assignment.
         mod = ItemChanger.ItemChangerMod.Modules.Get<TransitionSelectionModule>();
 #pragma warning restore CS8601 // Possible null reference assignment.
         if (mod == null)
         {
-            Console.AddLine("Bug Prince not enabled in this save; doing nothing");
+            DebugMod.Console.AddLine("Bug Prince not enabled in this save; doing nothing");
             return false;
         }
 
@@ -24,28 +28,28 @@ public static class DebugInterop
     [BindableMethod(name = "Give Gem", category = "Bug Prince")]
     public static void GiveGem()
     {
-        if (!BugPrinceEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod)) return;
         mod.TotalGems++;
     }
 
     [BindableMethod(name = "Give Coin", category = "Bug Prince")]
     public static void GiveCoin()
     {
-        if (!BugPrinceEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod)) return;
         mod.TotalCoins++;
     }
 
     [BindableMethod(name = "Give Dice Totem", category = "Bug Prince")]
     public static void GiveDiceTotem()
     {
-        if (!BugPrinceEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod)) return;
         mod.DiceTotems++;
     }
 
     [BindableMethod(name = "Give Push Pin", category = "Bug Prince")]
     public static void GivePushPin()
     {
-        if (!BugPrinceEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod)) return;
         mod.TotalPushPins++;
     }
 
@@ -56,7 +60,7 @@ public static class DebugInterop
         var upgrades = pd.GetInt(nameof(pd.nailSmithUpgrades));
         if (upgrades >= 4)
         {
-            Console.AddLine("Already at maximum nail upgrades");
+            DebugMod.Console.AddLine("Already at maximum nail upgrades");
             return;
         }
 
@@ -67,13 +71,46 @@ public static class DebugInterop
     }
 
 #if DEBUG
+    [BindableMethod(name = "Replay Updates", category = "Bug Prince")]
+    public static void ReplayUpdates()
+    {
+        if (!TransitionSelectionEnabled(out var mod)) return;
+
+        mod.TotalCoins = Math.Max(mod.TotalCoins, 100);
+        mod.TotalGems = Math.Max(mod.TotalGems, 100);
+        mod.TotalPushPins = Math.Max(mod.TotalPushPins, 100);
+        mod.DiceTotems = Math.Max(mod.DiceTotems, 100);
+
+        try
+        {
+            var file = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(BugPrinceMod).Assembly.Location), "replay.json");
+            List<TransitionSwapUpdate> updates = PurenailCore.SystemUtil.JsonUtil<BugPrinceMod>.DeserializeFromPath<List<TransitionSwapUpdate>>(file);
+            int success = 0;
+            foreach (var update in updates)
+            {
+                update.SequenceNumber = -1;
+                SwapTransitionsRequest req = new() { Update = update };
+                Wrapped<SwapTransitionsResponse?> resp = new(null);
+                mod.SwapTransitions(req, r => resp.Value = r);
+
+                if (!resp.Value!.Accepted) break;
+                else ++success;
+            }
+            DebugMod.Console.AddLine($"Applied {success} of {updates.Count} transition swap updates");
+        }
+        catch (Exception ex)
+        {
+            DebugMod.Console.AddLine($"Failed to apply updates: {ex}");
+        }
+    }
+
     [BindableMethod(name = "Take Screenshot", category = "Bug Prince")]
     public static void TakeScreenshot()
     {
         var name = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         var file = $"C:/Users/danie/Documents/Scenes/{name}.png";
 
-        ScreenCapture.CaptureScreenshot(file);
+        UnityEngine.ScreenCapture.CaptureScreenshot(file);
     }
 #endif
 }

@@ -947,14 +947,26 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         else return true;
     }
 
-    private bool SalvageTransitionSwap(ref TransitionSwap swap)
+    private bool SalvageTransitionSwap(ref TransitionSwap swap, out string reason)
     {
         // Check if the transition has been chosen already.
-        if (MutableState.ResolvedEnteredTransitions.Contains(swap.Source1)) return false;
-        if (TransitionSettings().Coupled && MutableState.ResolvedExitedTransitions.Contains(swap.Source1)) return false;
+        if (MutableState.ResolvedEnteredTransitions.Contains(swap.Source1))
+        {
+            reason = "Source already used.";
+            return false;
+        }
+        if (TransitionSettings().Coupled && MutableState.ResolvedExitedTransitions.Contains(swap.Source1))
+        {
+            reason = "Coupled source already used.";
+            return false;
+        }
 
         // Check if we can still afford it.
-        if (!CanPayCosts(swap.Target2.SceneName)) return false;
+        if (!CanPayCosts(swap.Target2.SceneName))
+        {
+            reason = "Cannot afford.";
+            return false;
+        }
 
         // Check if this transition is still logically permissible.
         var origTarget = MutableState.UnsyncedRandoPlacements[swap.Source1];
@@ -972,7 +984,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             }
             else if (MatchesSelection(target2, swap.Target2) && IsValidSwap(swap.Source1, origTarget, src2, target2)) alternates.Add((src2, target2));
         }
-        if (CanSwapTransitions(swap.Source1, swap.Source2)) return true;
+        if (CanSwapTransitions(swap.Source1, swap.Source2))
+        {
+            reason = "";
+            return true;
+        }
 
         // The original doesn't work, but maybe an equivalent alternative does.
         foreach (var (src2, target2) in alternates)
@@ -981,18 +997,24 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             {
                 swap.Source2 = src2;
                 swap.Target2 = target2;
+                reason = "";
                 return true;
             }
         }
 
+        reason = $"Illogical swap (+{alternates.Count} alternates)";
         return false;
     }
 
     // Attempt to apply a transiton swap update. Returns true if successful, false if rejected.
     private bool MaybeApplyTransitionSwapUpdate(ref TransitionSwapUpdate update)
     {
-        // All incoming requests should have swaps.
-        if (update.Swap == null) return false;
+        if (update.Swap == null)
+        {
+            update.SequenceNumber = MutableState.TransitionSwapUpdates.Count;
+            ForceApplyTransitionSwapUpdate(update, false);
+            return true;
+        }
 
         if (update.SequenceNumber == MutableState.TransitionSwapUpdates.Count)
         {
@@ -1007,8 +1029,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         if (update.PinReceipt != null && GetPushPins() <= 0) update.PinReceipt = null;
 
         // See if we can salvage the requested swap.
-        bool canSwap = SalvageTransitionSwap(ref update.Swap);
-        if (!canSwap) update.Swap = null;
+        var origSrc1 = update.Swap.Source1;
+        var origTarget2 = update.Swap.Target2;
+        bool canSwap = SalvageTransitionSwap(ref update.Swap, out var reason);
+        if (!canSwap)
+        {
+            BugPrinceMod.DebugLog($"{origSrc1} -> {origTarget2} failed: {reason}");
+            update.Swap = null;
+        }
 
         // Commit regardless, to update refresh trackers and pin count.
         ForceApplyTransitionSwapUpdate(update, canSwap);
@@ -1029,7 +1057,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             return;
         }
 
-        int origSequenceNumber = request.Update.SequenceNumber;
+        int origSequenceNumber = Math.Max(request.Update.SequenceNumber, 0);
         callback(new()
         {
             Nonce = request.Nonce,
