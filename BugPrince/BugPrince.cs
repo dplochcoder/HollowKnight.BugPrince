@@ -1,5 +1,7 @@
 using BugPrince.Data;
 using BugPrince.Rando;
+using BugPrince.UI;
+using ItemChanger;
 using ItemChanger.Internal.Menu;
 using Modding;
 using RandomizerMod.Logging;
@@ -73,4 +75,5 @@ public class BugPrinceMod : Mod, IGlobalSettings<GlobalSettings>, ICustomMenuMod
 
     // Public API
     public static void AddCostGroupProducer(Mod source, string name, ICostGroupProducer producer) => CostGroup.AddProducer($"{source.Name}-{name}", producer);
+    public static void AddSceneSprite(string sceneName, ISprite sprite) => SceneChoiceInfo.AddSceneSprite(sceneName, sprite);
 }

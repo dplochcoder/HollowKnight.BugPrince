@@ -1,6 +1,7 @@
 ﻿using BugPrince.Data;
 using BugPrince.IC;
 using ItemChanger;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BugPrince.UI;
@@ -33,8 +34,13 @@ internal record SceneChoiceInfo
         };
     }
 
+    private static readonly Dictionary<string, ISprite> extraSceneSprites = [];
+    internal static void AddSceneSprite(string sceneName, ISprite sprite) => extraSceneSprites[sceneName] = sprite;
+
     public Sprite GetSceneSprite()
     {
+        if (extraSceneSprites.TryGetValue(Target.SceneName, out var iSprite)) return iSprite.Value;
+
         IC.EmbeddedSprite sprite = new($"Scenes.{Target.SceneName}");
         return sprite.Value;
     }
