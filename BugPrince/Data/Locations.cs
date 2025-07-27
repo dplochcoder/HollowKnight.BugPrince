@@ -121,7 +121,7 @@ internal record LocationData
 
         return ItemType switch
         {
-            ItemType.Coin or ItemType.Gem => (rs.EnableCoinsAndGems && !gs.PoolSettings.Keys) ? LocationState.Preplaced : LocationState.Randomized,
+            ItemType.Coin or ItemType.Gem => (rs.AreCostsEnabled && !gs.PoolSettings.Keys) ? LocationState.Preplaced : LocationState.Randomized,
             ItemType.DiceTotem or ItemType.PushPin => gs.PoolSettings.Relics ? LocationState.Randomized : LocationState.Preplaced,
             _ => throw new ArgumentException($"Bad type: {ItemType}"),
         };

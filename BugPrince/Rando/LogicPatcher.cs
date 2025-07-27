@@ -28,7 +28,7 @@ internal static class LogicPatcher
         {
             lmb.AddItem(DiceTotemItem.LogicItem());
             lmb.AddItem(PushPinItem.LogicItem());
-            if (BugPrinceMod.RS.EnableCoinsAndGems)
+            if (BugPrinceMod.RS.AreCostsEnabled)
             {
                 lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
                 lmb.AddCostTypeTerms();
@@ -51,7 +51,7 @@ internal static class LogicPatcher
             transition.Value.LogicEdits.ForEach(lmb.DoLogicEdit);
         }
 
-        if (!BugPrinceMod.RS.EnableTransitionChoices || !BugPrinceMod.RS.EnableCoinsAndGems) return;
+        if (!BugPrinceMod.RS.AreCostsEnabled) return;
 
         HashSet<string> costScenes = [];
         foreach (var cgp in CostGroup.GetProducers().Values) costScenes.AddRange(cgp.RelevantSceneNames());

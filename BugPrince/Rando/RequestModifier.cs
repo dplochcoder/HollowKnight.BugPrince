@@ -194,7 +194,7 @@ internal class RequestModifier
             rb.AddItemByName(PushPinItem.ITEM_NAME, RS.TotalPushPins - RS.StartingPushPins);
         }
 
-        if (rb.gs.PoolSettings.Keys && RS.EnableCoinsAndGems)
+        if (rb.gs.PoolSettings.Keys && RS.AreCostsEnabled)
         {
             var neededCoins = RandoInterop.LS.GetItemCount(CostType.Coins);
             if (neededCoins > 0)
