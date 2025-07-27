@@ -204,7 +204,7 @@ internal class TorchPuzzleSwitch : MonoBehaviour, IHitResponder
         invuln = 0.15f;
         particlesParent.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0, 360f));
         particles.ForEach(p => p.Play());
-        gameObject.GetOrAddComponent<AudioSource>().PlayOneShot(audioClips.Random());
+        gameObject.PlaySoundEffect(audioClips.Random());
 
         if (complete.Value) return;
 

@@ -3,7 +3,6 @@ using ItemChanger.Extensions;
 using ItemChanger.Internal;
 using ItemChanger.Util;
 using PurenailCore.GOUtil;
-using PurenailCore.SystemUtil;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +11,14 @@ namespace BugPrince.Util;
 
 internal static class GameObjectUtil
 {
+    internal static void PlaySoundEffect(this AudioSource audioSource, AudioClip clip)
+    {
+        audioSource.outputAudioMixerGroup = AudioMixerGroups.Actors();
+        audioSource.PlayOneShot(clip);
+    }
+
+    internal static void PlaySoundEffect(this GameObject self, AudioClip clip) => self.GetOrAddComponent<AudioSource>().PlaySoundEffect(clip);
+
     internal static GameObject AddNewChild(this GameObject self, string name)
     {
         GameObject child = new(name);

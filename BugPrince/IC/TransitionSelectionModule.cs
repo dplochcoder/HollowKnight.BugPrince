@@ -1125,11 +1125,11 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             var audio = obj.GetOrAddComponent<AudioSource>();
             obj.transform.position = HeroController.instance.transform.position;
 
-            audio.PlayOneShot(SoundCache.FailedMenu);
+            audio.PlaySoundEffect(SoundCache.FailedMenu);
             yield return new WaitForSeconds(0.35f);
-            audio.PlayOneShot(SoundCache.FailedMenu);
+            audio.PlaySoundEffect(SoundCache.FailedMenu);
             yield return new WaitForSeconds(0.35f);
-            audio.PlayOneShot(SoundCache.FailedMenu);
+            audio.PlaySoundEffect(SoundCache.FailedMenu);
         }
 
         GameManager.instance.StartCoroutine(Routine());

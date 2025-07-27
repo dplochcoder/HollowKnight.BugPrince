@@ -136,7 +136,7 @@ internal class WindowBreakTag : SceneModifierTag
         if (immediate) return;
         Broken = true;
 
-        window.GetOrAddComponent<AudioSource>().PlayOneShot(BugPrincePreloader.Instance.QuakeFloorGlassShatterAudio);
+        window.PlaySoundEffect(BugPrincePreloader.Instance.QuakeFloorGlassShatterAudio);
 
         int breakables = Mathf.CeilToInt(Mathf.Abs(PaneY2 - PaneY1) / 0.4f);
         for (int i = 0; i < breakables; i++)

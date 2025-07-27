@@ -49,7 +49,7 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
         if (pd.GetInt(nameof(pd.nailSmithUpgrades)) < currentPlacement.Location.NailUpgradesThreshold)
         {
             shakeRange = SMALL_SHAKE_RANGE;
-            audioSource?.PlayOneShot(SoundCache.FailedMenu);
+            audioSource?.PlaySoundEffect(SoundCache.FailedMenu);
             return;
         }
 
@@ -59,14 +59,14 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
 
         if (hp > 0)
         {
-            audioSource?.PlayOneShot(HitClips.Random());
+            audioSource?.PlaySoundEffect(HitClips.Random());
             return;
         }
 
         currentPlacement.Items[currentItemIndex].GiveOrFling(currentPlacement, transform);
         ChooseNextItem();
         UpdateContainer();
-        audioSource?.PlayOneShot(currentPlacement != null ? GiveClip! : ShatterClip!);
+        audioSource?.PlaySoundEffect(currentPlacement != null ? GiveClip! : ShatterClip!);
     }
 
     private void ChooseNextItem()

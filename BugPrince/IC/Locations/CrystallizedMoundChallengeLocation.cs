@@ -133,7 +133,7 @@ internal class LanternControl : MonoBehaviour
         finalFlames?.Play();
         Activate(dreamParticles);
         if (!complete) dreamWalls.ForEach(w => w.SendEvent("DREAM GATE CLOSE"));
-        gameObject.GetOrAddComponent<AudioSource>().PlayOneShot(lightSound);
+        gameObject.PlaySoundEffect(lightSound!);
         platforms.ForEach(p => p.SetActive(false));
         enemies.Where(hm => hm.hp > 0).ForEach(hm => hm.gameObject.SetActive(false));
         shinies.ForEach(p => p.SetActive(true));
@@ -154,7 +154,7 @@ internal class LanternControl : MonoBehaviour
     {
         finalFlames?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         firstLight?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        gameObject.GetOrAddComponent<AudioSource>().PlayOneShot(lightSound);
+        gameObject.PlaySoundEffect(lightSound!);
         Deactivate(grimmFlameChildren);
         Deactivate(dreamParticles);
         dreamWalls.ForEach(w => w.SendEvent("DREAM GATE OPEN"));

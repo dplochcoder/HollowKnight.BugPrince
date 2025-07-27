@@ -62,7 +62,7 @@ internal static class ItemChangerUtil
         particles.AddComponent<ItemSummoner>().Init(self, finalClip);
 
         particles.SetActive(true);
-        particles.AddComponent<AudioSource>().PlayOneShot(summonClip);
+        particles.PlaySoundEffect(summonClip);
     }
 }
 
@@ -137,7 +137,7 @@ internal class ItemSummoner : MonoBehaviour
             if (post <= 0)
             {
                 shinyMarker?.SetActive(false);
-                gameObject.GetComponent<AudioSource>()?.PlayOneShot(finalClip);
+                gameObject.PlaySoundEffect(finalClip);
 
                 location!.GetContainer(out var obj, out var containerType);
                 Container.GetContainer(containerType)!.ApplyTargetContext(obj, gameObject, 0);
