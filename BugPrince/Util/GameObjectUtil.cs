@@ -39,17 +39,6 @@ internal static class GameObjectUtil
         }
     }
 
-    internal static IEnumerable<T> GetComponentsRecursively<T>(this GameObject self) where T : Component
-    {
-        Queue<GameObject> queue = new([self]);
-        while (queue.Count > 0)
-        {
-            var obj = queue.Dequeue();
-            foreach (var t in obj.GetComponents<T>()) yield return t;
-            obj.Children().ForEach(queue.Enqueue);
-        }
-    }
-
     internal static void DoOnDestroy(this GameObject self, Action action) => self.GetOrAddComponent<OnDestroyHook>().Action += action;
 
     private static bool GetColor(this GameObject self, out Color color)
