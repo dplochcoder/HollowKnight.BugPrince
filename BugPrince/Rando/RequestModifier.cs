@@ -112,18 +112,19 @@ internal class RequestModifier
 
     private static void AddItemsAndLocations(RequestBuilder rb)
     {
-        if (!BugPrinceMod.RS.IsEnabled) return;
+        var RS = BugPrinceMod.RS;
+        if (!RS.IsEnabled) return;
 
         ProvideRequestInfo(rb);
+        Locations.GetLocations().Values.ForEach(loc => loc.AddToRequestBuilder(RS, rb));
 
-        if (BugPrinceMod.RS.EnableTransitionChoices)
-        {
-            DefaultGroupPlacementStrategy.Constraint noSelfLoops = new(
-                (item, location) => item.Name != location.Name,
-                (_, _) => throw new RandomizerCore.Exceptions.OutOfLocationsException("BugPrince: No self-loops"),
-                "BugPrince-NoSelfLoops");
-            foreach (var group in rb.EnumerateTransitionGroups()) if (group.strategy is DefaultGroupPlacementStrategy dgps) dgps.ConstraintList.Add(noSelfLoops);
-        }
+        if (!RS.EnableTransitionChoices) return;
+
+        DefaultGroupPlacementStrategy.Constraint noSelfLoops = new(
+            (item, location) => item.Name != location.Name,
+            (_, _) => throw new RandomizerCore.Exceptions.OutOfLocationsException("BugPrince: No self-loops"),
+            "BugPrince-NoSelfLoops");
+        foreach (var group in rb.EnumerateTransitionGroups()) if (group.strategy is DefaultGroupPlacementStrategy dgps) dgps.ConstraintList.Add(noSelfLoops);
 
         HashSet<string> randomizedScenes = [];
         foreach (var transition in GetRandomizedTransitions(rb))
@@ -133,17 +134,7 @@ internal class RequestModifier
             RandoInterop.LS!.RandomizedTransitions.Add(t);
             randomizedScenes.Add(t.SceneName);
         }
-
-        if (randomizedScenes.Count == 0)
-        {
-            // No items.
-            foreach (var location in Locations.GetLocations())
-            {
-                var (name, loc) = (location.Key, location.Value);
-                loc.AddToRequestBuilder(BugPrinceMod.RS, rb);
-            }
-            return;
-        }
+        if (randomizedScenes.Count == 0) return;
 
         foreach (var scene in randomizedScenes)
         {
@@ -185,9 +176,6 @@ internal class RequestModifier
         WeightedRandomSort(ordered, r);
         RandoInterop.LS.CostGroupProgression = [.. ordered.Select(p => p.Item1)];
 
-        Locations.GetLocations().Values.ForEach(loc => loc.AddToRequestBuilder(BugPrinceMod.RS, rb));
-
-        var RS = BugPrinceMod.RS;
         if (rb.gs.PoolSettings.Relics)
         {
             rb.AddItemByName(DiceTotemItem.ITEM_NAME, RS.TotalDiceTotems - RS.StartingDiceTotems);
@@ -199,15 +187,15 @@ internal class RequestModifier
             var neededCoins = RandoInterop.LS.GetItemCount(CostType.Coins);
             if (neededCoins > 0)
             {
-                rb.AddItemByName(CoinItem.ITEM_NAME, neededCoins + BugPrinceMod.RS.CoinTolerance);
+                rb.AddItemByName(CoinItem.ITEM_NAME, neededCoins + RS.CoinTolerance);
                 rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}", BugPrinceMod.RS.CoinDuplicates);
             }
 
             var neededGems = RandoInterop.LS.GetItemCount(CostType.Gems);
             if (neededGems > 0)
             {
-                rb.AddItemByName(GemItem.ITEM_NAME, neededGems + BugPrinceMod.RS.GemTolerance);
-                rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}", BugPrinceMod.RS.GemDuplicates);
+                rb.AddItemByName(GemItem.ITEM_NAME, neededGems + RS.GemTolerance);
+                rb.AddItemByName($"{PlaceholderItem.Prefix}{GemItem.ITEM_NAME}", RS.GemDuplicates);
             }
         }
     }
