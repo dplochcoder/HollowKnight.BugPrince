@@ -233,7 +233,8 @@
     "SkewedAverage": 0.5
   },
   "Millibelle": {
-    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "AdvancedLocations",
     "SceneNames": [
       "Fungus3_35"
     ],
@@ -268,22 +269,22 @@
     ],
     "SkewedAverage": 0.5
   },
-  "Pleasure_House_(RoomRando)": {
-    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
-    "Constraint": "RoomRando",
-    "SceneNames": [
-      "Ruins_Bathhouse"
-    ],
-    "Type": "Coins",
-    "Cost": 1,
-    "SkewedAverage": 0.5
-  },
   "Pleasure_House_(FullAreaRando)": {
     "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
     "Constraint": "FullAreaRando",
     "SceneNames": [
       "Ruins_Bathhouse",
       "Ruins_Elevator"
+    ],
+    "Type": "Coins",
+    "Cost": 1,
+    "SkewedAverage": 0.5
+  },
+  "Pleasure_House_(RoomRando)": {
+    "$type": "BugPrince.Data.ConstrainedCostGroupProducer, BugPrince",
+    "Constraint": "RoomRando",
+    "SceneNames": [
+      "Ruins_Bathhouse"
     ],
     "Type": "Coins",
     "Cost": 1,
