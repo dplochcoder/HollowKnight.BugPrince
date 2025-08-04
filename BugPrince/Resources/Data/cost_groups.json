@@ -124,12 +124,21 @@
     "SkewedAverage": 0.5
   },
   "Iselda": {
-    "$type": "BugPrince.Data.CostGroupProducer, BugPrince",
+    "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
     "SceneNames": [
       "Room_mapper"
     ],
     "Type": "Coins",
-    "Cost": 1,
+    "Tiers": [
+      {
+        "Constraint": "MapShop",
+        "Cost": 2
+      },
+      {
+        "Constraint": "None",
+        "Cost": 1
+      }
+    ],
     "SkewedAverage": 0.25
   },
   "Jiji": {
