@@ -343,6 +343,7 @@
   "Seer": {
     "$type": "BugPrince.Data.TieredCostGroupProducer, BugPrince",
     "SceneNames": [
+      "RestingGrounds_04",
       "RestingGrounds_07"
     ],
     "Type": "Gems",
