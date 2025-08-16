@@ -37,12 +37,6 @@ internal static class LogicPatcher
             }
         }
 
-        foreach (var e in Locations.GetLocations()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddLogicDef(new(e.Key, e.Value.Logic.Value));
-        foreach (var e in Waypoints.GetWaypoints()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddWaypoint(new(e.Key, e.Value.Logic, true));
-    }
-
-    private static void ModifyTransitions(GenerationSettings gs, LogicManagerBuilder lmb)
-    {
         foreach (var transition in Transitions.GetTransitions())
         {
             if (!BugPrinceMod.RS.IsLocationPoolEnabled(transition.Value.LocationPool)) continue;
@@ -51,6 +45,12 @@ internal static class LogicPatcher
             transition.Value.LogicEdits.ForEach(lmb.DoLogicEdit);
         }
 
+        foreach (var e in Locations.GetLocations()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddLogicDef(new(e.Key, e.Value.Logic.Value));
+        foreach (var e in Waypoints.GetWaypoints()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddWaypoint(new(e.Key, e.Value.Logic, true));
+    }
+
+    private static void ModifyTransitions(GenerationSettings gs, LogicManagerBuilder lmb)
+    {
         if (!BugPrinceMod.RS.AreCostsEnabled) return;
 
         HashSet<string> costScenes = [];

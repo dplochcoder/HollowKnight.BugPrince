@@ -38,7 +38,7 @@ internal record CostConstraintCondition
     public CostConstraintAtom atom;
     public bool negated;
 
-    private static bool DiveFloorsImpl(Mod mod) => mod.TryGetSettings<BWR_Settings>(out var settings) && settings.Enabled && settings.DiveFloors;
+    private static bool DiveFloorsImpl(Mod mod) => mod.TryGetSettings<BWR_Settings>(out var settings) && settings.Enabled && settings.DiveFloors.Enabled;
     private static bool DiveFloorsApplies() => ModHooks.GetMod("Breakable Wall Randomizer") is Mod mod && DiveFloorsImpl(mod);
 
     private static bool GhostEssenceImpl(Mod mod) => mod.TryGetSettings<RandoPlus.GlobalSettings>(out var settings) && settings.GhostEssence;
@@ -56,7 +56,7 @@ internal record CostConstraintCondition
     private static bool NailUpgradesImpl(Mod mod) => mod.TryGetSettings<RandoPlus.GlobalSettings>(out var settings) && settings.NailUpgrades;
     private static bool NailUpgradesApplies() => ModHooks.GetMod("RandoPlus") is Mod mod && NailUpgradesImpl(mod);
 
-    private static bool RockWallsImpl(Mod mod) => mod.TryGetSettings<BWR_Settings>(out var settings) && settings.Enabled && settings.RockWalls;
+    private static bool RockWallsImpl(Mod mod) => mod.TryGetSettings<BWR_Settings>(out var settings) && settings.Enabled && settings.RockWalls.Enabled;
     private static bool RockWallsApplies() => ModHooks.GetMod("Breakable Wall Randomizer") is Mod mod && RockWallsImpl(mod);
 
     private static bool TRJRImpl(Mod mod) => mod.TryGetSettings<TheRealJournalRando.GlobalSettings>(out var settings) && settings.RandoSettings.Enabled;
