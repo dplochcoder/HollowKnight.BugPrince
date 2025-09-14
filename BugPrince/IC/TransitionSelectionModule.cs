@@ -883,7 +883,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             if (candidates.Count == 0) precomputersEvent.WaitOne();
             else
             {
-                candidates.OrderBy(p => p.Tests());
+                candidates.SortBy(p => p.Tests());
                 candidates[0].Advance();
             }
         }
