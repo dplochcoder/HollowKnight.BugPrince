@@ -6,6 +6,7 @@ using BugPrince.Util;
 using GlobalEnums;
 using ItemChanger;
 using ItemChanger.Extensions;
+using ItemChanger.Locations;
 using Modding;
 using Newtonsoft.Json;
 using PurenailCore.SystemUtil;
@@ -435,7 +436,14 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
         }
 
         // Verify all vanilla and all transitions are reachable.
-        foreach (var placement in RandoCtx().Vanilla) if (!placement.Location.CanGet(pm)) return false;
+        foreach (var placement in RandoCtx().Vanilla)
+        {
+            // TODO: Fix this in Randomizer 4.
+            // Salubra's Blessing always evaluates as unreachable if placed vanilla with a non-zero charm shop tolerance.
+            if (placement.Item.Name == ItemNames.Salubras_Blessing) continue;
+
+            if (!placement.Location.CanGet(pm)) return false;
+        }
         foreach (var transition in RandoCtx().transitionPlacements) if (!transition.Source.CanGet(pm)) return false;
 
         return true;
