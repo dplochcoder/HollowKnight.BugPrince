@@ -4,6 +4,7 @@ using BugPrince.IC.Items;
 using BugPrince.Util;
 using PurenailCore.RandoUtil;
 using RandomizerCore.Logic;
+using RandomizerCore.StringParsing;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using System.Collections.Generic;
@@ -72,8 +73,8 @@ internal static class LogicPatcher
             var internalProxy = $"BugPrinceInternalProxy_{transitionName}";
             var externalProxy = $"BugPrinceExternalProxy_{transitionName}";
 
-            replacer.SimpleTokenReplacements.Add(transitionName, new(externalProxy));
-            replacer.SimpleTokenReplacements.Add($"{transitionName}/", new($"{externalProxy}/"));
+            replacer.TokenReplacements.Add(transitionName, new NameToken(externalProxy));
+            replacer.TokenReplacements.Add($"{transitionName}/", new NameToken($"{externalProxy}/"));
 
             // We define a proxy waypoint which is only accessible via the transition term
             lmb.GetOrAddTerm(transitionName, TermType.State);
