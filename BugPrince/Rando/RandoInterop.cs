@@ -95,7 +95,7 @@ internal static class RandoInterop
 
         tw.WriteLine("Logging BugPrince Settings:");
         using JsonTextWriter jtw = new(tw) { CloseOutput = false };
-        RandomizerMod.RandomizerData.JsonUtil._js.Serialize(jtw, BugPrinceMod.GS.RandoSettings);
+        JsonUtil<BugPrinceMod>.Serialize(BugPrinceMod.GS.RandoSettings, jtw);
         tw.WriteLine();
     }
 }

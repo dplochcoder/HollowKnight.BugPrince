@@ -11,8 +11,14 @@
     <Reference Include="PurenailCore">
       <HintPath>$(HollowKnightRefs)/Mods/PurenailCore/PurenailCore.dll</HintPath>
     </Reference>
+    <Reference Include="RandomizerCore">
+      <HintPath>$(HollowKnightRefs)/Mods/RandomizerCore/RandomizerCore.dll</HintPath>
+    </Reference>
     <Reference Include="RandomizerCore.Json">
       <HintPath>$(HollowKnightRefs)/Mods/RandomizerCore.Json/RandomizerCore.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RandomizerMod">
+      <HintPath>$(HollowKnightRefs)/Mods/Randomizer 4/RandomizerMod.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

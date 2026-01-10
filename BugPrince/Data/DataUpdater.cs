@@ -25,7 +25,7 @@ public static class DataUpdater
         CopyDlls(root);
     }
 
-    private static void UpdateJson<T>(T obj, string root, string name)
+    private static void UpdateJson<T>(T obj, string root, string name) where T : class
     {
         var path = $"{root}/BugPrince/Resources/Data/{name}.json";
         JsonUtil.RewriteJsonFile(obj, path);

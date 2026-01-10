@@ -217,7 +217,7 @@ public class TransitionSelectionModule : ItemChanger.Modules.Module, ICostGroupP
             try
             {
                 StringWriter sw = new();
-                RandomizerCore.Json.JsonUtil.GetNonLogicSerializer().Serialize(sw, newMutableState);
+                JsonUtil<BugPrinceMod>.Serialize(newMutableState, sw);
                 FileUtil.AtomicWrite(MutableTransitionStatePath(), sw.ToString());
                 prevMutableState = newMutableState;
             }

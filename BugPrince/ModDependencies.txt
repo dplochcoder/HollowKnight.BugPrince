@@ -2,8 +2,11 @@ Benchwarp
 Breakable Wall Randomizer
 DebugMod
 ItemChanger
+ItemSync
+MapChanger
 MenuChanger
 MoreLocations
+MultiWorldLib
 PurenailCore
 RandoMapCore
 RandomizerCore
@@ -13,8 +16,3 @@ RandoSettingsManager
 Randomizable Levers
 SFCore
 TheRealJournalRando
-
-ItemSync
-MultiWorldLib
-MapChanger
-RandomizerCore.Json
