@@ -3,7 +3,6 @@ using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
-using SFCore.Utils;
 using UnityEngine;
 
 namespace BugPrince.Scripts.Proxy;
@@ -36,12 +35,12 @@ internal class TollGateProxy : MonoBehaviour
         Destroy(machine.LocateMyFSM("Disable if No Lantern"));
 
         var machineFsm = machine.LocateMyFSM("Toll Machine");
-        activated = machineFsm.GetFsmBoolVariable("Activated");
-        machineFsm.GetFsmState("Activated").GetFirstActionOfType<SendEventByName>().sendEvent = OpenedEvent();
-        machineFsm.RemoveFsmGlobalTransition("TOLL GATE OPENED");
-        machineFsm.AddFsmGlobalTransitions(OpenedEvent(), "Toll Gate Opened");
-        machineFsm.GetFsmState("Get Price").Actions = [new Lambda(() => { machineFsm.GetFsmIntVariable("Toll Cost").Value = TollCost; })];
-        machineFsm.GetFsmState("Open Gates").GetFirstActionOfType<SendEventByName>().sendEvent = OpenEvent();
+        activated = machineFsm.FsmVariables.GetFsmBool("Activated");
+        machineFsm.GetState("Activated").GetFirstActionOfType<SendEventByName>().sendEvent = OpenedEvent();
+        SFCore.Utils.FsmUtil.RemoveGlobalTransition(machineFsm, "TOLL GATE OPENED");
+        SFCore.Utils.FsmUtil.AddGlobalTransition(machineFsm, OpenedEvent(), "Toll Gate Opened");
+        machineFsm.GetState("Get Price").Actions = [new Lambda(() => { machineFsm.FsmVariables.GetFsmInt("Toll Cost").Value = TollCost; })];
+        machineFsm.GetState("Open Gates").GetFirstActionOfType<SendEventByName>().sendEvent = OpenEvent();
 
         var gate = Instantiate(BugPrincePreloader.Instance.TollGate!);
         gate.transform.position = Gate!.position;
@@ -49,11 +48,11 @@ internal class TollGateProxy : MonoBehaviour
         gate.SetActive(true);
 
         var gateFsm = gate.LocateMyFSM("Toll Gate");
-        var idle = gateFsm.GetFsmState("Idle");
-        idle.RemoveTransitionsOn("TOLL GATE OPEN");
-        idle.AddFsmTransition(OpenEvent(), "Open");
-        idle.RemoveTransitionsOn("TOLL GATE OPENED");
-        idle.AddFsmTransition(OpenedEvent(), "Destroy Self");
+        var idleState = gateFsm.GetState("Idle");
+        idleState.RemoveTransitionsOn("TOLL GATE OPEN");
+        idleState.AddTransition(OpenEvent(), "Open");
+        idleState.RemoveTransitionsOn("TOLL GATE OPENED");
+        idleState.AddTransition(OpenedEvent(), "Destroy Self");
 
         Machine!.gameObject.SetActive(false);
         Gate!.gameObject.SetActive(false);
