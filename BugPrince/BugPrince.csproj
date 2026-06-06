@@ -74,6 +74,9 @@
     <None Include="unity\.gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CSharpier.Core" Version="1.2.6" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>
     </Reference>

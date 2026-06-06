@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using BugPrince.Scripts.InternalLib;
 using BugPrince.Util;
+using CSharpier.Core.CSharp;
 using PurenailCore.SystemUtil;
 using UnityEngine;
 
@@ -140,7 +141,8 @@ internal static class UnityScriptShimsGenerator
         if (!Directory.Exists(dir))
             Directory.CreateDirectory(dir);
 
-        File.WriteAllText(path, content.Replace("\r\n", "\n").Replace("\n", "\r\n"));
+        var unix = content.Replace("\r\n", "\n");
+        File.WriteAllText(path, CSharpFormatter.Format(unix).Code);
     }
 
     private static string Pad(string src, int indent)
