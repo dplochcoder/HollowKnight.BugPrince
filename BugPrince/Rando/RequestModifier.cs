@@ -134,7 +134,9 @@ internal class RequestModifier
             return true;
         }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         cost = default;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         return false;
     }
 

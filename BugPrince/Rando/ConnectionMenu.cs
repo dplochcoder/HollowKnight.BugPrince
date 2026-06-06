@@ -57,8 +57,7 @@ internal class ConnectionMenu
 
         factory = new(bugPrincePage, BugPrinceMod.GS.RandoSettings);
         factory
-            .Elements.Select(e => e as MenuItem<bool>)
-            .Where(e => e != null)
+            .Elements.OfType<MenuItem<bool>>()
             .ForEach(e => e.SelfChanged += _ => UpdateColorsAndVisibility());
 
         var s = Settings;
