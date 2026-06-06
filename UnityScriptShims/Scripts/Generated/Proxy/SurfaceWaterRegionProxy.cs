@@ -1,7 +1,4 @@
 namespace BugPrince.Scripts.Proxy
 {
-    public class SurfaceWaterRegionProxy : UnityEngine.MonoBehaviour
-    {
-        
-    }
+    public class SurfaceWaterRegionProxy : UnityEngine.MonoBehaviour { }
 }

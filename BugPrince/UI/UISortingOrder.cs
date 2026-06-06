@@ -21,6 +21,6 @@ internal static class UISortingOrder
     {
         self.gameObject.layer = (int)PhysLayers.UI;
         self.sortingLayerName = "HUD";
-        self.sortingOrder = order + 11;  // Always in front of blanker.
+        self.sortingOrder = order + 11; // Always in front of blanker.
     }
 }

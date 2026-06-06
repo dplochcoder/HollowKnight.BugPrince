@@ -21,7 +21,8 @@ public class TilemapPatcher : MonoBehaviour
 
         // Patch terrain material.
         var terrainMaterial = BugPrincePreloader.Instance.TerrainMaterial!;
-        foreach (var collider in gameObject.GetComponentsInChildren<Collider2D>()) collider.sharedMaterial = terrainMaterial;
+        foreach (var collider in gameObject.GetComponentsInChildren<Collider2D>())
+            collider.sharedMaterial = terrainMaterial;
 
         GameManager.instance.RefreshTilemapInfo(gameObject.scene.name);
 

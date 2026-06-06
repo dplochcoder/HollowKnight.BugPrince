@@ -7,7 +7,13 @@ namespace BugPrince.Rando;
 
 internal static class LogicExtensions
 {
-    private static string GetTermString(this CostType self) => self switch { CostType.Coins => CoinItem.TERM_NAME, CostType.Gems => GemItem.TERM_NAME, _ => throw self.InvalidEnum() };
+    private static string GetTermString(this CostType self) =>
+        self switch
+        {
+            CostType.Coins => CoinItem.TERM_NAME,
+            CostType.Gems => GemItem.TERM_NAME,
+            _ => throw self.InvalidEnum(),
+        };
 
     internal static void AddCostTypeTerms(this LogicManagerBuilder self)
     {
@@ -15,7 +21,8 @@ internal static class LogicExtensions
         self.GetOrAddTerm(GemItem.TERM_NAME);
     }
 
-    internal static Term GetTerm(this CostType self, LogicManager lm) => lm.GetTermStrict(self.GetTermString());
+    internal static Term GetTerm(this CostType self, LogicManager lm) =>
+        lm.GetTermStrict(self.GetTermString());
 
     internal static bool TryGetInner<T>(this VariableResolver self, out T inner)
     {

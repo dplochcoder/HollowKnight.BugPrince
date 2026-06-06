@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using BugPrince.Scripts.Framework;
+using BugPrince.Scripts.Lib;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using BugPrince.Scripts.Lib;
-using BugPrince.Scripts.Framework;
 
 namespace BugPrince.Scripts
 {
@@ -27,8 +27,8 @@ namespace BugPrince.Scripts
             Hash.Update(ref hash, Width());
             Hash.Update(ref hash, Height());
             for (int x = 0; x < Width(); x++)
-                for (int y = 0; y < Height(); y++)
-                    Hash.Update(ref hash, Filled(x, y));
+            for (int y = 0; y < Height(); y++)
+                Hash.Update(ref hash, Filled(x, y));
 
             return hash;
         }
@@ -36,9 +36,18 @@ namespace BugPrince.Scripts
 
     static class RectExtensions
     {
-        public static List<Vector2> Points(this Lib.Rect r) => new List<Vector2>() { new Vector2(-r.W / 2f, -r.H / 2f), new Vector2(r.W / 2f, -r.H / 2f), new Vector2(r.W / 2f, r.H / 2f), new Vector2(-r.W / 2f, r.H / 2f), new Vector2(-r.W / 2f, -r.H / 2f) };
+        public static List<Vector2> Points(this Lib.Rect r) =>
+            new List<Vector2>()
+            {
+                new Vector2(-r.W / 2f, -r.H / 2f),
+                new Vector2(r.W / 2f, -r.H / 2f),
+                new Vector2(r.W / 2f, r.H / 2f),
+                new Vector2(-r.W / 2f, r.H / 2f),
+                new Vector2(-r.W / 2f, -r.H / 2f),
+            };
 
-        public static Vector3 Center(this Lib.Rect r) => new Vector3(r.X + r.W / 2.0f, r.Y + r.H / 2.0f);
+        public static Vector3 Center(this Lib.Rect r) =>
+            new Vector3(r.X + r.W / 2.0f, r.Y + r.H / 2.0f);
 
         public static Lib.Rect ToRect(this BoxCollider2D self)
         {
@@ -87,7 +96,7 @@ namespace BugPrince.Scripts
 
             var tilemap = gameObject.GetComponent<Tilemap>();
             tilemap.CompressBounds();
-            tilemap.color = new Color(1, 1, 1);  // Always set to white
+            tilemap.color = new Color(1, 1, 1); // Always set to white
 
             var grid = new TilemapGrid(tilemap);
             var newHash = grid.ComputeHash();
@@ -97,10 +106,13 @@ namespace BugPrince.Scripts
                 changed = true;
             }
 
-            if (!changed) return false;
-            if (prevCompiled != null) DestroyImmediate(prevCompiled, true);
+            if (!changed)
+                return false;
+            if (prevCompiled != null)
+                DestroyImmediate(prevCompiled, true);
 
-            if (gameObject.GetComponent<TilemapPatcher>() == null) gameObject.AddComponent<TilemapPatcher>();
+            if (gameObject.GetComponent<TilemapPatcher>() == null)
+                gameObject.AddComponent<TilemapPatcher>();
 
             GameObject compiled = new GameObject("Compiled");
             compiled.transform.SetParent(gameObject.transform);
@@ -114,7 +126,7 @@ namespace BugPrince.Scripts
             {
                 GameObject go = new GameObject();
                 go.name = $"Collider {++i}";
-                go.layer = 8;  // Terrain
+                go.layer = 8; // Terrain
                 go.transform.SetParent(colliders.transform);
 
                 var ec2d = go.AddComponent<EdgeCollider2D>();
@@ -136,15 +148,15 @@ namespace BugPrince.Scripts
             var h = tilemap.size.y;
             TileBase firstTile = null;
             for (int x = 0; x < w; x++)
-                for (int y = 0; y < h; y++)
+            for (int y = 0; y < h; y++)
+            {
+                var tile = tilemap.GetTile(new Vector3Int(x, y, 0));
+                if (tile != null)
                 {
-                    var tile = tilemap.GetTile(new Vector3Int(x, y, 0));
-                    if (tile != null)
-                    {
-                        firstTile = (firstTile ?? tile);
-                        tilemap.SetTile(new Vector3Int(x, y, 0), firstTile);
-                    }
+                    firstTile = (firstTile ?? tile);
+                    tilemap.SetTile(new Vector3Int(x, y, 0), firstTile);
                 }
+            }
 
             UnityEditorShims.MarkActiveSceneDirty();
         }

@@ -1,27 +1,30 @@
-﻿using BugPrince.Data;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using BugPrince.Data;
 using BugPrince.IC;
 using BugPrince.IC.Items;
 using BugPrince.ItemSyncInterop;
 using BugPrince.Util;
 using PurenailCore.GOUtil;
 using PurenailCore.SystemUtil;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace BugPrince.UI;
 
 internal record RoomSelectionDecision
 {
-    public SceneChoiceInfo? chosen;  // Can be null if no choices affordable.
-    public SceneChoiceInfo? newPin;  // Set if pin used.
+    public SceneChoiceInfo? chosen; // Can be null if no choices affordable.
+    public SceneChoiceInfo? newPin; // Set if pin used.
 }
 
 internal class RoomSelectionUI : MonoBehaviour
 {
-    internal delegate void SendSelectionCb(RoomSelectionDecision decision, Action<SwapTransitionsResponse> callback);
+    internal delegate void SendSelectionCb(
+        RoomSelectionDecision decision,
+        Action<SwapTransitionsResponse> callback
+    );
     internal delegate void FinalizeSelectionCb(SwapTransitionsResponse response);
     internal delegate bool RerollCb(out List<SceneChoiceInfo> reroll);
     internal delegate void FailedRerollCb();
@@ -43,7 +46,15 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private RoomSelectionLayout? layout;
 
-    internal static RoomSelectionUI Create(TransitionSelectionModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SendSelectionCb sendSelectionCb, FinalizeSelectionCb finalizeSelectionCb, RerollCb rerollCb, FailedRerollCb failedRerollCb)
+    internal static RoomSelectionUI Create(
+        TransitionSelectionModule module,
+        GateDirection gateDir,
+        List<SceneChoiceInfo> infos,
+        SendSelectionCb sendSelectionCb,
+        FinalizeSelectionCb finalizeSelectionCb,
+        RerollCb rerollCb,
+        FailedRerollCb failedRerollCb
+    )
     {
         GameObject obj = new("Room Selection");
         obj.SetActive(false);
@@ -51,7 +62,15 @@ internal class RoomSelectionUI : MonoBehaviour
         obj.transform.position = Vector3.zero;
 
         var ui = obj.AddComponent<RoomSelectionUI>();
-        ui.Init(module, gateDir, infos, sendSelectionCb, finalizeSelectionCb, rerollCb, failedRerollCb);
+        ui.Init(
+            module,
+            gateDir,
+            infos,
+            sendSelectionCb,
+            finalizeSelectionCb,
+            rerollCb,
+            failedRerollCb
+        );
 
         obj.SetActive(true);
         uiPresent = true;
@@ -60,7 +79,15 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void OnDestroy() => uiPresent = false;
 
-    private void Init(TransitionSelectionModule module, GateDirection gateDir, List<SceneChoiceInfo> infos, SendSelectionCb sendSelectionCb, FinalizeSelectionCb finalizeSelectionCb, RerollCb rerollCb, FailedRerollCb failedRerollCb)
+    private void Init(
+        TransitionSelectionModule module,
+        GateDirection gateDir,
+        List<SceneChoiceInfo> infos,
+        SendSelectionCb sendSelectionCb,
+        FinalizeSelectionCb finalizeSelectionCb,
+        RerollCb rerollCb,
+        FailedRerollCb failedRerollCb
+    )
     {
         this.module = module;
         choiceInfos = [.. infos];
@@ -94,13 +121,39 @@ internal class RoomSelectionUI : MonoBehaviour
         redOutRenderer.color = Color.red.WithAlpha(0);
         redOutObj.SetActive(true);
 
-        float invY = UIConstants.Y_MAIN - UIConstants.SCENE_Y_SPACE / 2 - UIConstants.INV_SLOT_BAR_Y_SPACE;
+        float invY =
+            UIConstants.Y_MAIN - UIConstants.SCENE_Y_SPACE / 2 - UIConstants.INV_SLOT_BAR_Y_SPACE;
         Vector2 InvPos(int idx) => new((idx * 2 - 3) * UIConstants.INV_SLOT_BAR_X_SPACE / 2, invY);
 
-        diceTotemSlot = InventorySlot.Create(gameObject, InvPos(0), () => module!.DiceTotems, DiceTotemItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-        coinSlot = InventorySlot.Create(gameObject, InvPos(1), () => module!.GetCoins(tempCostScene), CoinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE);
-        gemSlot = InventorySlot.Create(gameObject, InvPos(2), () => module!.GetGems(tempCostScene), GemItem.LargeSprite.Value, UIConstants.INV_SLOT_GEM_ITEM_SCALE);
-        pushPinSlot = InventorySlot.Create(gameObject, InvPos(3), () => module!.GetPushPins(tempPinReceipt), PushPinItem.LargeSprite.Value, UIConstants.INV_SLOT_ITEM_SCALE, hiddenPin);
+        diceTotemSlot = InventorySlot.Create(
+            gameObject,
+            InvPos(0),
+            () => module!.DiceTotems,
+            DiceTotemItem.LargeSprite.Value,
+            UIConstants.INV_SLOT_ITEM_SCALE
+        );
+        coinSlot = InventorySlot.Create(
+            gameObject,
+            InvPos(1),
+            () => module!.GetCoins(tempCostScene),
+            CoinItem.LargeSprite.Value,
+            UIConstants.INV_SLOT_ITEM_SCALE
+        );
+        gemSlot = InventorySlot.Create(
+            gameObject,
+            InvPos(2),
+            () => module!.GetGems(tempCostScene),
+            GemItem.LargeSprite.Value,
+            UIConstants.INV_SLOT_GEM_ITEM_SCALE
+        );
+        pushPinSlot = InventorySlot.Create(
+            gameObject,
+            InvPos(3),
+            () => module!.GetPushPins(tempPinReceipt),
+            PushPinItem.LargeSprite.Value,
+            UIConstants.INV_SLOT_ITEM_SCALE,
+            hiddenPin
+        );
         dashIco = MakeSprite(gameObject, InvPos(0) - new Vector2(0, 1.75f), dash_ico.Value);
         spellIco = MakeSprite(gameObject, InvPos(3) - new Vector2(0, 1.75f), spell_ico.Value);
 
@@ -135,15 +188,21 @@ internal class RoomSelectionUI : MonoBehaviour
         {
             var choice = SceneChoice.Create(module!, gameObject, choiceInfos[i], layout![i].Pos);
             choiceObjects.Add(choice);
-            if (i + 1 < choiceInfos.Count) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
+            if (i + 1 < choiceInfos.Count)
+                yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
         }
 
-        if (choiceObjects.Count > 0) yield return new WaitUntil(() => choiceObjects[choiceObjects.Count - 1].IsReady());
-        else yield return new WaitForSeconds(UIConstants.SCENE_ASCEND_TIME);
+        if (choiceObjects.Count > 0)
+            yield return new WaitUntil(() => choiceObjects[choiceObjects.Count - 1].IsReady());
+        else
+            yield return new WaitForSeconds(UIConstants.SCENE_ASCEND_TIME);
 
         selection = choiceObjects.Count > 0 ? 0 : -1;
         newPinSelection = null;
-        selectionCorners = SelectionCorners.Create(gameObject, choiceObjects.Count > 0 ? layout![0].Pos : new Vector2(0, UIConstants.Y_MAIN));
+        selectionCorners = SelectionCorners.Create(
+            gameObject,
+            choiceObjects.Count > 0 ? layout![0].Pos : new Vector2(0, UIConstants.Y_MAIN)
+        );
         acceptingInput = true;
     }
 
@@ -151,10 +210,13 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private bool UsedPinShown => choiceInfos.Count > 0 && choiceInfos[choiceInfos.Count - 1].Pinned;
     private bool PinIsUsed => hiddenPin || UsedPinShown;
+
     private void ShakePinIndicators()
     {
-        if (UsedPinShown) choiceObjects[choiceObjects.Count - 1].ShakePin();
-        if (newPinSelection.HasValue) choiceObjects[newPinSelection.Value].ShakePin();
+        if (UsedPinShown)
+            choiceObjects[choiceObjects.Count - 1].ShakePin();
+        if (newPinSelection.HasValue)
+            choiceObjects[newPinSelection.Value].ShakePin();
         pushPinSlot?.Shake();
     }
 
@@ -190,13 +252,14 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private InventorySlot? GetInvSlot(SceneChoiceInfo info)
     {
-        if (!info.Cost.HasValue) return null;
+        if (!info.Cost.HasValue)
+            return null;
 
         return info.Cost.Value.Item1 switch
         {
             CostType.Coins => coinSlot,
             CostType.Gems => gemSlot,
-            _ => throw info.Cost.Value.Item1.InvalidEnum()
+            _ => throw info.Cost.Value.Item1.InvalidEnum(),
         };
     }
 
@@ -220,7 +283,12 @@ internal class RoomSelectionUI : MonoBehaviour
         }
 
         var info = choiceInfos[selection];
-        if (newPinSelection.HasValue && PinIsUsed && selection != newPinSelection.Value && !info.Pinned)
+        if (
+            newPinSelection.HasValue
+            && PinIsUsed
+            && selection != newPinSelection.Value
+            && !info.Pinned
+        )
         {
             // Can't make 2 pins.
             ShakePinIndicators();
@@ -248,11 +316,14 @@ internal class RoomSelectionUI : MonoBehaviour
         IEnumerator LockIn()
         {
             Wrapped<SwapTransitionsResponse?> response = new(null);
-            sendSelectionCb!(new()
-            {
-                newPin = newPinSelection.HasValue ? choiceInfos[newPinSelection.Value] : null,
-                chosen = info,
-            }, resp => response.Value = resp);
+            sendSelectionCb!(
+                new()
+                {
+                    newPin = newPinSelection.HasValue ? choiceInfos[newPinSelection.Value] : null,
+                    chosen = info,
+                },
+                resp => response.Value = resp
+            );
 
             audioSource!.PlaySoundEffect(SoundCache.Confirm);
 
@@ -263,13 +334,16 @@ internal class RoomSelectionUI : MonoBehaviour
             }
 
             List<int> fadeOuts = [];
-            for (int i = 0; i < choiceObjects.Count; i++) if (i != selection) fadeOuts.Add(i);
+            for (int i = 0; i < choiceObjects.Count; i++)
+                if (i != selection)
+                    fadeOuts.Add(i);
             fadeOuts.Shuffle(new());
 
             foreach (int i in fadeOuts)
             {
                 choiceObjects[i].FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
-                if (i != fadeOuts[fadeOuts.Count - 1]) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
+                if (i != fadeOuts[fadeOuts.Count - 1])
+                    yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
             }
             yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_SCENE_STAGGER);
             choiceObjects[selection].FlyUp();
@@ -278,7 +352,8 @@ internal class RoomSelectionUI : MonoBehaviour
             yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_FINAL_DELAY);
             choiceObjects[selection].FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
 
-            while (response.Value == null) yield return null;
+            while (response.Value == null)
+                yield return null;
             finalizeSelectionCb!(response.Value);
         }
         StartCoroutine(LockIn());
@@ -286,7 +361,8 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private bool CanSelect()
     {
-        if (!_canSelect) return false;
+        if (!_canSelect)
+            return false;
         return _canSelect = choiceInfos.Any(i => i.CanAfford(module!));
     }
 
@@ -373,16 +449,19 @@ internal class RoomSelectionUI : MonoBehaviour
             audioSource!.PlaySoundEffect(SoundCache.RollTotem);
             selectionCorners?.FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
             selectionCorners = null;
-            if (success) audioSource!.PlaySoundEffect(SoundCache.SpendResources);
+            if (success)
+                audioSource!.PlaySoundEffect(SoundCache.SpendResources);
 
             List<int> indices = [];
-            for (int i = 0; i < choiceInfos.Count; i++) indices.Add(i);
+            for (int i = 0; i < choiceInfos.Count; i++)
+                indices.Add(i);
             indices.Shuffle(new());
 
             foreach (var idx in indices)
             {
                 choiceObjects[idx].FadeOut(UIConstants.SCENE_FADE_OUT_DURATION);
-                if (idx != indices[indices.Count - 1]) yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
+                if (idx != indices[indices.Count - 1])
+                    yield return new WaitForSeconds(UIConstants.ROOM_SELECTION_SCENE_STAGGER);
             }
 
             if (!success)
@@ -412,17 +491,25 @@ internal class RoomSelectionUI : MonoBehaviour
 
     private void Update()
     {
-        if (!acceptingInput) return;
+        if (!acceptingInput)
+            return;
 
         var actions = InputHandler.Instance.inputActions;
         var current = selection != -1 ? layout![selection] : null;
-        if (actions.left.WasPressed) TryMoveToIndex(current?.LeftIndex);
-        else if (actions.right.WasPressed) TryMoveToIndex(current?.RightIndex);
-        else if (actions.up.WasPressed) TryMoveToIndex(current?.UpIndex);
-        else if (actions.down.WasPressed) TryMoveToIndex(current?.DownIndex);
-        else if (actions.jump.WasPressed || actions.attack.WasPressed) TrySelectIndex(selection);
-        else if (actions.cast.WasPressed) TryTogglePin(selection);
-        else if (actions.dash.WasPressed) TryReroll();
+        if (actions.left.WasPressed)
+            TryMoveToIndex(current?.LeftIndex);
+        else if (actions.right.WasPressed)
+            TryMoveToIndex(current?.RightIndex);
+        else if (actions.up.WasPressed)
+            TryMoveToIndex(current?.UpIndex);
+        else if (actions.down.WasPressed)
+            TryMoveToIndex(current?.DownIndex);
+        else if (actions.jump.WasPressed || actions.attack.WasPressed)
+            TrySelectIndex(selection);
+        else if (actions.cast.WasPressed)
+            TryTogglePin(selection);
+        else if (actions.dash.WasPressed)
+            TryReroll();
 
         if (!CanSelect() && !rejected)
         {
@@ -433,7 +520,10 @@ internal class RoomSelectionUI : MonoBehaviour
                 rejected = true;
                 sendSelectionCb!(new(), _ => { });
             }
-            else if (rejectionTimer >= START_RED_OUT) redOutRenderer?.SetAlpha((rejectionTimer - START_RED_OUT) / (RED_OUT - START_RED_OUT));
+            else if (rejectionTimer >= START_RED_OUT)
+                redOutRenderer?.SetAlpha(
+                    (rejectionTimer - START_RED_OUT) / (RED_OUT - START_RED_OUT)
+                );
         }
     }
 }

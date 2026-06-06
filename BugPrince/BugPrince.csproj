@@ -28,10 +28,22 @@
     <RemoveDir Directories="$(ExportDir)/" />
     <MakeDir Directories="$(ExportDir)/" />
     <MakeDir Directories="$(ExportDir)/zip/" />
-    <MakeDir Condition="!Exists('$(HollowKnightRefs)/Mods/$(TargetName)/')" Directories="$(HollowKnightRefs)/Mods/$(TargetName)/" />
-    <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(HollowKnightRefs)/Mods/$(TargetName)/" />
-    <Copy SourceFiles="$(SolutionDir)/README.md;@(OutputFiles)" DestinationFolder="$(ExportDir)/zip/" />
-    <ZipDirectory SourceDirectory="$(ExportDir)/zip/" DestinationFile="$(ExportDir)/$(TargetName).zip" />
+    <MakeDir
+      Condition="!Exists('$(HollowKnightRefs)/Mods/$(TargetName)/')"
+      Directories="$(HollowKnightRefs)/Mods/$(TargetName)/"
+    />
+    <Copy
+      SourceFiles="@(OutputFiles)"
+      DestinationFolder="$(HollowKnightRefs)/Mods/$(TargetName)/"
+    />
+    <Copy
+      SourceFiles="$(SolutionDir)/README.md;@(OutputFiles)"
+      DestinationFolder="$(ExportDir)/zip/"
+    />
+    <ZipDirectory
+      SourceDirectory="$(ExportDir)/zip/"
+      DestinationFile="$(ExportDir)/$(TargetName).zip"
+    />
     <RemoveDir Directories="$(ExportDir)/zip/" />
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
@@ -39,7 +51,12 @@
     <ItemGroup>
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
-    <WriteLinesToFile File="$(ExportDir)/VERSION.txt" Lines="@(VersionNumber)" Overwrite="true" Encoding="UTF-8" />
+    <WriteLinesToFile
+      File="$(ExportDir)/VERSION.txt"
+      Lines="@(VersionNumber)"
+      Overwrite="true"
+      Encoding="UTF-8"
+    />
   </Target>
   <ItemGroup>
     <Compile Remove="Unity\**" />

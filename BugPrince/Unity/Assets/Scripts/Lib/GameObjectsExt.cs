@@ -7,7 +7,8 @@ namespace BugPrince.Scripts.Lib
     {
         public static IEnumerable<GameObject> Children(this GameObject self)
         {
-            foreach (Transform transform in self.transform) yield return transform.gameObject;
+            foreach (Transform transform in self.transform)
+                yield return transform.gameObject;
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using ItemChanger;
+﻿using System;
+using System.Collections.Generic;
+using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Internal;
 using ItemChanger.Util;
 using PurenailCore.GOUtil;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BugPrince.Util;
@@ -17,7 +17,8 @@ internal static class GameObjectUtil
         audioSource.PlayOneShot(clip);
     }
 
-    internal static void PlaySoundEffect(this GameObject self, AudioClip clip) => self.GetOrAddComponent<AudioSource>().PlaySoundEffect(clip);
+    internal static void PlaySoundEffect(this GameObject self, AudioClip clip) =>
+        self.GetOrAddComponent<AudioSource>().PlaySoundEffect(clip);
 
     internal static GameObject AddNewChild(this GameObject self, string name)
     {
@@ -31,7 +32,8 @@ internal static class GameObjectUtil
 
     internal static IEnumerable<GameObject> Children(this GameObject self)
     {
-        foreach (Transform transform in self.transform) yield return transform.gameObject;
+        foreach (Transform transform in self.transform)
+            yield return transform.gameObject;
     }
 
     internal static void Recursively(this GameObject self, Action<GameObject> action)
@@ -42,11 +44,13 @@ internal static class GameObjectUtil
             var obj = queue.Dequeue();
             action(obj);
 
-            foreach (Transform transform in obj.transform) queue.Enqueue(transform.gameObject);
+            foreach (Transform transform in obj.transform)
+                queue.Enqueue(transform.gameObject);
         }
     }
 
-    internal static void DoOnDestroy(this GameObject self, Action action) => self.GetOrAddComponent<OnDestroyHook>().Action += action;
+    internal static void DoOnDestroy(this GameObject self, Action action) =>
+        self.GetOrAddComponent<OnDestroyHook>().Action += action;
 
     private static bool GetColor(this GameObject self, out Color color)
     {
@@ -67,23 +71,28 @@ internal static class GameObjectUtil
 
     internal static void FadeColor(this GameObject self, Color from, Color to, float duration)
     {
-        if (self.GetComponent<SpriteRenderer>() == null && self.GetComponent<TextMesh>() == null) return;
+        if (self.GetComponent<SpriteRenderer>() == null && self.GetComponent<TextMesh>() == null)
+            return;
         self.GetOrAddComponent<Fader>().StartFade(from, to, duration);
     }
 
     internal static void FadeAlpha(this GameObject self, float from, float to, float duration)
     {
-        if (self.GetColor(out var color)) self.GetOrAddComponent<Fader>().StartFade(color.WithAlpha(from), color.WithAlpha(to), duration);
+        if (self.GetColor(out var color))
+            self.GetOrAddComponent<Fader>()
+                .StartFade(color.WithAlpha(from), color.WithAlpha(to), duration);
     }
 
     internal static void FadeColor(this GameObject self, Color to, float duration)
     {
-        if (self.GetColor(out var color)) self.GetOrAddComponent<Fader>().StartFade(color, to, duration);
+        if (self.GetColor(out var color))
+            self.GetOrAddComponent<Fader>().StartFade(color, to, duration);
     }
 
     internal static void FadeAlpha(this GameObject self, float to, float duration)
     {
-        if (self.GetColor(out var color)) self.GetOrAddComponent<Fader>().StartFade(color, color.WithAlpha(to), duration);
+        if (self.GetColor(out var color))
+            self.GetOrAddComponent<Fader>().StartFade(color, color.WithAlpha(to), duration);
     }
 
     internal static GameObject MakeShinyDecorator()
@@ -107,7 +116,9 @@ internal static class GameObjectUtil
 
     internal static GameObject FlingGlassDebris(Vector3 pos, Vector3 speed)
     {
-        var obj = UnityEngine.Object.Instantiate(BugPrincePreloader.Instance.QuakeFloorGlassDebris.Random());
+        var obj = UnityEngine.Object.Instantiate(
+            BugPrincePreloader.Instance.QuakeFloorGlassDebris.Random()
+        );
         obj.transform.position = pos;
         obj.GetComponent<Rigidbody2D>().velocity = speed;
         return obj;
@@ -134,8 +145,10 @@ internal class Fader : MonoBehaviour
         this.duration = duration;
         timer = 0;
 
-        if (spriteRenderer != null) spriteRenderer.color = from;
-        if (textMesh != null) textMesh.color = from;
+        if (spriteRenderer != null)
+            spriteRenderer.color = from;
+        if (textMesh != null)
+            textMesh.color = from;
     }
 
     private void Update()
@@ -143,13 +156,16 @@ internal class Fader : MonoBehaviour
         if (timer < duration)
         {
             timer += Time.deltaTime;
-            if (timer > duration) timer = duration;
+            if (timer > duration)
+                timer = duration;
         }
 
         float pct = timer / duration;
         var color = Color.Lerp(from, to, pct);
-        if (spriteRenderer != null) spriteRenderer.color = color;
-        if (textMesh != null) textMesh.color = color;
+        if (spriteRenderer != null)
+            spriteRenderer.color = color;
+        if (textMesh != null)
+            textMesh.color = color;
     }
 }
 

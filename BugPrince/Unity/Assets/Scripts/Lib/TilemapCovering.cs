@@ -18,8 +18,8 @@ namespace BugPrince.Scripts.Lib
             Hash.Update(ref hash, self.Width());
             Hash.Update(ref hash, self.Height());
             for (int x = 0; x < self.Width(); x++)
-                for (int y = 0; y < self.Height(); y++)
-                    Hash.Update(ref hash, self.Filled(x, y));
+            for (int y = 0; y < self.Height(); y++)
+                Hash.Update(ref hash, self.Filled(x, y));
             return hash;
         }
     }
@@ -65,8 +65,10 @@ namespace BugPrince.Scripts.Lib
                 {
                     bool filled = g.Filled(x, y);
                     claimed[x, y] = !filled;
-                    if (filled) ++runSize;
-                    else runSize = 0;
+                    if (filled)
+                        ++runSize;
+                    else
+                        runSize = 0;
 
                     yRuns[x, y] = runSize;
                 }
@@ -76,8 +78,10 @@ namespace BugPrince.Scripts.Lib
                 int runSize = 0;
                 for (int x = width - 1; x >= 0; x--)
                 {
-                    if (g.Filled(x, y)) ++runSize;
-                    else runSize = 0;
+                    if (g.Filled(x, y))
+                        ++runSize;
+                    else
+                        runSize = 0;
 
                     xRuns[x, y] = runSize;
                 }
@@ -131,8 +135,8 @@ namespace BugPrince.Scripts.Lib
             }
 
             for (int dx = 0; dx < w; dx++)
-                for (int dy = 0; dy < h; dy++)
-                    claimed[cX + dx, cY + dy] = true;
+            for (int dy = 0; dy < h; dy++)
+                claimed[cX + dx, cY + dy] = true;
             return new Rect(cX, cY, w, h);
         }
     }
@@ -143,7 +147,8 @@ namespace BugPrince.Scripts.Lib
         {
             var runs = new CoverageRuns(grid);
             List<Rect> result = new List<Rect>();
-            while (runs.NextRect(out var rect)) result.Add(rect);
+            while (runs.NextRect(out var rect))
+                result.Add(rect);
 
             return result;
         }

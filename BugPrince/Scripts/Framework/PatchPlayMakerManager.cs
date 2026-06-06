@@ -6,7 +6,8 @@ namespace BugPrince.Scripts.Framework;
 [Shim]
 class PatchPlayMakerManager : MonoBehaviour
 {
-    [ShimField] public Transform? ManagerTransform;
+    [ShimField]
+    public Transform? ManagerTransform;
 
     public void Awake()
     {

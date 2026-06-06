@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using SFCore.MonoBehaviours;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BugPrince.Scripts.Proxy;
+using SFCore.MonoBehaviours;
+using UnityEngine;
 
 namespace BugPrince.Scripts.Lib
 {
@@ -14,11 +14,13 @@ namespace BugPrince.Scripts.Lib
             DELETED,
         }
 
-        private static FixResult ChangedResult(bool changed) => changed ? FixResult.CHANGED : FixResult.UNCHANGED;
+        private static FixResult ChangedResult(bool changed) =>
+            changed ? FixResult.CHANGED : FixResult.UNCHANGED;
 
         private static bool UpdateFloat(ref float src, float dest)
         {
-            if (Mathf.Abs(src - dest) < 0.001f) return false;
+            if (Mathf.Abs(src - dest) < 0.001f)
+                return false;
 
             src = dest;
             return true;
@@ -26,18 +28,21 @@ namespace BugPrince.Scripts.Lib
 
         private static bool OptimizeObject(Object o, bool optimized)
         {
-            if (optimized) UnityEditorShims.MarkDirty(o);
+            if (optimized)
+                UnityEditorShims.MarkDirty(o);
             return optimized;
         }
 
-        private static bool FixAll<T>(System.Func<T, FixResult> fixer) where T : Component
+        private static bool FixAll<T>(System.Func<T, FixResult> fixer)
+            where T : Component
         {
             bool changed = false;
             foreach (var t in Object.FindObjectsOfType<T>(true))
             {
                 var result = fixer(t);
                 changed |= result != FixResult.UNCHANGED;
-                if (result == FixResult.CHANGED) UnityEditorShims.MarkDirty(t);
+                if (result == FixResult.CHANGED)
+                    UnityEditorShims.MarkDirty(t);
             }
             return changed;
         }
@@ -47,8 +52,10 @@ namespace BugPrince.Scripts.Lib
             var updates = new List<string>();
             void Update(string name, bool fnResult)
             {
-                if (fnResult) updates.Add(name);
-            };
+                if (fnResult)
+                    updates.Add(name);
+            }
+            ;
 
             Update("AddRequiredObjects()", AddRequiredObjects());
             Update("FixScenery()", FixScenery());
@@ -57,14 +64,24 @@ namespace BugPrince.Scripts.Lib
             Update("FixAll<CameraLockAreaProxy>(FixCLAP)", FixAll<CameraLockAreaProxy>(FixCLAP));
             Update("FixAll<HeroDetectorProxy>(FixHDP)", FixAll<HeroDetectorProxy>(FixHDP));
             Update("FixAll<HazardRespawnTrigger>(FixHRT)", FixAll<HazardRespawnTrigger>(FixHRT));
-            Update("FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene()))", FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene())));
+            Update(
+                "FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene()))",
+                FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene()))
+            );
             Update("FixAll<TransitionPoint>(FixTP)", FixAll<TransitionPoint>(FixTP));
             return updates;
         }
 
         private static bool AddRequiredObjects()
         {
-            var objects = new string[] { "_Transition Gates", "Darkness", "CameraLocks", "HRTs", "Secrets" };
+            var objects = new string[]
+            {
+                "_Transition Gates",
+                "Darkness",
+                "CameraLocks",
+                "HRTs",
+                "Secrets",
+            };
 
             bool changed = false;
             foreach (var name in objects)
@@ -82,20 +99,20 @@ namespace BugPrince.Scripts.Lib
 
         private static Dictionary<string, int> SortingLayers = new Dictionary<string, int>()
         {
-            {"Far BG 2", -6},
-            {"Far BG 1", -5},
-            {"Mid BG", -4},
-            {"Immediate BG", -3},
-            {"Actors", -2},
-            {"Player", -1},
-            {"Default", 0},
-            {"Tiles", 1},
-            {"MID Dressing", 2},
-            {"Immediate FG", 3},
-            {"Far FG", 4},
-            {"Vignette", 5},
-            {"Over", 6},
-            {"HUD", 7},
+            { "Far BG 2", -6 },
+            { "Far BG 1", -5 },
+            { "Mid BG", -4 },
+            { "Immediate BG", -3 },
+            { "Actors", -2 },
+            { "Player", -1 },
+            { "Default", 0 },
+            { "Tiles", 1 },
+            { "MID Dressing", 2 },
+            { "Immediate FG", 3 },
+            { "Far FG", 4 },
+            { "Vignette", 5 },
+            { "Over", 6 },
+            { "HUD", 7 },
         };
 
         private static bool FixTiles()
@@ -107,7 +124,11 @@ namespace BugPrince.Scripts.Lib
             names.Add("tower_");
 
             bool changed = false;
-            foreach (var spriteRenderer in GameObject.Find("_Scenery").GetComponentsInChildren<SpriteRenderer>())
+            foreach (
+                var spriteRenderer in GameObject
+                    .Find("_Scenery")
+                    .GetComponentsInChildren<SpriteRenderer>()
+            )
             {
                 var go = spriteRenderer.gameObject;
                 foreach (var prefix in names)
@@ -144,9 +165,10 @@ namespace BugPrince.Scripts.Lib
 
             bool changed = false;
 
-            if (Mathf.Sqrt(2) > 2)  // No depth fixing for tiles
+            if (Mathf.Sqrt(2) > 2) // No depth fixing for tiles
             {
-                Dictionary<(int, int, int), List<SpriteRenderer>> depthBuckets = new Dictionary<(int, int, int), List<SpriteRenderer>>();
+                Dictionary<(int, int, int), List<SpriteRenderer>> depthBuckets =
+                    new Dictionary<(int, int, int), List<SpriteRenderer>>();
                 foreach (var spriteRenderer in go.GetComponentsInChildren<SpriteRenderer>())
                 {
                     var quat = spriteRenderer.gameObject.transform.localRotation;
@@ -159,22 +181,28 @@ namespace BugPrince.Scripts.Lib
                         changed = true;
                     }
 
-                    var z = (int)System.Math.Round(spriteRenderer.gameObject.transform.position.z * 100);
+                    var z = (int)
+                        System.Math.Round(spriteRenderer.gameObject.transform.position.z * 100);
                     int layer = SortingLayers[spriteRenderer.sortingLayerName];
-                    if (z == 0) z = System.Math.Sign(layer - 3);
+                    if (z == 0)
+                        z = System.Math.Sign(layer - 3);
 
                     var depthBucket = (-z, layer, spriteRenderer.sortingOrder);
                     depthBuckets.GetOrAddNew(depthBucket).Add(spriteRenderer);
                 }
 
                 // Sort sprites by all parameters, then group by z.
-                List<((int, int, int), List<SpriteRenderer>)> sorted = new List<((int, int, int), List<SpriteRenderer>)>();
+                List<((int, int, int), List<SpriteRenderer>)> sorted =
+                    new List<((int, int, int), List<SpriteRenderer>)>();
                 depthBuckets.ForEach(pair => sorted.Add((pair.Key, pair.Value)));
                 sorted.SortBy(pair => pair.Item1);
 
-                Dictionary<int, List<List<SpriteRenderer>>> zBuckets = new Dictionary<int, List<List<SpriteRenderer>>>();
-                foreach (var (k, v) in sorted) zBuckets.GetOrAddNew(k.Item1).Add(v);
-                List<(int, List<List<SpriteRenderer>>)> sortedZBuckets = new List<(int, List<List<SpriteRenderer>>)>();
+                Dictionary<int, List<List<SpriteRenderer>>> zBuckets =
+                    new Dictionary<int, List<List<SpriteRenderer>>>();
+                foreach (var (k, v) in sorted)
+                    zBuckets.GetOrAddNew(k.Item1).Add(v);
+                List<(int, List<List<SpriteRenderer>>)> sortedZBuckets =
+                    new List<(int, List<List<SpriteRenderer>>)>();
                 zBuckets.ForEach(pair => sortedZBuckets.Add((pair.Key, pair.Value)));
                 sortedZBuckets.SortBy(pair => pair.Item1);
 
@@ -188,8 +216,10 @@ namespace BugPrince.Scripts.Lib
                         var newZ = curMax / 100.0f;
 
                         string layerName = "Default";
-                        if (newZ == 0) layerName = "Immediate FG";
-                        if (newZ < 0) layerName = "Far FG";
+                        if (newZ == 0)
+                            layerName = "Immediate FG";
+                        if (newZ < 0)
+                            layerName = "Far FG";
 
                         foreach (var spriteRenderer in group)
                         {
@@ -215,7 +245,6 @@ namespace BugPrince.Scripts.Lib
                 }
             }
 
-
             if (go.GetComponent<SpritePatcher>() == null)
             {
                 go.AddComponent<SpritePatcher>();
@@ -227,11 +256,23 @@ namespace BugPrince.Scripts.Lib
 
         private static FixResult FixBPP(BlurPlanePatcher bpp)
         {
-            var stageSize = GameObject.Find("TilemapGrid/Tilemap").GetComponent<UnityEngine.Tilemaps.Tilemap>().size;
+            var stageSize = GameObject
+                .Find("TilemapGrid/Tilemap")
+                .GetComponent<UnityEngine.Tilemaps.Tilemap>()
+                .size;
             var z = bpp.gameObject.transform.position.z;
-            bool changed = MathExt.UpdateLocalRotation(bpp.gameObject.transform, Quaternion.Euler(270, 0, 0));
-            changed |= MathExt.UpdatePosition(bpp.gameObject.transform, new Vector3(stageSize.x / 2, stageSize.y / 2, z));
-            changed |= MathExt.UpdateLocalScale(bpp.gameObject.transform, new Vector3((stageSize.x / 10) + z, 1, (stageSize.y / 10) + z));
+            bool changed = MathExt.UpdateLocalRotation(
+                bpp.gameObject.transform,
+                Quaternion.Euler(270, 0, 0)
+            );
+            changed |= MathExt.UpdatePosition(
+                bpp.gameObject.transform,
+                new Vector3(stageSize.x / 2, stageSize.y / 2, z)
+            );
+            changed |= MathExt.UpdateLocalScale(
+                bpp.gameObject.transform,
+                new Vector3((stageSize.x / 10) + z, 1, (stageSize.y / 10) + z)
+            );
             return ChangedResult(changed);
         }
 
@@ -240,7 +281,10 @@ namespace BugPrince.Scripts.Lib
             bool changed = false;
             if (MathExt.NeedsSnap(clap.gameObject.transform.position, 0.5f))
             {
-                clap.gameObject.transform.position = MathExt.Snap(clap.gameObject.transform.position, 0.5f);
+                clap.gameObject.transform.position = MathExt.Snap(
+                    clap.gameObject.transform.position,
+                    0.5f
+                );
                 changed = true;
             }
 
@@ -304,7 +348,8 @@ namespace BugPrince.Scripts.Lib
                     }
                 }
 
-                if (!isFixed) Debug.LogError($"{hrt.name} is missing its HazardRespawnMarker");
+                if (!isFixed)
+                    Debug.LogError($"{hrt.name} is missing its HazardRespawnMarker");
             }
 
             return ChangedResult(changed);
@@ -352,7 +397,8 @@ namespace BugPrince.Scripts.Lib
                     }
                 }
 
-                if (!isFixed) Debug.LogError($"{tp.name} is missing its HazardRespawnMarker");
+                if (!isFixed)
+                    Debug.LogError($"{tp.name} is missing its HazardRespawnMarker");
             }
 
             return ChangedResult(changed);

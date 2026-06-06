@@ -11,5 +11,11 @@ internal record Waypoint
 internal class Waypoints
 {
     private static SortedDictionary<string, Waypoint>? data;
-    public static IReadOnlyDictionary<string, Waypoint> GetWaypoints() => (data ??= PurenailCore.SystemUtil.JsonUtil<BugPrinceMod>.DeserializeEmbedded<SortedDictionary<string, Waypoint>>("BugPrince.Resources.Data.waypoints.json"));
+
+    public static IReadOnlyDictionary<string, Waypoint> GetWaypoints() =>
+        (
+            data ??= PurenailCore.SystemUtil.JsonUtil<BugPrinceMod>.DeserializeEmbedded<
+                SortedDictionary<string, Waypoint>
+            >("BugPrince.Resources.Data.waypoints.json")
+        );
 }

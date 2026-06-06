@@ -14,13 +14,14 @@ public class DiceTotemItem : AbstractItem
 
     internal static EmptyItem LogicItem() => new(ITEM_NAME);
 
-    internal static ItemDef ItemDef() => new()
-    {
-        Name = ITEM_NAME,
-        Pool = PoolNames.Relic,
-        MajorItem = false,
-        PriceCap = 800,
-    };
+    internal static ItemDef ItemDef() =>
+        new()
+        {
+            Name = ITEM_NAME,
+            Pool = PoolNames.Relic,
+            MajorItem = false,
+            PriceCap = 800,
+        };
 
     public DiceTotemItem()
     {
@@ -28,13 +29,16 @@ public class DiceTotemItem : AbstractItem
         UIDef = new MsgUIDef()
         {
             name = new BoxedString("Dice Totem"),
-            shopDesc = new BoxedString("A monument to chance, to persistence! Just one more, surely."),
+            shopDesc = new BoxedString(
+                "A monument to chance, to persistence! Just one more, surely."
+            ),
             sprite = Sprite,
         };
         this.AddInteropData("Relics");
     }
 
-    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get()!.DiceTotems++;
+    public override void GiveImmediate(GiveInfo info) =>
+        TransitionSelectionModule.Get()!.DiceTotems++;
 
     public override AbstractItem Clone() => new DiceTotemItem();
 }

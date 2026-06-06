@@ -1,10 +1,10 @@
-﻿using ItemChanger.Util;
-using ItemChanger;
-using UnityEngine;
+﻿using BugPrince.Util;
 using HutongGames.PlayMaker.Actions;
+using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Locations;
-using BugPrince.Util;
+using ItemChanger.Util;
+using UnityEngine;
 
 namespace BugPrince.IC;
 
@@ -13,24 +13,31 @@ enum FlingDirection
     Any,
     Left,
     Right,
-    Down
+    Down,
 }
 
 internal static class ItemChangerUtil
 {
-    internal static bool GiveOrFling(this AbstractItem self, AbstractPlacement placement, Transform src, FlingDirection dir = FlingDirection.Any)
+    internal static bool GiveOrFling(
+        this AbstractItem self,
+        AbstractPlacement placement,
+        Transform src,
+        FlingDirection dir = FlingDirection.Any
+    )
     {
-        if (self.IsObtained()) return false;
+        if (self.IsObtained())
+            return false;
 
         GiveInfo info = new()
         {
             Container = Container.Chest,
             FlingType = FlingType.Everywhere,
             Transform = src,
-            MessageType = MessageType.Corner
+            MessageType = MessageType.Corner,
         };
 
-        if (self.GiveEarly(Container.Chest)) self.Give(placement, info);
+        if (self.GiveEarly(Container.Chest))
+            self.Give(placement, info);
         else
         {
             var shiny = ShinyUtility.MakeNewShiny(placement, self, FlingType.Everywhere);
@@ -40,10 +47,18 @@ internal static class ItemChangerUtil
             var fsm = shiny.LocateMyFSM("Shiny Control");
             switch (dir)
             {
-                case FlingDirection.Left: ShinyUtility.FlingShinyLeft(fsm); break;
-                case FlingDirection.Right: ShinyUtility.FlingShinyRight(fsm); break;
-                case FlingDirection.Down: ShinyUtility.FlingShinyDown(fsm); break;
-                default: ShinyUtility.FlingShinyRandomly(fsm); break;
+                case FlingDirection.Left:
+                    ShinyUtility.FlingShinyLeft(fsm);
+                    break;
+                case FlingDirection.Right:
+                    ShinyUtility.FlingShinyRight(fsm);
+                    break;
+                case FlingDirection.Down:
+                    ShinyUtility.FlingShinyDown(fsm);
+                    break;
+                default:
+                    ShinyUtility.FlingShinyRandomly(fsm);
+                    break;
             }
         }
         return true;
@@ -53,8 +68,16 @@ internal static class ItemChangerUtil
     {
         var shaman = BugPrincePreloader.Instance.ShamanMeeting!;
         var fsm = shaman.LocateMyFSM("Conversation Control");
-        var summonClip = (fsm.GetState("Summon Anim").GetFirstActionOfType<AudioPlayerOneShotSingle>().audioClip.Value as AudioClip)!;
-        var finalClip = (fsm.GetState("Spell Appear").GetFirstActionOfType<AudioPlayerOneShotSingle>().audioClip.Value as AudioClip)!;
+        var summonClip = (
+            fsm.GetState("Summon Anim")
+                .GetFirstActionOfType<AudioPlayerOneShotSingle>()
+                .audioClip.Value as AudioClip
+        )!;
+        var finalClip = (
+            fsm.GetState("Spell Appear")
+                .GetFirstActionOfType<AudioPlayerOneShotSingle>()
+                .audioClip.Value as AudioClip
+        )!;
         var particles = Object.Instantiate(shaman.FindChild("Summon 1")!);
 
         particles.transform.position = pos;
@@ -110,7 +133,8 @@ internal class ItemSummoner : MonoBehaviour
                 shinyMarker.transform.localScale = Vector3.zero;
                 shinyMarker.SetActive(true);
             }
-            else return;
+            else
+                return;
         }
         if (ease > 0)
         {
@@ -123,7 +147,8 @@ internal class ItemSummoner : MonoBehaviour
             else
             {
                 var emission = particleSystem!.emission;
-                emission.rateOverTime = MIN_PARTICLES + (MAX_PARTICLES - MIN_PARTICLES) * (EASE_TIME - ease);
+                emission.rateOverTime =
+                    MIN_PARTICLES + (MAX_PARTICLES - MIN_PARTICLES) * (EASE_TIME - ease);
 
                 var pct = (EASE_TIME - ease) / EASE_TIME;
                 var scale = (1 - Mathf.Sin((pct + 1) * Mathf.PI / 2)) * 0.75f;

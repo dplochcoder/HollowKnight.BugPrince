@@ -1,5 +1,5 @@
-﻿using SFCore.Utils;
-using System.Linq;
+﻿using System.Linq;
+using SFCore.Utils;
 using UnityEngine;
 
 namespace BugPrince.Scripts.Proxy;
@@ -20,14 +20,26 @@ internal static class AreaTitleControllerProxy
         vars.GetFsmGameObject("Area Title").Value = GameObject.Find("Area Title");
 
         // Define private Area object
-        var areaType = typeof(AreaTitleController).GetNestedType("Area", System.Reflection.BindingFlags.NonPublic);
-        var con = areaType.GetConstructor([typeof(string), typeof(int), typeof(bool), typeof(string)]);
+        var areaType = typeof(AreaTitleController).GetNestedType(
+            "Area",
+            System.Reflection.BindingFlags.NonPublic
+        );
+        var con = areaType.GetConstructor([
+            typeof(string),
+            typeof(int),
+            typeof(bool),
+            typeof(string),
+        ]);
         var areaObj = con.Invoke([areaName, areaId, false, pdVisitedBool]);
 
         // Add new areas
         var atc = obj.GetComponent<AreaTitleController>();
         var atcList = atc.GetAttr<AreaTitleController, object>("areaList");
-        var addMethod = atcList.GetType().GetMethods().Where(mi => mi.Name == "Add" && mi.GetParameters().Length == 1).FirstOrDefault();
+        var addMethod = atcList
+            .GetType()
+            .GetMethods()
+            .Where(mi => mi.Name == "Add" && mi.GetParameters().Length == 1)
+            .FirstOrDefault();
         addMethod.Invoke(atcList, [areaObj]);
 
         obj.SetActive(true);

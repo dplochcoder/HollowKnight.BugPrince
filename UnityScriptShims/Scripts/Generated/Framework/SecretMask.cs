@@ -7,6 +7,5 @@ namespace BugPrince.Scripts.Framework
         public float ConcealDelay;
         public float ConcealTime;
         public bool Inverted;
-        
     }
 }

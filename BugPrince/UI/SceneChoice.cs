@@ -8,7 +8,12 @@ namespace BugPrince.UI;
 
 internal class SceneChoice : MonoBehaviour
 {
-    internal static SceneChoice Create(TransitionSelectionModule module, GameObject parent, SceneChoiceInfo info, Vector2 targetPos)
+    internal static SceneChoice Create(
+        TransitionSelectionModule module,
+        GameObject parent,
+        SceneChoiceInfo info,
+        Vector2 targetPos
+    )
     {
         var obj = parent.AddNewChild("SceneChoice");
         var choice = obj.AddComponent<SceneChoice>();
@@ -18,7 +23,11 @@ internal class SceneChoice : MonoBehaviour
 
         var sceneSprite = obj.AddNewChild("Scene");
         sceneSprite.transform.SetParent(obj.transform);
-        sceneSprite.transform.localScale = new(UIConstants.SCENE_SCALE, UIConstants.SCENE_SCALE, UIConstants.SCENE_SCALE);
+        sceneSprite.transform.localScale = new(
+            UIConstants.SCENE_SCALE,
+            UIConstants.SCENE_SCALE,
+            UIConstants.SCENE_SCALE
+        );
         var renderer = sceneSprite.AddComponent<SpriteRenderer>();
         renderer.sprite = info.GetSceneSprite();
         renderer.SetUILayer(UISortingOrder.ScenePicture);
@@ -27,7 +36,11 @@ internal class SceneChoice : MonoBehaviour
         if (renderer.sprite.bounds.size.x < 1)
         {
             var textObj = obj.AddNewChild("Text");
-            textObj.transform.localScale = new(UIConstants.TEXT_SCALE, UIConstants.TEXT_SCALE, UIConstants.TEXT_SCALE);
+            textObj.transform.localScale = new(
+                UIConstants.TEXT_SCALE,
+                UIConstants.TEXT_SCALE,
+                UIConstants.TEXT_SCALE
+            );
 
             var text = textObj.AddComponent<TextMesh>();
             text.color = Color.white;
@@ -53,12 +66,24 @@ internal class SceneChoice : MonoBehaviour
             for (int i = 0; i < cost; i++)
             {
                 var costIco = costsShaker.gameObject.AddNewChild("Cost");
-                costIco.transform.localPosition = new(i * UIConstants.SCENE_COST_X_SPACE - (cost - 1) * UIConstants.SCENE_COST_X_SPACE / 2, UIConstants.SCENE_COST_Y);
-                var scale = costType == Data.CostType.Coins ? UIConstants.SCENE_COST_COIN_SCALE : UIConstants.SCENE_COST_GEM_SCALE;
+                costIco.transform.localPosition = new(
+                    i * UIConstants.SCENE_COST_X_SPACE
+                        - (cost - 1) * UIConstants.SCENE_COST_X_SPACE / 2,
+                    UIConstants.SCENE_COST_Y
+                );
+                var scale =
+                    costType == Data.CostType.Coins
+                        ? UIConstants.SCENE_COST_COIN_SCALE
+                        : UIConstants.SCENE_COST_GEM_SCALE;
                 costIco.transform.localScale = new(scale, scale, scale);
 
                 var costRenderer = costIco.AddComponent<SpriteRenderer>();
-                costRenderer.sprite = costType switch { Data.CostType.Coins => CoinItem.LargeSprite.Value, Data.CostType.Gems => GemItem.LargeSprite.Value, _ => throw costType.InvalidEnum() };
+                costRenderer.sprite = costType switch
+                {
+                    Data.CostType.Coins => CoinItem.LargeSprite.Value,
+                    Data.CostType.Gems => GemItem.LargeSprite.Value,
+                    _ => throw costType.InvalidEnum(),
+                };
                 costRenderer.SetUILayer(UISortingOrder.CostIcons);
                 costIco.FadeAlpha(0, 1, UIConstants.SCENE_ASCEND_TIME);
             }
@@ -68,8 +93,9 @@ internal class SceneChoice : MonoBehaviour
         choice.costsShaker = costsShaker;
         choice.pinAnimator = pinAnimator;
         choice.targetPos = targetPos;
-        if (!module.MatchingTransitions()) choice.particleFactory = new(obj.transform, info.Target.GetDirection());
-            
+        if (!module.MatchingTransitions())
+            choice.particleFactory = new(obj.transform, info.Target.GetDirection());
+
         return choice;
     }
 
@@ -105,29 +131,42 @@ internal class SceneChoice : MonoBehaviour
     {
         particleFactory?.Update(Time.deltaTime);
 
-        if (flying) transform.Translate(new(0, FLY_VELOCITY * Time.deltaTime));
-        if (ascendTime >= UIConstants.SCENE_ASCEND_TIME) return;
-        
-        ascendTime += Time.deltaTime;
-        if (ascendTime > UIConstants.SCENE_ASCEND_TIME) ascendTime = UIConstants.SCENE_ASCEND_TIME;
+        if (flying)
+            transform.Translate(new(0, FLY_VELOCITY * Time.deltaTime));
+        if (ascendTime >= UIConstants.SCENE_ASCEND_TIME)
+            return;
 
-        transform.localPosition = new(targetPos.x, targetPos.y - UIConstants.SCENE_ASCEND_DISTANCE * (1 - Mathf.Sin(Mathf.PI * (ascendTime / UIConstants.SCENE_ASCEND_TIME) / 2)));
+        ascendTime += Time.deltaTime;
+        if (ascendTime > UIConstants.SCENE_ASCEND_TIME)
+            ascendTime = UIConstants.SCENE_ASCEND_TIME;
+
+        transform.localPosition = new(
+            targetPos.x,
+            targetPos.y
+                - UIConstants.SCENE_ASCEND_DISTANCE
+                    * (1 - Mathf.Sin(Mathf.PI * (ascendTime / UIConstants.SCENE_ASCEND_TIME) / 2))
+        );
     }
 }
 
-internal class GateDirectionParticleFactory : AbstractParticleFactory<GateDirectionParticleFactory, GateDirectionParticle>
+internal class GateDirectionParticleFactory
+    : AbstractParticleFactory<GateDirectionParticleFactory, GateDirectionParticle>
 {
     private static readonly EmbeddedSprite sprite = new("UI.fullwhite");
     private const float FULL_EMISSION_RATE = 250;
     private const float LIFETIME = 1;
 
-    private static float EmissionRate(GateDirection dir) => FULL_EMISSION_RATE * dir switch
-    {
-        GateDirection.Left or GateDirection.Right => UIConstants.SELECTION_WIDTH / (2 * (UIConstants.SELECTION_WIDTH + UIConstants.SELECTION_HEIGHT)),
-        GateDirection.Top or  GateDirection.Bot => UIConstants.SELECTION_HEIGHT / (2 * (UIConstants.SELECTION_WIDTH + UIConstants.SELECTION_HEIGHT)),
-        GateDirection.Door => 1,
-        _ => throw dir.InvalidEnum()
-    };
+    private static float EmissionRate(GateDirection dir) =>
+        FULL_EMISSION_RATE
+        * dir switch
+        {
+            GateDirection.Left or GateDirection.Right => UIConstants.SELECTION_WIDTH
+                / (2 * (UIConstants.SELECTION_WIDTH + UIConstants.SELECTION_HEIGHT)),
+            GateDirection.Top or GateDirection.Bot => UIConstants.SELECTION_HEIGHT
+                / (2 * (UIConstants.SELECTION_WIDTH + UIConstants.SELECTION_HEIGHT)),
+            GateDirection.Door => 1,
+            _ => throw dir.InvalidEnum(),
+        };
 
     private readonly Transform parent;
     private readonly GateDirection dir;
@@ -155,37 +194,66 @@ internal class GateDirectionParticleFactory : AbstractParticleFactory<GateDirect
     {
         foreach (var elapsed in ticker.Tick(time))
         {
-            if (!Launch(elapsed, LIFETIME, out var particle)) continue;
+            if (!Launch(elapsed, LIFETIME, out var particle))
+                continue;
 
             particle.Init(RandomPos());
             particle.Finalize(elapsed);
         }
     }
 
-    private Vector3 TopLeft() => new(parent.position.x - UIConstants.SELECTION_WIDTH / 2, parent.position.y + UIConstants.SELECTION_HEIGHT / 2);
-    private Vector3 TopRight() => new(parent.position.x + UIConstants.SELECTION_WIDTH / 2, parent.position.y + UIConstants.SELECTION_HEIGHT / 2);
-    private Vector3 BottomLeft() => new(parent.position.x - UIConstants.SELECTION_WIDTH / 2, parent.position.y - UIConstants.SELECTION_HEIGHT / 2);
-    private Vector3 BottomRight() => new(parent.position.x + UIConstants.SELECTION_WIDTH / 2, parent.position.y - UIConstants.SELECTION_HEIGHT / 2);
+    private Vector3 TopLeft() =>
+        new(
+            parent.position.x - UIConstants.SELECTION_WIDTH / 2,
+            parent.position.y + UIConstants.SELECTION_HEIGHT / 2
+        );
 
-    private static readonly GateDirection[] DIRS = [GateDirection.Top, GateDirection.Bot, GateDirection.Left, GateDirection.Right];
+    private Vector3 TopRight() =>
+        new(
+            parent.position.x + UIConstants.SELECTION_WIDTH / 2,
+            parent.position.y + UIConstants.SELECTION_HEIGHT / 2
+        );
 
-    private Vector3 RandomPos() => dir switch
-    {
-        GateDirection.Door => RandomPos(DIRS.Random()),
-        _ => RandomPos(dir)
-    };
+    private Vector3 BottomLeft() =>
+        new(
+            parent.position.x - UIConstants.SELECTION_WIDTH / 2,
+            parent.position.y - UIConstants.SELECTION_HEIGHT / 2
+        );
 
-    private Vector3 RandomPos(GateDirection d) => d switch
-    {
-        GateDirection.Top => Vector3.Lerp(TopLeft(), TopRight(), Random.Range(0f, 1f)),
-        GateDirection.Left => Vector3.Lerp(TopLeft(), BottomLeft(), Random.Range(0f, 1f)),
-        GateDirection.Right => Vector3.Lerp(TopRight(), BottomRight(), Random.Range(0f, 1f)),
-        GateDirection.Bot => Vector3.Lerp(BottomLeft(), BottomRight(), Random.Range(0f, 1f)),
-        _ => throw d.InvalidEnum()
-    };
+    private Vector3 BottomRight() =>
+        new(
+            parent.position.x + UIConstants.SELECTION_WIDTH / 2,
+            parent.position.y - UIConstants.SELECTION_HEIGHT / 2
+        );
+
+    private static readonly GateDirection[] DIRS =
+    [
+        GateDirection.Top,
+        GateDirection.Bot,
+        GateDirection.Left,
+        GateDirection.Right,
+    ];
+
+    private Vector3 RandomPos() =>
+        dir switch
+        {
+            GateDirection.Door => RandomPos(DIRS.Random()),
+            _ => RandomPos(dir),
+        };
+
+    private Vector3 RandomPos(GateDirection d) =>
+        d switch
+        {
+            GateDirection.Top => Vector3.Lerp(TopLeft(), TopRight(), Random.Range(0f, 1f)),
+            GateDirection.Left => Vector3.Lerp(TopLeft(), BottomLeft(), Random.Range(0f, 1f)),
+            GateDirection.Right => Vector3.Lerp(TopRight(), BottomRight(), Random.Range(0f, 1f)),
+            GateDirection.Bot => Vector3.Lerp(BottomLeft(), BottomRight(), Random.Range(0f, 1f)),
+            _ => throw d.InvalidEnum(),
+        };
 }
 
-internal class GateDirectionParticle : AbstractParticle<GateDirectionParticleFactory, GateDirectionParticle>
+internal class GateDirectionParticle
+    : AbstractParticle<GateDirectionParticleFactory, GateDirectionParticle>
 {
     private Vector3 srcPos;
     private Vector3 direction;

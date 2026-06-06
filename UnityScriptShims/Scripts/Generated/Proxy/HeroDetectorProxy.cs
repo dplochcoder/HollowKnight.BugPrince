@@ -1,7 +1,4 @@
 namespace BugPrince.Scripts.Proxy
 {
-    public class HeroDetectorProxy : UnityEngine.MonoBehaviour
-    {
-        
-    }
+    public class HeroDetectorProxy : UnityEngine.MonoBehaviour { }
 }

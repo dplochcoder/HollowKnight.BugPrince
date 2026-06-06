@@ -6,11 +6,13 @@ namespace BugPrince.Rando;
 
 internal class SettingsProxy : RandoSettingsProxy<RandomizationSettings, string>
 {
-    public static void Setup() => RandoSettingsManagerMod.Instance.RegisterConnection(new SettingsProxy());
+    public static void Setup() =>
+        RandoSettingsManagerMod.Instance.RegisterConnection(new SettingsProxy());
 
     public override string ModKey => nameof(BugPrinceMod);
 
-    public override VersioningPolicy<string> VersioningPolicy => new StrictModVersioningPolicy(BugPrinceMod.Instance!);
+    public override VersioningPolicy<string> VersioningPolicy =>
+        new StrictModVersioningPolicy(BugPrinceMod.Instance!);
 
     public override bool TryProvideSettings(out RandomizationSettings? settings)
     {
@@ -18,5 +20,6 @@ internal class SettingsProxy : RandoSettingsProxy<RandomizationSettings, string>
         return settings.IsEnabled;
     }
 
-    public override void ReceiveSettings(RandomizationSettings? settings) => ConnectionMenu.Instance!.ApplySettings(settings ?? new());
+    public override void ReceiveSettings(RandomizationSettings? settings) =>
+        ConnectionMenu.Instance!.ApplySettings(settings ?? new());
 }

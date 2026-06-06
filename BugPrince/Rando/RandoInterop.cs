@@ -1,13 +1,13 @@
-﻿using bugPrince.Imports;
+﻿using System.Collections.Generic;
+using System.IO;
 using BugPrince.Data;
 using BugPrince.IC;
 using BugPrince.IC.Items;
+using bugPrince.Imports;
 using ItemChanger;
 using Newtonsoft.Json;
 using PurenailCore.SystemUtil;
 using RandomizerMod.RC;
-using System.Collections.Generic;
-using System.IO;
 
 namespace BugPrince.Rando;
 
@@ -21,13 +21,17 @@ internal record LocalSettings : ICostGroupProgressionProvider
 
     int ICostGroupProgressionProvider.Generation() => gen;
 
-    IReadOnlyDictionary<string, CostGroup> ICostGroupProgressionProvider.GetCostGroups() => CostGroups;
+    IReadOnlyDictionary<string, CostGroup> ICostGroupProgressionProvider.GetCostGroups() =>
+        CostGroups;
 
-    IReadOnlyDictionary<string, string> ICostGroupProgressionProvider.GetCostGroupsByScene() => CostGroupsByScene;
+    IReadOnlyDictionary<string, string> ICostGroupProgressionProvider.GetCostGroupsByScene() =>
+        CostGroupsByScene;
 
-    public bool IsRandomizedTransition(Transition transition) => RandomizedTransitions.Contains(transition);
+    public bool IsRandomizedTransition(Transition transition) =>
+        RandomizedTransitions.Contains(transition);
 
-    IReadOnlyList<string> ICostGroupProgressionProvider.GetCostGroupProgression() => CostGroupProgression;
+    IReadOnlyList<string> ICostGroupProgressionProvider.GetCostGroupProgression() =>
+        CostGroupProgression;
 }
 
 internal static class RandoInterop
@@ -47,7 +51,11 @@ internal static class RandoInterop
 
         RandomizerMod.Logging.SettingsLog.AfterLogSettings += LogSettings;
         RandomizerMod.Logging.LogManager.AddLogger(new BugPrinceLogger());
-        CondensedSpoilerLogger.AddCategory("BugPrince Currency", _ => BugPrinceMod.RS.IsEnabled, [CoinItem.ITEM_NAME, GemItem.ITEM_NAME]);
+        CondensedSpoilerLogger.AddCategory(
+            "BugPrince Currency",
+            _ => BugPrinceMod.RS.IsEnabled,
+            [CoinItem.ITEM_NAME, GemItem.ITEM_NAME]
+        );
     }
 
     private static void DefineCustomItems()
@@ -58,11 +66,14 @@ internal static class RandoInterop
         Finder.DefineCustomItem(new PushPinItem());
     }
 
-    private static void DefineCustomLocations() => Locations.GetLocations().Values.ForEach(l =>
-    {
-        l.AddInteropData();
-        Finder.DefineCustomLocation(l.Location!);
-    });
+    private static void DefineCustomLocations() =>
+        Locations
+            .GetLocations()
+            .Values.ForEach(l =>
+            {
+                l.AddInteropData();
+                Finder.DefineCustomLocation(l.Location!);
+            });
 
     private static void OnExportCompleted(RandoController rc)
     {
@@ -77,21 +88,28 @@ internal static class RandoInterop
             module.DiceTotems = BugPrinceMod.RS.StartingDiceTotems;
             module.TotalPushPins = BugPrinceMod.RS.StartingPushPins;
         }
-        if (BugPrinceMod.RS.AdvancedLocations) ItemChangerMod.Modules.Add<BreakablesModule>();
+        if (BugPrinceMod.RS.AdvancedLocations)
+            ItemChangerMod.Modules.Add<BreakablesModule>();
         if (BugPrinceMod.RS.MapShop)
         {
             ItemChangerMod.Modules.Add<MapShopModule>();
-            if (!rc.gs.PoolSettings.Maps) MapShopModule.PlaceVanillaMaps();
+            if (!rc.gs.PoolSettings.Maps)
+                MapShopModule.PlaceVanillaMaps();
         }
-        if (BugPrinceMod.RS.GemstoneCavern) ItemChangerMod.Modules.Add<GemstoneCavernModule>();
-        if (BugPrinceMod.RS.TheVault) ItemChangerMod.Modules.Add<VaultModule>();
+        if (BugPrinceMod.RS.GemstoneCavern)
+            ItemChangerMod.Modules.Add<GemstoneCavernModule>();
+        if (BugPrinceMod.RS.TheVault)
+            ItemChangerMod.Modules.Add<VaultModule>();
 
-        Locations.GetLocations().Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, BugPrinceMod.RS));
+        Locations
+            .GetLocations()
+            .Values.ForEach(l => l.AddVanillaToItemChanger(rc.gs, BugPrinceMod.RS));
     }
 
     private static void LogSettings(RandomizerMod.Logging.LogArguments args, TextWriter tw)
     {
-        if (!BugPrinceMod.RS.IsEnabled) return;
+        if (!BugPrinceMod.RS.IsEnabled)
+            return;
 
         tw.WriteLine("Logging BugPrince Settings:");
         using JsonTextWriter jtw = new(tw) { CloseOutput = false };

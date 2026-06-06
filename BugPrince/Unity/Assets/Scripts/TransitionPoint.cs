@@ -58,8 +58,9 @@ public class TransitionPoint : MonoBehaviour
         Colosseum = 2,
         GrimmDream = 3,
         ContinueFromSave = 4,
-        GodsAndGlory = 5
+        GodsAndGlory = 5,
     }
+
     [Header("Cosmetics")]
     public SceneLoadVisualizations sceneLoadVisualization;
 

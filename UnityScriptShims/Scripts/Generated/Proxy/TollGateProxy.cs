@@ -7,6 +7,5 @@ namespace BugPrince.Scripts.Proxy
         public UnityEngine.Transform Machine;
         public UnityEngine.Transform Gate;
         public bool OpenRight;
-        
     }
 }

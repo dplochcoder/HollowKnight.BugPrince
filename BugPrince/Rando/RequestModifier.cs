@@ -1,4 +1,7 @@
-﻿using BugPrince.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BugPrince.Data;
 using BugPrince.IC;
 using BugPrince.IC.Items;
 using ItemChanger;
@@ -9,9 +12,6 @@ using RandomizerCore.Randomization;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace BugPrince.Rando;
 
@@ -30,17 +30,22 @@ internal class RequestModifier
         {
             if (group is TransitionGroupBuilder tgb)
             {
-                foreach (var name in tgb.Sources.EnumerateDistinct()) yield return name;
-                foreach (var name in tgb.Targets.EnumerateDistinct()) yield return name;
+                foreach (var name in tgb.Sources.EnumerateDistinct())
+                    yield return name;
+                foreach (var name in tgb.Targets.EnumerateDistinct())
+                    yield return name;
             }
             else if (group is SelfDualTransitionGroupBuilder sdtgb)
             {
-                foreach (var name in sdtgb.Transitions.EnumerateDistinct()) yield return name;
+                foreach (var name in sdtgb.Transitions.EnumerateDistinct())
+                    yield return name;
             }
             else if (group is SymmetricTransitionGroupBuilder stgb)
             {
-                foreach (var name in stgb.Group1.EnumerateDistinct()) yield return name;
-                foreach (var name in stgb.Group2.EnumerateDistinct()) yield return name;
+                foreach (var name in stgb.Group1.EnumerateDistinct())
+                    yield return name;
+                foreach (var name in stgb.Group2.EnumerateDistinct())
+                    yield return name;
             }
         }
     }
@@ -49,7 +54,8 @@ internal class RequestModifier
     {
         foreach (var e in Transitions.GetTransitions())
         {
-            if (!BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) continue;
+            if (!BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool))
+                continue;
             yield return (e.Key, e.Value.Def!);
         }
     }
@@ -57,31 +63,51 @@ internal class RequestModifier
     private static void ProvideRequestInfo(RequestBuilder rb)
     {
         rb.EditItemRequest(CoinItem.ITEM_NAME, info => info.getItemDef = CoinItem.ItemDef);
-        rb.EditItemRequest(DiceTotemItem.ITEM_NAME, info => info.getItemDef = DiceTotemItem.ItemDef);
+        rb.EditItemRequest(
+            DiceTotemItem.ITEM_NAME,
+            info => info.getItemDef = DiceTotemItem.ItemDef
+        );
         rb.EditItemRequest(GemItem.ITEM_NAME, info => info.getItemDef = GemItem.ItemDef);
         rb.EditItemRequest(PushPinItem.ITEM_NAME, info => info.getItemDef = PushPinItem.ItemDef);
 
         foreach (var location in Locations.GetLocations())
         {
             var (name, loc) = (location.Key, location.Value);
-            rb.EditLocationRequest(name, info =>
-            {
-                info.getLocationDef = loc.LocationDef;
-
-                if (loc.LocationPool == LocationPool.MapShop)
+            rb.EditLocationRequest(
+                name,
+                info =>
                 {
-                    info.onRandoLocationCreation += (randoFactory, randoLocation) =>
+                    info.getLocationDef = loc.LocationDef;
+
+                    if (loc.LocationPool == LocationPool.MapShop)
                     {
-                        randoLocation.AddCost(new LogicGeoCost(randoFactory.lm, -1));
-                        randoLocation.AddCost(new SimpleCost(randoFactory.lm.GetTermStrict("MAPS"), randoFactory.rng.Next(BugPrinceMod.RS.MinimumMaps, BugPrinceMod.RS.MaximumMaps + 1)));
-                    };
-                    info.onRandomizerFinish += placement =>
-                    {
-                        if (placement.Location is not RandoModLocation rl || placement.Item is not RandoModItem ri || rl.costs == null) return;
-                        foreach (var cost in rl.costs.OfType<LogicGeoCost>()) cost.GeoAmount = GetShopCost(rb.rng, ri);
-                    };
+                        info.onRandoLocationCreation += (randoFactory, randoLocation) =>
+                        {
+                            randoLocation.AddCost(new LogicGeoCost(randoFactory.lm, -1));
+                            randoLocation.AddCost(
+                                new SimpleCost(
+                                    randoFactory.lm.GetTermStrict("MAPS"),
+                                    randoFactory.rng.Next(
+                                        BugPrinceMod.RS.MinimumMaps,
+                                        BugPrinceMod.RS.MaximumMaps + 1
+                                    )
+                                )
+                            );
+                        };
+                        info.onRandomizerFinish += placement =>
+                        {
+                            if (
+                                placement.Location is not RandoModLocation rl
+                                || placement.Item is not RandoModItem ri
+                                || rl.costs == null
+                            )
+                                return;
+                            foreach (var cost in rl.costs.OfType<LogicGeoCost>())
+                                cost.GeoAmount = GetShopCost(rb.rng, ri);
+                        };
+                    }
                 }
-            });
+            );
         }
 
         rb.CostConverters.Subscribe(0f, TryConvertMapCost);
@@ -93,8 +119,10 @@ internal class RequestModifier
         double pow = 1.2; // setting?
 
         int cap = item.ItemDef is not null ? item.ItemDef.PriceCap : 500;
-        if (cap <= 100) return cap;
-        if (item.Required) return rng.PowerLaw(pow, 100, Math.Min(cap, 500)).ClampToMultipleOf(5);
+        if (cap <= 100)
+            return cap;
+        if (item.Required)
+            return rng.PowerLaw(pow, 100, Math.Min(cap, 500)).ClampToMultipleOf(5);
         return rng.PowerLaw(pow, 100, cap).ClampToMultipleOf(5);
     }
 
@@ -113,40 +141,54 @@ internal class RequestModifier
     private static void AddItemsAndLocations(RequestBuilder rb)
     {
         var RS = BugPrinceMod.RS;
-        if (!RS.IsEnabled) return;
+        if (!RS.IsEnabled)
+            return;
 
         ProvideRequestInfo(rb);
         Locations.GetLocations().Values.ForEach(loc => loc.AddToRequestBuilder(RS, rb));
 
-        if (!RS.EnableTransitionChoices) return;
+        if (!RS.EnableTransitionChoices)
+            return;
 
         DefaultGroupPlacementStrategy.Constraint noSelfLoops = new(
             (item, location) => item.Name != location.Name,
-            (_, _) => throw new RandomizerCore.Exceptions.OutOfLocationsException("BugPrince: No self-loops"),
-            "BugPrince-NoSelfLoops");
-        foreach (var group in rb.EnumerateTransitionGroups()) if (group.strategy is DefaultGroupPlacementStrategy dgps) dgps.ConstraintList.Add(noSelfLoops);
+            (_, _) =>
+                throw new RandomizerCore.Exceptions.OutOfLocationsException(
+                    "BugPrince: No self-loops"
+                ),
+            "BugPrince-NoSelfLoops"
+        );
+        foreach (var group in rb.EnumerateTransitionGroups())
+            if (group.strategy is DefaultGroupPlacementStrategy dgps)
+                dgps.ConstraintList.Add(noSelfLoops);
 
         HashSet<string> randomizedScenes = [];
         foreach (var transition in GetRandomizedTransitions(rb))
         {
-            if (!transition.ToTransition(out var t)) throw new ArgumentException($"Invalid transition: '{t}'");
+            if (!transition.ToTransition(out var t))
+                throw new ArgumentException($"Invalid transition: '{t}'");
 
             RandoInterop.LS!.RandomizedTransitions.Add(t);
             randomizedScenes.Add(t.SceneName);
         }
-        if (randomizedScenes.Count == 0) return;
+        if (randomizedScenes.Count == 0)
+            return;
 
         foreach (var scene in randomizedScenes)
         {
-            var stream = typeof(BugPrinceMod).Assembly.GetManifestResourceStream($"BugPrince.Resources.Sprites.Scenes.{scene}.png");
-            if (stream == null) BugPrinceMod.Instance?.LogError($"Missing scene: {scene}");
+            var stream = typeof(BugPrinceMod).Assembly.GetManifestResourceStream(
+                $"BugPrince.Resources.Sprites.Scenes.{scene}.png"
+            );
+            if (stream == null)
+                BugPrinceMod.Instance?.LogError($"Missing scene: {scene}");
         }
 
         Dictionary<string, (string, CostGroup)> groups = [];
         foreach (var e in CostGroup.GetProducers())
         {
             var groupName = e.Key;
-            if (!e.Value.ProduceCostGroup(rb.gs, randomizedScenes.Contains, out var costGroup)) continue;
+            if (!e.Value.ProduceCostGroup(rb.gs, randomizedScenes.Contains, out var costGroup))
+                continue;
 
             var priority = costGroup.Priority;
             foreach (var scene in costGroup.SceneNames)
@@ -155,10 +197,15 @@ internal class RequestModifier
                 {
                     var (existingName, existingGroup) = pair;
                     var existingPriority = existingGroup.Priority;
-                    if (priority == existingPriority) throw new ArgumentException($"Cost groups '{existingName}' and '{groupName}' conflict on scene '{scene}'");
-                    else if (priority > existingPriority) groups[scene] = (groupName, costGroup);
+                    if (priority == existingPriority)
+                        throw new ArgumentException(
+                            $"Cost groups '{existingName}' and '{groupName}' conflict on scene '{scene}'"
+                        );
+                    else if (priority > existingPriority)
+                        groups[scene] = (groupName, costGroup);
                 }
-                else groups[scene] = (groupName, costGroup);
+                else
+                    groups[scene] = (groupName, costGroup);
             }
         }
 
@@ -170,7 +217,10 @@ internal class RequestModifier
             RandoInterop.LS.CostGroupsByScene[scene] = name;
         }
 
-        List<(string, CostGroup)> ordered = [.. RandoInterop.LS!.CostGroups.Select(e => (e.Key, e.Value)).OrderBy(p => p.Key)];
+        List<(string, CostGroup)> ordered =
+        [
+            .. RandoInterop.LS!.CostGroups.Select(e => (e.Key, e.Value)).OrderBy(p => p.Key),
+        ];
 
         Random r = new(rb.gs.Seed + 17);
         WeightedRandomSort(ordered, r);
@@ -188,7 +238,10 @@ internal class RequestModifier
             if (neededCoins > 0)
             {
                 rb.AddItemByName(CoinItem.ITEM_NAME, neededCoins + RS.CoinTolerance);
-                rb.AddItemByName($"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}", BugPrinceMod.RS.CoinDuplicates);
+                rb.AddItemByName(
+                    $"{PlaceholderItem.Prefix}{CoinItem.ITEM_NAME}",
+                    BugPrinceMod.RS.CoinDuplicates
+                );
             }
 
             var neededGems = RandoInterop.LS.GetItemCount(CostType.Gems);
@@ -200,14 +253,19 @@ internal class RequestModifier
         }
     }
 
-    private static void AddTolerances(LogicManager lm, GenerationSettings gs, ProgressionInitializer pi)
+    private static void AddTolerances(
+        LogicManager lm,
+        GenerationSettings gs,
+        ProgressionInitializer pi
+    )
     {
         if (BugPrinceMod.RS.AreCostsEnabled)
         {
             pi.Setters.Add(new(CostType.Coins.GetTerm(lm), -BugPrinceMod.RS.CoinTolerance));
             pi.Setters.Add(new(CostType.Gems.GetTerm(lm), -BugPrinceMod.RS.GemTolerance));
         }
-        if (BugPrinceMod.RS.MapShop) pi.Setters.Add(new(lm.GetTermStrict("MAPS"), -BugPrinceMod.RS.MapTolerance));
+        if (BugPrinceMod.RS.MapShop)
+            pi.Setters.Add(new(lm.GetTermStrict("MAPS"), -BugPrinceMod.RS.MapTolerance));
     }
 
     private static void WeightedRandomSort(List<(string, CostGroup)> list, Random r)
@@ -218,15 +276,18 @@ internal class RequestModifier
             var avg = list[i].Item2.SkewedAverage;
 
             var rank = (float)r.NextDouble();
-            if (rank >= 0.5f) rank = avg + (1 - avg) * (rank - 0.5f) * 2;
-            else rank = avg - avg * (0.5f - rank) * 2;
+            if (rank >= 0.5f)
+                rank = avg + (1 - avg) * (rank - 0.5f) * 2;
+            else
+                rank = avg - avg * (0.5f - rank) * 2;
 
             ranks.Add((i, rank));
         }
         ranks.StableSort((p1, p2) => p1.Item2.CompareTo(p2.Item2));
 
         List<(string, CostGroup)> shuffled = [];
-        foreach (var (i, _) in ranks) shuffled.Add(list[i]);
+        foreach (var (i, _) in ranks)
+            shuffled.Add(list[i]);
         list.Clear();
         list.AddRange(shuffled);
     }

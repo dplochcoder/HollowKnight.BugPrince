@@ -1,11 +1,11 @@
-﻿using BugPrince.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using BugPrince.Data;
 using BugPrince.Util;
 using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Locations;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,12 +20,16 @@ internal class CityLampLocation : ExistingContainerLocation, IPinLocationProvide
 
     protected override void OnLoad() => Events.AddSceneChangeEdit(UnsafeSceneName, InstallLamp);
 
-    protected override void OnUnload() => Events.RemoveSceneChangeEdit(UnsafeSceneName, InstallLamp);
+    protected override void OnUnload() =>
+        Events.RemoveSceneChangeEdit(UnsafeSceneName, InstallLamp);
 
-    public override ContainerLocation AsContainerLocation() => throw new InvalidOperationException("CityLampLocation cannot be replaced");
+    public override ContainerLocation AsContainerLocation() =>
+        throw new InvalidOperationException("CityLampLocation cannot be replaced");
 
-
-    private static readonly FieldInfo debrisParts = typeof(Breakable).GetField("debrisParts", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly FieldInfo debrisParts = typeof(Breakable).GetField(
+        "debrisParts",
+        BindingFlags.Instance | BindingFlags.NonPublic
+    );
 
     private void InstallLamp(Scene scene)
     {
@@ -47,14 +51,17 @@ internal class CityLampLocation : ExistingContainerLocation, IPinLocationProvide
         var breakable = obj.GetComponent<Breakable>();
         var debris = (debrisParts.GetValue(breakable) as List<GameObject>)!;
         debris.RemoveAll(o => o.name.StartsWith("lamp_bug"));
-        ItemChangerMod.Modules.Get<BreakablesModule>()?.DoOnBreak(breakable, () => SpawnItems(lampBug.transform));
+        ItemChangerMod
+            .Modules.Get<BreakablesModule>()
+            ?.DoOnBreak(breakable, () => SpawnItems(lampBug.transform));
 
         obj.SetActive(true);
     }
 
     private void SpawnItems(Transform src)
     {
-        foreach (var item in Placement.Items) item.GiveOrFling(Placement, src, direction);
+        foreach (var item in Placement.Items)
+            item.GiveOrFling(Placement, src, direction);
     }
 
     public PinLocation ProvidePinLocation() => new(sceneName!, x, y);

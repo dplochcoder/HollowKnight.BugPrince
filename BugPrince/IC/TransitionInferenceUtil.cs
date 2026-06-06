@@ -1,7 +1,7 @@
-﻿using BugPrince.Util;
+﻿using System.Linq;
+using BugPrince.Util;
 using ItemChanger;
 using RandomizerMod.RC;
-using System.Linq;
 using UnityEngine;
 
 namespace BugPrince.IC;
@@ -12,28 +12,40 @@ internal enum GateDirection
     Right,
     Top,
     Bot,
-    Door
+    Door,
 }
 
 internal static class TransitionInferenceUtil
 {
     // Mostly copied from ItemChanger.
-    internal static bool GetSrcTarget(GameManager gameManager, GameManager.SceneLoadInfo info, out Transition source, out Transition target)
+    internal static bool GetSrcTarget(
+        GameManager gameManager,
+        GameManager.SceneLoadInfo info,
+        out Transition source,
+        out Transition target
+    )
     {
         source = default;
         target = default;
-        if (info.GetType() != typeof(GameManager.SceneLoadInfo)) return false;
+        if (info.GetType() != typeof(GameManager.SceneLoadInfo))
+            return false;
 
         string sceneName = gameManager.sceneName;
         string? gateName = null;
         target = new(info.SceneName, info.EntryGateName);
 
-        TransitionPoint tp = Object.FindObjectsOfType<TransitionPoint>().FirstOrDefault(p => p.entryPoint == info.EntryGateName && p.targetScene == info.SceneName);
+        TransitionPoint tp = Object
+            .FindObjectsOfType<TransitionPoint>()
+            .FirstOrDefault(p =>
+                p.entryPoint == info.EntryGateName && p.targetScene == info.SceneName
+            );
         if (tp != null)
         {
             gateName = tp.name.Split(null)[0];
-            if (sceneName == SceneNames.Fungus2_14 && gateName[0] == 'b') gateName = "bot3";
-            else if (sceneName == SceneNames.Fungus2_15 && gateName[0] == 't') gateName = "top3";
+            if (sceneName == SceneNames.Fungus2_14 && gateName[0] == 'b')
+                gateName = "bot3";
+            else if (sceneName == SceneNames.Fungus2_15 && gateName[0] == 't')
+                gateName = "top3";
         }
         else
         {
@@ -70,28 +82,41 @@ internal static class TransitionInferenceUtil
             }
         }
 
-        if (sceneName == null || gateName == null) return false;
-        
+        if (sceneName == null || gateName == null)
+            return false;
+
         source = new(sceneName, gateName);
-        if (!ItemChanger.Internal.Ref.Settings.TransitionOverrides.TryGetValue(source, out var modified)) return false;
+        if (
+            !ItemChanger.Internal.Ref.Settings.TransitionOverrides.TryGetValue(
+                source,
+                out var modified
+            )
+        )
+            return false;
 
         target = modified.ToStruct();
         return true;
     }
 
-    internal static Transition ToStruct(this ITransition self) => new(self.SceneName, self.GateName);
+    internal static Transition ToStruct(this ITransition self) =>
+        new(self.SceneName, self.GateName);
 
-    internal static Transition ToStruct(this RandoModTransition self) => new(self.TransitionDef.SceneName, self.TransitionDef.DoorName);
+    internal static Transition ToStruct(this RandoModTransition self) =>
+        new(self.TransitionDef.SceneName, self.TransitionDef.DoorName);
 
     internal static bool ToTransition(this string self, out Transition transition)
     {
         transition = default;
-        if (!self.EndsWith("]")) return false;
+        if (!self.EndsWith("]"))
+            return false;
 
         var split = self.Split('[');
-        if (split.Length != 2) return false;
-        if (split[0].Length == 0) return false;
-        if (split[1].Length <= 1) return false;
+        if (split.Length != 2)
+            return false;
+        if (split[0].Length == 0)
+            return false;
+        if (split[1].Length <= 1)
+            return false;
 
         transition = new(split[0], split[1].Substring(0, split[1].Length - 1));
         return true;
@@ -99,20 +124,26 @@ internal static class TransitionInferenceUtil
 
     internal static GateDirection GetDirection(this Transition self)
     {
-        if (self.GateName.StartsWith("left")) return GateDirection.Left;
-        else if (self.GateName.StartsWith("right")) return GateDirection.Right;
-        else if (self.GateName.StartsWith("top")) return GateDirection.Top;
-        else if (self.GateName.StartsWith("bot")) return GateDirection.Bot;
-        else return GateDirection.Door;
+        if (self.GateName.StartsWith("left"))
+            return GateDirection.Left;
+        else if (self.GateName.StartsWith("right"))
+            return GateDirection.Right;
+        else if (self.GateName.StartsWith("top"))
+            return GateDirection.Top;
+        else if (self.GateName.StartsWith("bot"))
+            return GateDirection.Bot;
+        else
+            return GateDirection.Door;
     }
 
-    internal static GateDirection Opposite(this GateDirection self) => self switch
-    {
-        GateDirection.Left => GateDirection.Right,
-        GateDirection.Right => GateDirection.Left,
-        GateDirection.Bot => GateDirection.Top,
-        GateDirection.Top => GateDirection.Bot,
-        GateDirection.Door => GateDirection.Door,
-        _ => throw self.InvalidEnum()
-    };
+    internal static GateDirection Opposite(this GateDirection self) =>
+        self switch
+        {
+            GateDirection.Left => GateDirection.Right,
+            GateDirection.Right => GateDirection.Left,
+            GateDirection.Bot => GateDirection.Top,
+            GateDirection.Top => GateDirection.Bot,
+            GateDirection.Door => GateDirection.Door,
+            _ => throw self.InvalidEnum(),
+        };
 }

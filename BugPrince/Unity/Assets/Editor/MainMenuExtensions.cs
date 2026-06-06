@@ -1,11 +1,11 @@
-﻿using BugPrince.Scripts.Lib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using BugPrince.Scripts.Lib;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 internal class TilemapShiftPopup : EditorWindow
 {
@@ -25,7 +25,8 @@ internal class TilemapShiftPopup : EditorWindow
             Close();
         }
 
-        if (GUILayout.Button("Cancel")) Close();
+        if (GUILayout.Button("Cancel"))
+            Close();
     }
 }
 
@@ -60,7 +61,8 @@ public class MainMenuExtensions
 
     internal static void ShiftTilemap(int dx, int dy)
     {
-        if (dx == 0 && dy == 0) return;
+        if (dx == 0 && dy == 0)
+            return;
 
         var tilemap = Object.FindObjectOfType<Tilemap>();
         var oSize = tilemap.size;
@@ -86,15 +88,19 @@ public class MainMenuExtensions
 
         // Move all game objects not at origin.
         var scene = SceneManager.GetActiveScene();
-        foreach (var obj in scene.GetRootGameObjects()) ShiftObject(obj, dx, dy);
+        foreach (var obj in scene.GetRootGameObjects())
+            ShiftObject(obj, dx, dy);
         EditorSceneManager.MarkSceneDirty(scene);
     }
 
     private static void ShiftObject(GameObject obj, int dx, int dy)
     {
         var pos = obj.transform.position;
-        if (pos.x == 0 && pos.y == 0) foreach (var child in obj.Children()) ShiftObject(child, dx, dy);
-        else obj.transform.position += new Vector3(dx, dy, 0);
+        if (pos.x == 0 && pos.y == 0)
+            foreach (var child in obj.Children())
+                ShiftObject(child, dx, dy);
+        else
+            obj.transform.position += new Vector3(dx, dy, 0);
     }
 
     [MenuItem("BugPrince/Scene/Optimize")]
@@ -104,10 +110,12 @@ public class MainMenuExtensions
         if (updates.Count > 0)
         {
             Debug.Log("Optimized scene");
-            foreach (var update in updates) Debug.Log(update);
+            foreach (var update in updates)
+                Debug.Log(update);
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
-        else Debug.Log("Scene already optimized");
+        else
+            Debug.Log("Scene already optimized");
     }
 
     private static string AssetBundleName(string sceneName) => sceneName.Replace("_", "").ToLower();
@@ -128,11 +136,13 @@ public class MainMenuExtensions
         }
 
         var results = new List<(int, string)>();
-        foreach (var entry in count) results.Add((entry.Value, entry.Key));
+        foreach (var entry in count)
+            results.Add((entry.Value, entry.Key));
         results.Sort();
         results.Reverse();
         var printed = new List<string>();
-        foreach (var (c, p) in results) printed.Add($"{p}: {c}");
+        foreach (var (c, p) in results)
+            printed.Add($"{p}: {c}");
 
         Debug.Log($"Search results:\n  {string.Join("\n  ", printed.ToArray())}");
     }
@@ -170,7 +180,8 @@ public class MainMenuExtensions
                     Debug.Log($"Updated {scene.name}: [{string.Join(", ", updates)}]");
                     ++scenesFixed;
                 }
-                else ++scenesUnfixed;
+                else
+                    ++scenesUnfixed;
             }
             catch (System.Exception ex)
             {
@@ -181,7 +192,9 @@ public class MainMenuExtensions
 
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
-        Debug.Log($"Optimized {scenesFixed + scenesUnfixed + scenesErrored} scenes; updated {scenesFixed}, {scenesUnfixed} already optimal, {scenesErrored} errors");
+        Debug.Log(
+            $"Optimized {scenesFixed + scenesUnfixed + scenesErrored} scenes; updated {scenesFixed}, {scenesUnfixed} already optimal, {scenesErrored} errors"
+        );
         EditorSceneManager.OpenScene(origPath);
         EditorUtility.ClearProgressBar();
     }
@@ -193,7 +206,11 @@ public class MainMenuExtensions
         string[] guids = AssetDatabase.FindAssets("t:Scene");
         for (int i = 0; i < guids.Length; i++)
         {
-            EditorUtility.DisplayProgressBar("Processing Scenes", $"Processed {i} of {guids.Length} scenes...", i * 1f / guids.Length);
+            EditorUtility.DisplayProgressBar(
+                "Processing Scenes",
+                $"Processed {i} of {guids.Length} scenes...",
+                i * 1f / guids.Length
+            );
 
             var path = AssetDatabase.GUIDToAssetPath(guids[i]);
             EditorSceneManager.OpenScene(path);
@@ -205,16 +222,20 @@ public class MainMenuExtensions
     }
 
     [MenuItem("BugPrince/Scene/Build")]
-    static void BuildSceneSpecificBundle() => BuildSceneSpecificBundle(BuildTarget.StandaloneWindows);
+    static void BuildSceneSpecificBundle() =>
+        BuildSceneSpecificBundle(BuildTarget.StandaloneWindows);
 
     [MenuItem("BugPrince/Scene/Build (Linux)")]
-    static void BuildSceneSpecificBundleLinux() => BuildSceneSpecificBundle(BuildTarget.StandaloneLinux64);
+    static void BuildSceneSpecificBundleLinux() =>
+        BuildSceneSpecificBundle(BuildTarget.StandaloneLinux64);
 
     [MenuItem("BugPrince/Core Bundle/Build")]
-    static void BuildCoreBundle() => BuildSpecificBundle("scatteredandlostcorebundle", BuildTarget.StandaloneWindows);
+    static void BuildCoreBundle() =>
+        BuildSpecificBundle("scatteredandlostcorebundle", BuildTarget.StandaloneWindows);
 
     [MenuItem("BugPrince/Core Bundle/Build (Linux)")]
-    static void BuildCoreBundleLinux() => BuildSpecificBundle("scatteredandlostcorebundle", BuildTarget.StandaloneLinux64);
+    static void BuildCoreBundleLinux() =>
+        BuildSpecificBundle("scatteredandlostcorebundle", BuildTarget.StandaloneLinux64);
 
     [MenuItem("BugPrince/All Scenes/Build")]
     static void BuildAllAssetBundles()
@@ -241,15 +262,18 @@ public class MainMenuExtensions
     private static string AssetBundlesDir()
     {
         string assetBundleDirectory = "Assets/AssetBundles";
-        if (!Directory.Exists(assetBundleDirectory)) Directory.CreateDirectory(assetBundleDirectory);
+        if (!Directory.Exists(assetBundleDirectory))
+            Directory.CreateDirectory(assetBundleDirectory);
         return assetBundleDirectory;
     }
 
     private static void BuildAllAssetBundles(BuildTarget buildTarget)
     {
-        BuildPipeline.BuildAssetBundles(AssetBundlesDir(),
-                                        BuildAssetBundleOptions.None,
-                                        buildTarget);
+        BuildPipeline.BuildAssetBundles(
+            AssetBundlesDir(),
+            BuildAssetBundleOptions.None,
+            buildTarget
+        );
     }
 
     private static void BuildSceneSpecificBundle(BuildTarget buildTarget)
@@ -267,6 +291,11 @@ public class MainMenuExtensions
         build.assetBundleName = bundleName;
         build.assetNames = AssetDatabase.GetAssetPathsFromAssetBundle(bundleName);
 
-        BuildPipeline.BuildAssetBundles(AssetBundlesDir(), new AssetBundleBuild[] { build }, BuildAssetBundleOptions.None, buildTarget);
+        BuildPipeline.BuildAssetBundles(
+            AssetBundlesDir(),
+            new AssetBundleBuild[] { build },
+            BuildAssetBundleOptions.None,
+            buildTarget
+        );
     }
 }

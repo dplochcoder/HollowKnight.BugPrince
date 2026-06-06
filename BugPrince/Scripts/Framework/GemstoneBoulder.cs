@@ -1,8 +1,8 @@
-﻿using BugPrince.IC;
+﻿using System.Collections.Generic;
+using BugPrince.IC;
 using BugPrince.IC.Locations;
 using BugPrince.Scripts.InternalLib;
 using BugPrince.Util;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BugPrince.Scripts.Framework;
@@ -15,10 +15,17 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
     private const float NORMAL_SHAKE_RANGE = 0.2f;
     private const float SMALL_SHAKE_RANGE = 0.04f;
 
-    [ShimField] public SpriteRenderer? Sprite;
-    [ShimField] public List<AudioClip> HitClips = [];
-    [ShimField] public AudioClip? GiveClip;
-    [ShimField] public AudioClip? ShatterClip;
+    [ShimField]
+    public SpriteRenderer? Sprite;
+
+    [ShimField]
+    public List<AudioClip> HitClips = [];
+
+    [ShimField]
+    public AudioClip? GiveClip;
+
+    [ShimField]
+    public AudioClip? ShatterClip;
 
     private GemstoneBoulderPlacement? currentPlacement;
     private int currentItemIndex = -1;
@@ -38,15 +45,21 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
 
     public void Hit(HitInstance damageInstance)
     {
-        if (currentPlacement == null) return;
-        if (invulnTimer > 0) return;
-        if (damageInstance.AttackType != AttackTypes.Nail) return;
+        if (currentPlacement == null)
+            return;
+        if (invulnTimer > 0)
+            return;
+        if (damageInstance.AttackType != AttackTypes.Nail)
+            return;
 
         invulnTimer = INVULN_DURATION;
         shakeTimer = SHAKE_DURATION;
 
         var pd = PlayerData.instance;
-        if (pd.GetInt(nameof(pd.nailSmithUpgrades)) < currentPlacement.Location.NailUpgradesThreshold)
+        if (
+            pd.GetInt(nameof(pd.nailSmithUpgrades))
+            < currentPlacement.Location.NailUpgradesThreshold
+        )
         {
             shakeRange = SMALL_SHAKE_RANGE;
             audioSource?.PlaySoundEffect(SoundCache.FailedMenu);
@@ -73,12 +86,23 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
     {
         foreach (var placement in GemstoneBoulderPlacement.ActivePlacements())
         {
-            if (placement.AllObtained()) continue;
-            if (currentPlacement != null && placement.Location.NailUpgradesThreshold < currentPlacement.Location.NailUpgradesThreshold) continue;
+            if (placement.AllObtained())
+                continue;
+            if (
+                currentPlacement != null
+                && placement.Location.NailUpgradesThreshold
+                    < currentPlacement.Location.NailUpgradesThreshold
+            )
+                continue;
 
-            for (int i = placement == currentPlacement ? currentItemIndex + 1 : 0; i < placement.Items.Count; i++)
+            for (
+                int i = placement == currentPlacement ? currentItemIndex + 1 : 0;
+                i < placement.Items.Count;
+                i++
+            )
             {
-                if (placement.Items[i].IsObtained()) continue;
+                if (placement.Items[i].IsObtained())
+                    continue;
 
                 // Found an unobtained item.
                 currentPlacement = placement;
@@ -118,7 +142,8 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
         if (invulnTimer > 0)
         {
             invulnTimer -= Time.deltaTime;
-            if (invulnTimer <= 0) invulnTimer = 0;
+            if (invulnTimer <= 0)
+                invulnTimer = 0;
         }
 
         if (shakeTimer > 0)
@@ -129,7 +154,13 @@ internal class GemstoneBoulder : MonoBehaviour, IHitResponder
                 shakeTimer = 0;
                 Sprite!.transform.localPosition = origPos;
             }
-            else Sprite!.transform.localPosition = origPos + new Vector3(Random.Range(-shakeRange, shakeRange), Random.Range(-shakeRange, shakeRange));
+            else
+                Sprite!.transform.localPosition =
+                    origPos
+                    + new Vector3(
+                        Random.Range(-shakeRange, shakeRange),
+                        Random.Range(-shakeRange, shakeRange)
+                    );
         }
     }
 }

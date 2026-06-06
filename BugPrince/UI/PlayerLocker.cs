@@ -33,6 +33,7 @@ internal class PlayerLocker : MonoBehaviour
     }
 
     private Vector3? origCameraPos;
+
     private void LockCamera(On.CameraController.orig_LateUpdate orig, CameraController self)
     {
         origCameraPos ??= self.transform.position;
@@ -45,14 +46,15 @@ internal class PlayerLocker : MonoBehaviour
 
     private void Update()
     {
-
         timer += Time.deltaTime;
-        if (timer > UIConstants.PLAYER_LOCK_DELAY) timer = UIConstants.PLAYER_LOCK_DELAY;
+        if (timer > UIConstants.PLAYER_LOCK_DELAY)
+            timer = UIConstants.PLAYER_LOCK_DELAY;
     }
 
     private static float Quadratic(float v, float accel, float max, float time)
     {
-        if (v > max) return max * time;
+        if (v > max)
+            return max * time;
 
         float v2 = v + accel * time;
         if (v2 > max)
@@ -60,7 +62,8 @@ internal class PlayerLocker : MonoBehaviour
             float aTime = (v2 - v) / accel;
             return (v2 + v) * aTime / 2 + (time - aTime) * max;
         }
-        else return (v + v2) * time / 2;
+        else
+            return (v + v2) * time / 2;
     }
 
     private static Vector3 Project(GateDirection gateDir, Vector2 origVel, float time)

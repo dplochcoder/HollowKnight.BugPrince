@@ -14,13 +14,14 @@ public class PushPinItem : AbstractItem
 
     internal static EmptyItem LogicItem() => new(ITEM_NAME);
 
-    internal static ItemDef ItemDef() => new()
-    {
-        Name = ITEM_NAME,
-        Pool = PoolNames.Relic,
-        MajorItem = false,
-        PriceCap = 1250,
-    };
+    internal static ItemDef ItemDef() =>
+        new()
+        {
+            Name = ITEM_NAME,
+            Pool = PoolNames.Relic,
+            MajorItem = false,
+            PriceCap = 1250,
+        };
 
     public PushPinItem()
     {
@@ -28,13 +29,16 @@ public class PushPinItem : AbstractItem
         UIDef = new MsgUIDef()
         {
             name = new BoxedString("Push Pin"),
-            shopDesc = new BoxedString("I could really use a dozen more of these to organize all the clutter."),
+            shopDesc = new BoxedString(
+                "I could really use a dozen more of these to organize all the clutter."
+            ),
             sprite = Sprite,
         };
         this.AddInteropData("Relics");
     }
 
-    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get()!.TotalPushPins++;
+    public override void GiveImmediate(GiveInfo info) =>
+        TransitionSelectionModule.Get()!.TotalPushPins++;
 
     public override AbstractItem Clone() => new PushPinItem();
 }

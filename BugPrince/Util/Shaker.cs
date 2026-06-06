@@ -14,17 +14,23 @@ internal class Shaker : MonoBehaviour
 
     private void Update()
     {
-        if (timer <= 0) return;
+        if (timer <= 0)
+            return;
 
         timer -= Time.deltaTime;
-        if (timer <= 0) transform.localPosition = Vector3.zero;
-        else transform.localPosition = new(Random.Range(-span, span), Random.Range(-span, span));
+        if (timer <= 0)
+            transform.localPosition = Vector3.zero;
+        else
+            transform.localPosition = new(Random.Range(-span, span), Random.Range(-span, span));
     }
 }
 
 internal static class ShakerExtensions
 {
-    internal static Shaker AddNewChildShaker(this GameObject self, float span = UIConstants.SHAKE_SPAN)
+    internal static Shaker AddNewChildShaker(
+        this GameObject self,
+        float span = UIConstants.SHAKE_SPAN
+    )
     {
         var shaker = self.AddNewChild("Shaker").AddComponent<Shaker>();
         shaker.SetSpan(span);

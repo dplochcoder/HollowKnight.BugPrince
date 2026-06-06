@@ -1,12 +1,12 @@
-﻿using BugPrince.Scripts.Proxy;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using BugPrince.Scripts.Proxy;
 using ItemChanger;
 using Modding;
 using PurenailCore.ICUtil;
 using PurenailCore.SystemUtil;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,9 +29,11 @@ internal class BugPrinceSceneLoaderModule : ItemChanger.Modules.Module
     {
         foreach (var str in typeof(BugPrinceSceneLoaderModule).Assembly.GetManifestResourceNames())
         {
-            if (!str.StartsWith(PREFIX) || str.EndsWith(".manifest") || str.EndsWith("meta")) continue;
+            if (!str.StartsWith(PREFIX) || str.EndsWith(".manifest") || str.EndsWith("meta"))
+                continue;
             string name = str.Substring(PREFIX.Length);
-            if (name == "AssetBundles" || name == "scenes") continue;
+            if (name == "AssetBundles" || name == "scenes")
+                continue;
 
             sceneBundles[name] = null;
         }
@@ -60,8 +62,15 @@ internal class BugPrinceSceneLoaderModule : ItemChanger.Modules.Module
         Events.RemoveSceneChangeEdit("BugPrince_Vault", ShowVaultTitle);
     }
 
-    private void ShowGemstoneCavernTitle(Scene scene) => AreaTitleControllerProxy.ShowAreaTitle(GEMSTONE_CAVERN, GEMSTONE_CAVERN_ID, nameof(VisitedGemstoneCavern));
-    private void ShowVaultTitle(Scene scene) => AreaTitleControllerProxy.ShowAreaTitle(THE_VAULT, THE_VAULT_ID, nameof(VisitedTheVault));
+    private void ShowGemstoneCavernTitle(Scene scene) =>
+        AreaTitleControllerProxy.ShowAreaTitle(
+            GEMSTONE_CAVERN,
+            GEMSTONE_CAVERN_ID,
+            nameof(VisitedGemstoneCavern)
+        );
+
+    private void ShowVaultTitle(Scene scene) =>
+        AreaTitleControllerProxy.ShowAreaTitle(THE_VAULT, THE_VAULT_ID, nameof(VisitedTheVault));
 
     private string LanguageGetHook(string key, string sheetTitle, string orig)
     {
@@ -73,7 +82,7 @@ internal class BugPrinceSceneLoaderModule : ItemChanger.Modules.Module
             $"{THE_VAULT}_SUPER" => "",
             $"{THE_VAULT}_MAIN" => "The Vault",
             $"{THE_VAULT}_SUB" => "",
-            _ => orig
+            _ => orig,
         };
     }
 
@@ -83,7 +92,7 @@ internal class BugPrinceSceneLoaderModule : ItemChanger.Modules.Module
         {
             nameof(VisitedGemstoneCavern) => VisitedGemstoneCavern,
             nameof(VisitedTheVault) => VisitedTheVault,
-            _ => orig
+            _ => orig,
         };
     }
 
@@ -96,7 +105,6 @@ internal class BugPrinceSceneLoaderModule : ItemChanger.Modules.Module
             _ => value,
         };
     }
-
 
     private void OnBeforeSceneLoad(string sceneName, Action cb)
     {
@@ -112,7 +120,8 @@ internal class BugPrinceSceneLoaderModule : ItemChanger.Modules.Module
 
     private void OnUnloadScene(string prevSceneName, string nextSceneName)
     {
-        if (nextSceneName == prevSceneName) return;
+        if (nextSceneName == prevSceneName)
+            return;
 
         var assetBundleName = AssetBundleName(prevSceneName);
         if (sceneBundles.TryGetValue(assetBundleName, out var assetBundle))
@@ -134,7 +143,11 @@ internal class BugPrinceSceneLoaderModule : ItemChanger.Modules.Module
             yield break;
         }
 
-        StreamReader sr = new(typeof(BugPrinceSceneLoaderModule).Assembly.GetManifestResourceStream($"{PREFIX}{assetBundleName}"));
+        StreamReader sr = new(
+            typeof(BugPrinceSceneLoaderModule).Assembly.GetManifestResourceStream(
+                $"{PREFIX}{assetBundleName}"
+            )
+        );
         var request = AssetBundle.LoadFromStreamAsync(sr.BaseStream);
         yield return request;
 

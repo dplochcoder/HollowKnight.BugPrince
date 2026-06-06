@@ -1,10 +1,10 @@
-﻿using BugPrince.Util;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BugPrince.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
 using PurenailCore.ModUtil;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace BugPrince;
@@ -43,11 +43,29 @@ internal class BugPrincePreloader : Preloader
     [Preload(SceneNames.Ruins2_01_b, "Quake Floor Glass")]
     public GameObject? QuakeFloorGlass { get; private set; }
 
-    public List<GameObject> QuakeFloorGlassDebris => [.. QuakeFloorGlass!.FindChild("Debris")!.Children().Where(o => o.name.StartsWith("Bottle Glass"))];
+    public List<GameObject> QuakeFloorGlassDebris =>
+        [
+            .. QuakeFloorGlass!
+                .FindChild("Debris")!
+                .Children()
+                .Where(o => o.name.StartsWith("Bottle Glass")),
+        ];
 
-    public AudioClip QuakeFloorGlassShatterAudio => QuakeFloorGlass!.LocateMyFSM("quake_floor").GetState("Glass").GetFirstActionOfType<AudioPlayerOneShot>().audioClips[0];
+    public AudioClip QuakeFloorGlassShatterAudio =>
+        QuakeFloorGlass!
+            .LocateMyFSM("quake_floor")
+            .GetState("Glass")
+            .GetFirstActionOfType<AudioPlayerOneShot>()
+            .audioClips[0];
 
-    public AudioClip SecretSoundClip => (SecretSoundRegion!.LocateMyFSM("unmasker").GetState("Sound").GetFirstActionOfType<AudioPlayerOneShotSingle>().audioClip.Value as AudioClip)!;
+    public AudioClip SecretSoundClip =>
+        (
+            SecretSoundRegion!
+                .LocateMyFSM("unmasker")
+                .GetState("Sound")
+                .GetFirstActionOfType<AudioPlayerOneShotSingle>()
+                .audioClip.Value as AudioClip
+        )!;
 
     [Preload(SceneNames.Deepnest_44, "Secret Sound Region")]
     public GameObject? SecretSoundRegion { get; private set; }
@@ -63,10 +81,12 @@ internal class BugPrincePreloader : Preloader
 
     [Preload(SceneNames.Ruins2_04, "Surface Water Region")]
     public GameObject? SurfaceWaterRegion { get; private set; }
-    
-    public PhysicsMaterial2D TerrainMaterial => SmallPlatform!.GetComponent<Collider2D>().sharedMaterial;
 
-    public AudioClip TinkEffectClip => Goam!.GetComponent<TinkEffect>().blockEffect.GetComponent<AudioSource>().clip;
+    public PhysicsMaterial2D TerrainMaterial =>
+        SmallPlatform!.GetComponent<Collider2D>().sharedMaterial;
+
+    public AudioClip TinkEffectClip =>
+        Goam!.GetComponent<TinkEffect>().blockEffect.GetComponent<AudioSource>().clip;
 
     [Preload(SceneNames.Mines_33, "Toll Gate")]
     public GameObject? TollGate { get; private set; }

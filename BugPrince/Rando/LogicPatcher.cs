@@ -1,4 +1,5 @@
-﻿using BugPrince.Data;
+﻿using System.Collections.Generic;
+using BugPrince.Data;
 using BugPrince.IC;
 using BugPrince.IC.Items;
 using BugPrince.Util;
@@ -7,7 +8,6 @@ using RandomizerCore.Logic;
 using RandomizerCore.StringParsing;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
-using System.Collections.Generic;
 
 namespace BugPrince.Rando;
 
@@ -16,12 +16,13 @@ internal static class LogicPatcher
     internal static void Setup()
     {
         RCData.RuntimeLogicOverride.Subscribe(-2000f, AddDefinitions);
-        RCData.RuntimeLogicOverride.Subscribe(200f, ModifyTransitions);  // Must run after MoreDoors
+        RCData.RuntimeLogicOverride.Subscribe(200f, ModifyTransitions); // Must run after MoreDoors
     }
 
     private static void AddDefinitions(GenerationSettings gs, LogicManagerBuilder lmb)
     {
-        if (!BugPrinceMod.RS.IsEnabled) return;
+        if (!BugPrinceMod.RS.IsEnabled)
+            return;
 
         RandoInterop.LS = new();
 
@@ -40,29 +41,38 @@ internal static class LogicPatcher
 
         foreach (var transition in Transitions.GetTransitions())
         {
-            if (!BugPrinceMod.RS.IsLocationPoolEnabled(transition.Value.LocationPool)) continue;
+            if (!BugPrinceMod.RS.IsLocationPoolEnabled(transition.Value.LocationPool))
+                continue;
 
             lmb.AddTransition(new(transition.Key, transition.Value.Logic));
             transition.Value.LogicEdits.ForEach(lmb.DoLogicEdit);
         }
 
-        foreach (var e in Locations.GetLocations()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddLogicDef(new(e.Key, e.Value.Logic.Value));
-        foreach (var e in Waypoints.GetWaypoints()) if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool)) lmb.AddWaypoint(new(e.Key, e.Value.Logic, true));
+        foreach (var e in Locations.GetLocations())
+            if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool))
+                lmb.AddLogicDef(new(e.Key, e.Value.Logic.Value));
+        foreach (var e in Waypoints.GetWaypoints())
+            if (BugPrinceMod.RS.IsLocationPoolEnabled(e.Value.LocationPool))
+                lmb.AddWaypoint(new(e.Key, e.Value.Logic, true));
     }
 
     private static void ModifyTransitions(GenerationSettings gs, LogicManagerBuilder lmb)
     {
-        if (!BugPrinceMod.RS.AreCostsEnabled) return;
+        if (!BugPrinceMod.RS.AreCostsEnabled)
+            return;
 
         HashSet<string> costScenes = [];
-        foreach (var cgp in CostGroup.GetProducers().Values) costScenes.AddRange(cgp.RelevantSceneNames());
+        foreach (var cgp in CostGroup.GetProducers().Values)
+            costScenes.AddRange(cgp.RelevantSceneNames());
 
         // Add proxies for all transitions that might have costs, to support purchase logic.
         LogicReplacer replacer = new();
         foreach (var transitionName in lmb.Transitions)
         {
-            if (!transitionName.ToTransition(out var transition)) continue;
-            if (!costScenes.Contains(transition.SceneName)) continue;
+            if (!transitionName.ToTransition(out var transition))
+                continue;
+            if (!costScenes.Contains(transition.SceneName))
+                continue;
 
             // This scenario is more complicated than MoreDoors. There, we protect access to the *source* transition through logic. Here, we protect the *destination* transition.
             // We do this by splitting the target item into three parts:
@@ -74,13 +84,21 @@ internal static class LogicPatcher
             var externalProxy = $"BugPrinceExternalProxy_{transitionName}";
 
             replacer.TokenReplacements.Add(transitionName, new NameToken(externalProxy));
-            replacer.TokenReplacements.Add($"{transitionName}/", new NameToken($"{externalProxy}/"));
+            replacer.TokenReplacements.Add(
+                $"{transitionName}/",
+                new NameToken($"{externalProxy}/")
+            );
 
             // We define a proxy waypoint which is only accessible via the transition term
             lmb.GetOrAddTerm(transitionName, TermType.State);
-            
+
             // The internal proxy is only accessible if we can purchase the transition.
-            lmb.AddWaypoint(new(internalProxy, $"{transitionName} + {BugPrinceVariableResolver.BUG_PRINCE_ACCESS_PREFIX}[{transition}]"));
+            lmb.AddWaypoint(
+                new(
+                    internalProxy,
+                    $"{transitionName} + {BugPrinceVariableResolver.BUG_PRINCE_ACCESS_PREFIX}[{transition}]"
+                )
+            );
             replacer.IgnoredNames.Add(internalProxy);
 
             // The external proxy represents what the transition used to represent.

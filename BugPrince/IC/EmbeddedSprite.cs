@@ -4,7 +4,11 @@ namespace BugPrince.IC;
 
 public class EmbeddedSprite : ItemChanger.EmbeddedSprite
 {
-    private static readonly SpriteManager manager = new(typeof(EmbeddedSprite).Assembly, "BugPrince.Resources.Sprites.", new EmbeddedSpriteInfo());
+    private static readonly SpriteManager manager = new(
+        typeof(EmbeddedSprite).Assembly,
+        "BugPrince.Resources.Sprites.",
+        new EmbeddedSpriteInfo()
+    );
 
     public EmbeddedSprite(string key) => this.key = key;
 
@@ -17,7 +21,8 @@ internal class EmbeddedSpriteInfo : SpriteManager.Info
 
     public override float GetPixelsPerUnit(string name)
     {
-        if (name.StartsWith("Game.") && (overridePPUs == null || !overridePPUs.ContainsKey(name))) return 64f;
+        if (name.StartsWith("Game.") && (overridePPUs == null || !overridePPUs.ContainsKey(name)))
+            return 64f;
         return base.GetPixelsPerUnit(name);
     }
 }

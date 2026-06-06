@@ -14,7 +14,12 @@ internal static class Interop
         interop.Properties["PoolGroup"] = pool;
     }
 
-    internal static void AddInteropData(this AbstractLocation self, string pool, PinLocation? pinLocation, string? displaySource)
+    internal static void AddInteropData(
+        this AbstractLocation self,
+        string pool,
+        PinLocation? pinLocation,
+        string? displaySource
+    )
     {
         var rsmTag = self.AddTag<InteropTag>();
         rsmTag.Message = "RandoSupplementalMetadata";
@@ -22,8 +27,10 @@ internal static class Interop
         rsmTag.Properties["PinSpriteKey"] = pool;
         if (pinLocation != null)
         {
-            if (pinLocation.IsWorld) rsmTag.Properties["WorldMapLocation"] = pinLocation.AsTuple();
-            else rsmTag.Properties["MapLocations"] = pinLocation.AsTupleArray();
+            if (pinLocation.IsWorld)
+                rsmTag.Properties["WorldMapLocation"] = pinLocation.AsTuple();
+            else
+                rsmTag.Properties["MapLocations"] = pinLocation.AsTupleArray();
         }
 
         if (displaySource != null)

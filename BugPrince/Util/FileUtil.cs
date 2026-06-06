@@ -10,12 +10,14 @@ internal static class FileUtil
         try
         {
             File.WriteAllText(temp, content);
-            if (File.Exists(path)) File.Delete(path);
+            if (File.Exists(path))
+                File.Delete(path);
             File.Move(temp, path);
         }
         finally
         {
-            if (File.Exists(temp)) File.Delete(temp);
+            if (File.Exists(temp))
+                File.Delete(temp);
         }
     }
 }

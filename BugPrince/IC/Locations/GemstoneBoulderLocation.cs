@@ -1,8 +1,8 @@
-﻿using ItemChanger;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ItemChanger;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace BugPrince.IC.Locations;
 
@@ -26,14 +26,17 @@ internal class GemstoneBoulderLocation : AbstractLocation
 internal class GemstoneBoulderPlacement : AbstractPlacement, IPrimaryLocationPlacement
 {
     private static SortedDictionary<int, GemstoneBoulderPlacement> activePlacements = [];
-    internal static IEnumerable<GemstoneBoulderPlacement> ActivePlacements() => activePlacements.Values;
+
+    internal static IEnumerable<GemstoneBoulderPlacement> ActivePlacements() =>
+        activePlacements.Values;
 
     public GemstoneBoulderLocation? Location;
 
     [JsonIgnore]
     AbstractLocation IPrimaryLocationPlacement.Location => Location!;
 
-    public GemstoneBoulderPlacement(string name) : base(name) { }
+    public GemstoneBoulderPlacement(string name)
+        : base(name) { }
 
     protected override void OnLoad()
     {
@@ -48,5 +51,6 @@ internal class GemstoneBoulderPlacement : AbstractPlacement, IPrimaryLocationPla
         Location.Unload();
     }
 
-    public override IEnumerable<Tag> GetPlacementAndLocationTags() => base.GetPlacementAndLocationTags().Concat(Location?.tags ?? []);
+    public override IEnumerable<Tag> GetPlacementAndLocationTags() =>
+        base.GetPlacementAndLocationTags().Concat(Location?.tags ?? []);
 }

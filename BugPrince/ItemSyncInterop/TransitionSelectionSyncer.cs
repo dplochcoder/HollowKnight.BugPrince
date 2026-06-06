@@ -1,11 +1,11 @@
-﻿using BugPrince.IC;
-using ItemChanger.Modules;
-using ItemSyncMod;
-using JsonUtil = PurenailCore.SystemUtil.JsonUtil<BugPrince.BugPrinceMod>;
-using MultiWorldLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using BugPrince.IC;
+using ItemChanger.Modules;
+using ItemSyncMod;
+using MultiWorldLib;
+using JsonUtil = PurenailCore.SystemUtil.JsonUtil<BugPrince.BugPrinceMod>;
 
 namespace BugPrince.ItemSyncInterop;
 
@@ -16,7 +16,8 @@ internal class TransitionSelectionSyncer : Module
 {
     private readonly Dictionary<string, Action<DataReceivedEvent>> handlers = [];
 
-    private static void HandlerImpl<T>(DataReceivedEvent data, Action<T> handler) where T : class, new()
+    private static void HandlerImpl<T>(DataReceivedEvent data, Action<T> handler)
+        where T : class, new()
     {
         T message = new();
         try
@@ -43,7 +44,8 @@ internal class TransitionSelectionSyncer : Module
 
     private static string Label<T>() => $"BugPrince-{typeof(T).Name}";
 
-    private void AddHandler<T>(Action<T> handler) where T : class, new() => handlers.Add(Label<T>(), data => HandlerImpl(data, handler));
+    private void AddHandler<T>(Action<T> handler)
+        where T : class, new() => handlers.Add(Label<T>(), data => HandlerImpl(data, handler));
 
     private static TransitionSelectionSyncer? instance;
 
@@ -74,8 +76,9 @@ internal class TransitionSelectionSyncer : Module
 
     private void HandleMessages(DataReceivedEvent data)
     {
-        if (!handlers.TryGetValue(data.Label, out var handler)) return;
-        
+        if (!handlers.TryGetValue(data.Label, out var handler))
+            return;
+
         handler(data);
         data.Handled = true;
     }
@@ -86,7 +89,8 @@ internal class TransitionSelectionSyncer : Module
 
     private const int TTL = 300;
 
-    private void SendData<T>(T data, int to) where T : class
+    private void SendData<T>(T data, int to)
+        where T : class
     {
         StringWriter sw = new();
         JsonUtil.Serialize(data, sw);
@@ -94,7 +98,8 @@ internal class TransitionSelectionSyncer : Module
         ISConnection.SendData(Label<T>(), sw.ToString(), to, TTL);
     }
 
-    private void SendDataToAll<T>(T data) where T : class
+    private void SendDataToAll<T>(T data)
+        where T : class
     {
         StringWriter sw = new();
         JsonUtil.Serialize(data, sw);
@@ -102,7 +107,12 @@ internal class TransitionSelectionSyncer : Module
         ISConnection.SendDataToAll(Label<T>(), sw.ToString(), TTL);
     }
 
-    internal void SendImpl<Req, Resp>(Dictionary<int, Action<Resp>> callbacks, Req request, Action<Resp> callback) where Req : class, IIdentifiedRequest
+    internal void SendImpl<Req, Resp>(
+        Dictionary<int, Action<Resp>> callbacks,
+        Req request,
+        Action<Resp> callback
+    )
+        where Req : class, IIdentifiedRequest
     {
         request.RequestingPlayerID = ItemSyncMod.ItemSyncMod.ISSettings.MWPlayerId;
         do
@@ -114,10 +124,13 @@ internal class TransitionSelectionSyncer : Module
         SendData(request, 0);
     }
 
-    private void HandleResponseImpl<T>(Dictionary<int, Action<T>> callbacks, T response) where T : IIdentifiedRequest
+    private void HandleResponseImpl<T>(Dictionary<int, Action<T>> callbacks, T response)
+        where T : IIdentifiedRequest
     {
-        if (IsHost) return;
-        if (!callbacks.TryGetValue(response.Nonce, out var callback)) return;
+        if (IsHost)
+            return;
+        if (!callbacks.TryGetValue(response.Nonce, out var callback))
+            return;
 
         callbacks.Remove(response.Nonce);
         callback(response);
@@ -127,52 +140,78 @@ internal class TransitionSelectionSyncer : Module
 
     private void Handle(SwapTransitionsRequest request)
     {
-        if (!IsHost) return;
+        if (!IsHost)
+            return;
 
-        TransitionSelectionModule.Get()!.SwapTransitions(request, response =>
-        {
-            SendData(response, request.RequestingPlayerID);
-            if (MoreThanTwo) SendDataToAll(response.Updates);
-        });
+        TransitionSelectionModule
+            .Get()!
+            .SwapTransitions(
+                request,
+                response =>
+                {
+                    SendData(response, request.RequestingPlayerID);
+                    if (MoreThanTwo)
+                        SendDataToAll(response.Updates);
+                }
+            );
     }
 
-    private void Handle(SwapTransitionsResponse response) => HandleResponseImpl(swapTransitionsCallbacks, response);
+    private void Handle(SwapTransitionsResponse response) =>
+        HandleResponseImpl(swapTransitionsCallbacks, response);
 
-    internal void Send(SwapTransitionsRequest request, Action<SwapTransitionsResponse> callback) => SendImpl(swapTransitionsCallbacks, request, callback);
+    internal void Send(SwapTransitionsRequest request, Action<SwapTransitionsResponse> callback) =>
+        SendImpl(swapTransitionsCallbacks, request, callback);
 
     private void Handle(TransitionSwapUpdate update)
     {
-        if (IsHost) return;
+        if (IsHost)
+            return;
         TransitionSelectionModule.Get()!.ApplyTransitionSwapUpdates([update]);
     }
 
     internal void Send(TransitionSwapUpdate update)
     {
-        if (!IsHost) return;
+        if (!IsHost)
+            return;
         SendDataToAll(update);
     }
 
     private void Handle(TransitionSwapUpdates updates)
     {
-        if (IsHost) return;
+        if (IsHost)
+            return;
         TransitionSelectionModule.Get()!.ApplyTransitionSwapUpdates(updates.Updates);
     }
 
     internal void Send(TransitionSwapUpdates updates)
     {
-        if (!IsHost) return;
+        if (!IsHost)
+            return;
         SendDataToAll(updates);
     }
 
-    private readonly Dictionary<int, Action<GetTransitionSwapUpdatesResponse>> getTransitionUpdatesCallbacks = [];
+    private readonly Dictionary<
+        int,
+        Action<GetTransitionSwapUpdatesResponse>
+    > getTransitionUpdatesCallbacks = [];
 
     private void Handle(GetTransitionSwapUpdatesRequest request)
     {
-        if (!IsHost) return;
-        TransitionSelectionModule.Get()!.GetTransitionSwapUpdates(request, response => SendData(response, request.RequestingPlayerID));
+        if (!IsHost)
+            return;
+        TransitionSelectionModule
+            .Get()!
+            .GetTransitionSwapUpdates(
+                request,
+                response => SendData(response, request.RequestingPlayerID)
+            );
     }
 
-    private void Handle(GetTransitionSwapUpdatesResponse response) => HandleResponseImpl(getTransitionUpdatesCallbacks, response);
+    private void Handle(GetTransitionSwapUpdatesResponse response) =>
+        HandleResponseImpl(getTransitionUpdatesCallbacks, response);
 
-    internal void Send(GetTransitionSwapUpdatesRequest request, Action<GetTransitionSwapUpdatesResponse> callback) => SendImpl(getTransitionUpdatesCallbacks, request, callback);
+    internal void Send(
+        GetTransitionSwapUpdatesRequest request,
+        Action<GetTransitionSwapUpdatesResponse> callback
+    ) => SendImpl(getTransitionUpdatesCallbacks, request, callback);
 }

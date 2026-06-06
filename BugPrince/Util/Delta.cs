@@ -28,18 +28,24 @@ public class ListDelta<T> : IDelta<List<T>>
 
         NewSize = after.Count;
         int min = Math.Min(after.Count, before.Count);
-        for (int i = 0; i < min; i++) if (!EqualityComparer<T>.Default.Equals(after[i], before[i])) Changes.Add((i, after[i]));
-        for (int i = min; i < after.Count; i++) Changes.Add((i, after[i]));
+        for (int i = 0; i < min; i++)
+            if (!EqualityComparer<T>.Default.Equals(after[i], before[i]))
+                Changes.Add((i, after[i]));
+        for (int i = min; i < after.Count; i++)
+            Changes.Add((i, after[i]));
     }
 
     public void Apply(List<T> src)
     {
-        if (src.Count > NewSize) src.RemoveRange(NewSize, src.Count - NewSize);
+        if (src.Count > NewSize)
+            src.RemoveRange(NewSize, src.Count - NewSize);
 #pragma warning disable CS8604 // Possible null reference argument.
-        while (src.Count < NewSize) src.Add(default);
+        while (src.Count < NewSize)
+            src.Add(default);
 #pragma warning restore CS8604 // Possible null reference argument.
 
-        foreach (var (idx, value) in Changes) src[idx] = value;
+        foreach (var (idx, value) in Changes)
+            src[idx] = value;
     }
 }
 
@@ -49,10 +55,12 @@ public class AppendOnlyListDelta<T> : IDelta<List<T>>
 
     public void Calculate(List<T> after, List<T> before)
     {
-        if (after.Count < before.Count) throw new ArgumentException($"AppendOnlyListDelta: {after.Count} < {before.Count}");
+        if (after.Count < before.Count)
+            throw new ArgumentException($"AppendOnlyListDelta: {after.Count} < {before.Count}");
 
         Changes.Clear();
-        for (int i = before.Count; i < after.Count; i++) Changes.Add(after[i]);
+        for (int i = before.Count; i < after.Count; i++)
+            Changes.Add(after[i]);
     }
 
     public void Apply(List<T> src) => src.AddRange(Changes);
@@ -68,8 +76,12 @@ public class HashSetDelta<T> : IDelta<HashSet<T>>
         Add.Clear();
         Remove.Clear();
 
-        foreach (var item in after) if (!before.Contains(item)) Add.Add(item);
-        foreach (var item in before) if (!after.Contains(item)) Remove.Add(item);
+        foreach (var item in after)
+            if (!before.Contains(item))
+                Add.Add(item);
+        foreach (var item in before)
+            if (!after.Contains(item))
+                Remove.Add(item);
     }
 
     public void Apply(HashSet<T> src)
@@ -89,13 +101,21 @@ public class DictionaryDelta<K, V> : IDelta<Dictionary<K, V>>
         Changes.Clear();
         Removes.Clear();
 
-        foreach (var e in after) if (!before.TryGetValue(e.Key, out var beforeValue) || !EqualityComparer<V>.Default.Equals(beforeValue, e.Value)) Changes.Add((e.Key, e.Value));
-        foreach (var k in before.Keys) if (!after.ContainsKey(k)) Removes.Add(k);
+        foreach (var e in after)
+            if (
+                !before.TryGetValue(e.Key, out var beforeValue)
+                || !EqualityComparer<V>.Default.Equals(beforeValue, e.Value)
+            )
+                Changes.Add((e.Key, e.Value));
+        foreach (var k in before.Keys)
+            if (!after.ContainsKey(k))
+                Removes.Add(k);
     }
 
     public void Apply(Dictionary<K, V> src)
     {
         Removes.ForEach(k => src.Remove(k));
-        foreach (var (k, v) in Changes) src[k] = v;
+        foreach (var (k, v) in Changes)
+            src[k] = v;
     }
 }

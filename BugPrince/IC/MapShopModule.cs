@@ -1,8 +1,8 @@
-﻿using ItemChanger;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ItemChanger;
 using ItemChanger.Items;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace BugPrince.IC;
 
@@ -23,13 +23,17 @@ internal class MapShopModule : ItemChanger.Modules.Module
         (LocationNames.Kingdoms_Edge_Map, ItemNames.Kingdoms_Edge_Map),
         (LocationNames.Queens_Gardens_Map, ItemNames.Queens_Gardens_Map),
         (LocationNames.Resting_Grounds_Map, ItemNames.Resting_Grounds_Map),
-        (LocationNames.Royal_Waterways_Map, ItemNames.Royal_Waterways_Map)
+        (LocationNames.Royal_Waterways_Map, ItemNames.Royal_Waterways_Map),
     ];
 
     internal static void PlaceVanillaMaps()
     {
         ItemChangerMod.CreateSettingsProfile(false);
-        ItemChangerMod.AddPlacements(VANILLA_MAPS.Select(pair => Finder.GetLocation(pair.Item1)!.Wrap().Add(Finder.GetItem(pair.Item2)!)));
+        ItemChangerMod.AddPlacements(
+            VANILLA_MAPS.Select(pair =>
+                Finder.GetLocation(pair.Item1)!.Wrap().Add(Finder.GetItem(pair.Item2)!)
+            )
+        );
     }
 
     // Store these separately so RandoMapMod still works.
@@ -44,7 +48,8 @@ internal class MapShopModule : ItemChanger.Modules.Module
 
     private void MaybeUpgradeMap(GiveEventArgs args)
     {
-        if (args.Item is MapItem mapItem) args.Item = new MapShopMapItem(mapItem);
+        if (args.Item is MapItem mapItem)
+            args.Item = new MapShopMapItem(mapItem);
     }
 }
 
@@ -68,7 +73,9 @@ internal class MapShopMapItem : AbstractItem
         ItemChangerMod.Modules.Get<MapShopModule>()?.RealFieldNames.Add(mapItem.fieldName);
     }
 
-    public override bool Redundant() => ItemChangerMod.Modules.Get<MapShopModule>()?.RealFieldNames.Contains(mapItem.fieldName) ?? mapItem.Redundant();
+    public override bool Redundant() =>
+        ItemChangerMod.Modules.Get<MapShopModule>()?.RealFieldNames.Contains(mapItem.fieldName)
+        ?? mapItem.Redundant();
 }
 
 internal record MapCost : Cost
@@ -77,7 +84,8 @@ internal record MapCost : Cost
 
     public MapCost(int cost) => Cost = cost;
 
-    public override bool CanPay() => (ItemChangerMod.Modules.Get<MapShopModule>()?.NumMaps ?? 13) >= Cost;
+    public override bool CanPay() =>
+        (ItemChangerMod.Modules.Get<MapShopModule>()?.NumMaps ?? 13) >= Cost;
 
     public override string GetCostText() => $"Requires {Cost} maps.";
 

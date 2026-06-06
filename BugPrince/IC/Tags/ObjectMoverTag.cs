@@ -10,9 +10,12 @@ internal class ObjectMoverTag : SceneModifierTag
 {
     public string SceneName = "";
     public string ObjectPath = "";
-    [JsonConverter(typeof(Vector3Converter))] public Vector3 Move;
+
+    [JsonConverter(typeof(Vector3Converter))]
+    public Vector3 Move;
 
     protected override string GetSceneName() => SceneName;
 
-    protected override void ModifyScene(Scene scene) => scene.FindGameObject(ObjectPath)?.transform.Translate(Move);
+    protected override void ModifyScene(Scene scene) =>
+        scene.FindGameObject(ObjectPath)?.transform.Translate(Move);
 }

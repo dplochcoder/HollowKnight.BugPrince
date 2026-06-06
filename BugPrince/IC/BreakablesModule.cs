@@ -1,7 +1,7 @@
-﻿using BugPrince.Util;
-using PurenailCore.SystemUtil;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using BugPrince.Util;
+using PurenailCore.SystemUtil;
 
 namespace BugPrince.IC;
 
@@ -13,7 +13,13 @@ internal class BreakablesModule : ItemChanger.Modules.Module
 
     public override void Unload() => On.Breakable.Break -= OnBreak;
 
-    private void OnBreak(On.Breakable.orig_Break orig, Breakable self, float flingAngleMin, float flingAngleMax, float impactMultiplier)
+    private void OnBreak(
+        On.Breakable.orig_Break orig,
+        Breakable self,
+        float flingAngleMin,
+        float flingAngleMax,
+        float impactMultiplier
+    )
     {
         if (actions.TryGetValue(self, out var set))
         {

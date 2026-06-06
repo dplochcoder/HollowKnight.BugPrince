@@ -1,12 +1,12 @@
-﻿using GlobalEnums;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using GlobalEnums;
 using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.Locations;
 using PurenailCore.GOUtil;
 using RandomizerMod.Extensions;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,9 +16,11 @@ internal class OvergrownMoundPuzzleLocation : ContainerLocation
 {
     protected override void OnLoad() => Events.AddSceneChangeEdit(UnsafeSceneName, ModifyScene);
 
-    protected override void OnUnload() => Events.RemoveSceneChangeEdit(UnsafeSceneName, ModifyScene);
+    protected override void OnUnload() =>
+        Events.RemoveSceneChangeEdit(UnsafeSceneName, ModifyScene);
 
-    private static readonly List<string> PLATFORM_NAMES = [
+    private static readonly List<string> PLATFORM_NAMES =
+    [
         "fung_plat_float_01",
         "fung_plat_float_05",
         "fung_plat_float_07 (1)",
@@ -28,12 +30,15 @@ internal class OvergrownMoundPuzzleLocation : ContainerLocation
         "fung_plat_float_05 (1)",
         "fung_plat_float_08 (2)",
         "fung_plat_float_08 (1)",
-        "fung_plat_float_07"
+        "fung_plat_float_07",
     ];
 
     private void ModifyScene(Scene scene)
     {
-        List<BoxCollider2D> boxes = [.. PLATFORM_NAMES.Select(n => scene.FindGameObject(n)!.GetComponent<BoxCollider2D>())];
+        List<BoxCollider2D> boxes =
+        [
+            .. PLATFORM_NAMES.Select(n => scene.FindGameObject(n)!.GetComponent<BoxCollider2D>()),
+        ];
         List<TorchInterface> torches = [.. boxes.Select(SpawnTorch)];
 
         GameObject tracker = new("PuzzleTracker");
@@ -95,11 +100,10 @@ internal class TorchInterface : MonoBehaviour
         sincePop = 0;
     }
 
-
     private void Update()
     {
         sincePop += Time.deltaTime;
-        
+
         if (torchGlow != null)
         {
             float pct = sincePop > SHRINK_PERIOD ? 1 : sincePop / SHRINK_PERIOD;
@@ -115,7 +119,11 @@ internal class PlatformPuzzleTracker : MonoBehaviour
     private List<BoxCollider2D> boxes = [];
     private List<TorchInterface> torches = [];
 
-    internal void Init(OvergrownMoundPuzzleLocation location, List<BoxCollider2D> boxes, List<TorchInterface> torches)
+    internal void Init(
+        OvergrownMoundPuzzleLocation location,
+        List<BoxCollider2D> boxes,
+        List<TorchInterface> torches
+    )
     {
         this.Location = location;
         this.boxes = [.. boxes];
@@ -135,12 +143,17 @@ internal class PlatformPuzzleTracker : MonoBehaviour
 
     private int lastTouchedIndex = -1;
 
-    private void TrackCollisionEnter(On.HeroController.orig_OnCollisionEnter2D orig, HeroController self, Collision2D collision)
+    private void TrackCollisionEnter(
+        On.HeroController.orig_OnCollisionEnter2D orig,
+        HeroController self,
+        Collision2D collision
+    )
     {
         if (collision.collider is BoxCollider2D box)
         {
             int idx = boxes.IndexOf(box);
-            if (idx >= 0) lastTouchedIndex = idx;
+            if (idx >= 0)
+                lastTouchedIndex = idx;
         }
 
         orig(self, collision);
@@ -204,7 +217,8 @@ internal class PlatformPuzzleTracker : MonoBehaviour
                 else
                 {
                     // Failure.
-                    foreach (var torch in torches) torch.Pop();
+                    foreach (var torch in torches)
+                        torch.Pop();
 
                     yield return new WaitForSeconds(1);
                     lastTouchedIndex = -1;

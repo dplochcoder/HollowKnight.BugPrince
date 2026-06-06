@@ -15,13 +15,14 @@ public class GemItem : AbstractItem
 
     internal static StringItemTemplate LogicItem() => new(ITEM_NAME, $"{TERM_NAME}++");
 
-    internal static ItemDef ItemDef() => new()
-    {
-        Name = ITEM_NAME,
-        Pool = PoolNames.Key,
-        MajorItem = true,
-        PriceCap = 400,
-    };
+    internal static ItemDef ItemDef() =>
+        new()
+        {
+            Name = ITEM_NAME,
+            Pool = PoolNames.Key,
+            MajorItem = true,
+            PriceCap = 400,
+        };
 
     public GemItem()
     {
@@ -29,13 +30,16 @@ public class GemItem : AbstractItem
         UIDef = new MsgUIDef()
         {
             name = new BoxedString("Gem"),
-            shopDesc = new BoxedString("Sparkling, bright, beautifully cut... I should charge at least five times more for this."),
+            shopDesc = new BoxedString(
+                "Sparkling, bright, beautifully cut... I should charge at least five times more for this."
+            ),
             sprite = Sprite,
         };
         this.AddInteropData("Keys");
     }
 
-    public override void GiveImmediate(GiveInfo info) => TransitionSelectionModule.Get()!.TotalGems++;
+    public override void GiveImmediate(GiveInfo info) =>
+        TransitionSelectionModule.Get()!.TotalGems++;
 
     public override AbstractItem Clone() => new GemItem();
 }

@@ -1,9 +1,9 @@
-﻿using BugPrince.IC;
+﻿using System;
+using System.Collections.Generic;
+using BugPrince.IC;
 using BugPrince.ItemSyncInterop;
 using BugPrince.Util;
 using DebugMod;
-using System;
-using System.Collections.Generic;
 
 namespace BugPrince.DebugInterop;
 
@@ -28,28 +28,32 @@ public static class DebugInterop
     [BindableMethod(name = "Give Gem", category = "Bug Prince")]
     public static void GiveGem()
     {
-        if (!TransitionSelectionEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod))
+            return;
         mod.TotalGems++;
     }
 
     [BindableMethod(name = "Give Coin", category = "Bug Prince")]
     public static void GiveCoin()
     {
-        if (!TransitionSelectionEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod))
+            return;
         mod.TotalCoins++;
     }
 
     [BindableMethod(name = "Give Dice Totem", category = "Bug Prince")]
     public static void GiveDiceTotem()
     {
-        if (!TransitionSelectionEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod))
+            return;
         mod.DiceTotems++;
     }
 
     [BindableMethod(name = "Give Push Pin", category = "Bug Prince")]
     public static void GivePushPin()
     {
-        if (!TransitionSelectionEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod))
+            return;
         mod.TotalPushPins++;
     }
 
@@ -74,7 +78,8 @@ public static class DebugInterop
     [BindableMethod(name = "Replay Updates", category = "Bug Prince")]
     public static void ReplayUpdates()
     {
-        if (!TransitionSelectionEnabled(out var mod)) return;
+        if (!TransitionSelectionEnabled(out var mod))
+            return;
 
         mod.TotalCoins = Math.Max(mod.TotalCoins, 100);
         mod.TotalGems = Math.Max(mod.TotalGems, 100);
@@ -83,8 +88,14 @@ public static class DebugInterop
 
         try
         {
-            var file = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(BugPrinceMod).Assembly.Location), "replay.json");
-            List<TransitionSwapUpdate> updates = PurenailCore.SystemUtil.JsonUtil<BugPrinceMod>.DeserializeFromPath<List<TransitionSwapUpdate>>(file);
+            var file = System.IO.Path.Combine(
+                System.IO.Path.GetDirectoryName(typeof(BugPrinceMod).Assembly.Location),
+                "replay.json"
+            );
+            List<TransitionSwapUpdate> updates =
+                PurenailCore.SystemUtil.JsonUtil<BugPrinceMod>.DeserializeFromPath<
+                    List<TransitionSwapUpdate>
+                >(file);
             int success = 0;
             foreach (var update in updates)
             {
@@ -93,10 +104,14 @@ public static class DebugInterop
                 Wrapped<SwapTransitionsResponse?> resp = new(null);
                 mod.SwapTransitions(req, r => resp.Value = r);
 
-                if (!resp.Value!.Accepted) break;
-                else ++success;
+                if (!resp.Value!.Accepted)
+                    break;
+                else
+                    ++success;
             }
-            DebugMod.Console.AddLine($"Applied {success} of {updates.Count} transition swap updates");
+            DebugMod.Console.AddLine(
+                $"Applied {success} of {updates.Count} transition swap updates"
+            );
         }
         catch (Exception ex)
         {

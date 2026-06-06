@@ -22,11 +22,13 @@ internal abstract class BasicPreloader : MonoBehaviour
 [Shim]
 internal class CrystalGlobe : BasicPreloader
 {
-    protected override GameObject GetTemplate(BugPrincePreloader preloader) => preloader.CrystalGlobe!;
+    protected override GameObject GetTemplate(BugPrincePreloader preloader) =>
+        preloader.CrystalGlobe!;
 }
 
 [Shim]
 internal class RuinsWater : BasicPreloader
 {
-    protected override GameObject GetTemplate(BugPrincePreloader preloader) => preloader.RuinsWater!;
+    protected override GameObject GetTemplate(BugPrincePreloader preloader) =>
+        preloader.RuinsWater!;
 }

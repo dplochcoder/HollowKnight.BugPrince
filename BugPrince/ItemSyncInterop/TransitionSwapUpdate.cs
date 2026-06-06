@@ -1,5 +1,5 @@
-﻿using ItemChanger;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ItemChanger;
 
 namespace BugPrince.ItemSyncInterop;
 
@@ -20,6 +20,6 @@ public record TransitionSwapUpdate
 {
     public int SequenceNumber;
     public TransitionSwap? Swap = new();
-    public List<List<string>> RefreshCounterUpdates = [];  // Sets of scenes to update counters for, in order.
-    public PinReceipt? PinReceipt;  // Set if a player spent a pin on this swap attempt.
+    public List<List<string>> RefreshCounterUpdates = []; // Sets of scenes to update counters for, in order.
+    public PinReceipt? PinReceipt; // Set if a player spent a pin on this swap attempt.
 }

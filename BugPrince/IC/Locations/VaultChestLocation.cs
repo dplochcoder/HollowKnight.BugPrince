@@ -15,7 +15,8 @@ internal class VaultChestLocation : CoordinateLocation
     public override AbstractPlacement Wrap()
     {
         var placement = base.Wrap();
-        if (placement is MutablePlacement mutable) mutable.containerType = Container.Chest;
+        if (placement is MutablePlacement mutable)
+            mutable.containerType = Container.Chest;
         return placement;
     }
 
@@ -23,15 +24,21 @@ internal class VaultChestLocation : CoordinateLocation
     {
         base.PlaceContainer(obj, containerType);
 
-        if (containerType != Container.Chest) return;
+        if (containerType != Container.Chest)
+            return;
 
         var fsm = obj.LocateMyFSM("Chest Control");
-        fsm.GetState("Range?").AddFirstAction(new Lambda(() =>
-        {
-            var tollGate = GameObject.Find(TollGateProxyPath);
+        fsm.GetState("Range?")
+            .AddFirstAction(
+                new Lambda(() =>
+                {
+                    var tollGate = GameObject.Find(TollGateProxyPath);
 
-            if (tollGate?.GetComponent<TollGateProxy>()?.IsOpened ?? true) return;
-            else fsm.SendEvent("FINISHED");
-        }));
+                    if (tollGate?.GetComponent<TollGateProxy>()?.IsOpened ?? true)
+                        return;
+                    else
+                        fsm.SendEvent("FINISHED");
+                })
+            );
     }
 }

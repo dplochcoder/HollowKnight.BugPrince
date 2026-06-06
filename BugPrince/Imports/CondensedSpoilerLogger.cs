@@ -12,10 +12,15 @@ internal static class CondensedSpoilerLogger
     {
         public static Action<string, Func<LogArguments, bool>, List<string>> AddCategory = null;
     }
+
     static CondensedSpoilerLogger()
     {
         typeof(CondensedSpoilerLoggerImport).ModInterop();
     }
-    public static void AddCategory(string categoryName, Func<LogArguments, bool> test, List<string> entries)
-        => CondensedSpoilerLoggerImport.AddCategory?.Invoke(categoryName, test, entries);
+
+    public static void AddCategory(
+        string categoryName,
+        Func<LogArguments, bool> test,
+        List<string> entries
+    ) => CondensedSpoilerLoggerImport.AddCategory?.Invoke(categoryName, test, entries);
 }

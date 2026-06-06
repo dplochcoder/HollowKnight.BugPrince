@@ -11,11 +11,20 @@ internal class SecretMask : MonoBehaviour
 {
     private SpriteRenderer[] masks = [];
 
-    [ShimField] public HeroDetectorProxy? Proxy;
-    [ShimField] public float RevealTime;
-    [ShimField] public float ConcealDelay;
-    [ShimField] public float ConcealTime;
-    [ShimField] public bool Inverted;
+    [ShimField]
+    public HeroDetectorProxy? Proxy;
+
+    [ShimField]
+    public float RevealTime;
+
+    [ShimField]
+    public float ConcealDelay;
+
+    [ShimField]
+    public float ConcealTime;
+
+    [ShimField]
+    public bool Inverted;
 
     private void Awake() => masks = gameObject.GetComponentsInChildren<SpriteRenderer>();
 
@@ -24,12 +33,14 @@ internal class SecretMask : MonoBehaviour
 
     private void Update()
     {
-        if (Proxy == null) return;
+        if (Proxy == null)
+            return;
 
         if (Proxy.Detected())
         {
             alpha -= Time.deltaTime / RevealTime;
-            if (alpha < 0) alpha = 0;
+            if (alpha < 0)
+                alpha = 0;
             delay = ConcealDelay;
         }
         else
@@ -38,7 +49,8 @@ internal class SecretMask : MonoBehaviour
             if (delay < 0)
             {
                 alpha += -delay / ConcealTime;
-                if (alpha > 1) alpha = 1;
+                if (alpha > 1)
+                    alpha = 1;
                 delay = 0;
             }
         }

@@ -14,9 +14,12 @@ internal static class SoundCache
 
     private static AudioClip GetAudioClip(string name)
     {
-        if (clips.TryGetValue(name, out var clip)) return clip;
+        if (clips.TryGetValue(name, out var clip))
+            return clip;
 
-        using Stream s = typeof(SoundCache).Assembly.GetManifestResourceStream($"BugPrince.Resources.Sounds.{name}.wav");
+        using Stream s = typeof(SoundCache).Assembly.GetManifestResourceStream(
+            $"BugPrince.Resources.Sounds.{name}.wav"
+        );
         clip = SFCore.Utils.WavUtils.ToAudioClip(s);
         clips[name] = clip;
         return clip;
@@ -24,9 +27,14 @@ internal static class SoundCache
 
     static SoundCache()
     {
-        foreach (var property in typeof(SoundCache).GetProperties(BindingFlags.NonPublic | BindingFlags.Static))
+        foreach (
+            var property in typeof(SoundCache).GetProperties(
+                BindingFlags.NonPublic | BindingFlags.Static
+            )
+        )
         {
-            if (property.GetCustomAttribute<SoundCachePreloadAttribute>() != null) property.GetValue(null);
+            if (property.GetCustomAttribute<SoundCachePreloadAttribute>() != null)
+                property.GetValue(null);
         }
     }
 

@@ -1,13 +1,20 @@
-﻿using BugPrince.Util;
+﻿using System;
+using BugPrince.Util;
 using ItemChanger.Extensions;
-using System;
 using UnityEngine;
 
 namespace BugPrince.UI;
 
 internal class InventorySlot : MonoBehaviour
 {
-    internal static InventorySlot Create(GameObject parent, Vector2 pos, Func<int> valueGetter, Sprite sprite, float spriteScale, bool hiddenPin = false)
+    internal static InventorySlot Create(
+        GameObject parent,
+        Vector2 pos,
+        Func<int> valueGetter,
+        Sprite sprite,
+        float spriteScale,
+        bool hiddenPin = false
+    )
     {
         var localParent = parent.AddNewChild("InvSlot");
         localParent.transform.localPosition = pos;
@@ -16,7 +23,11 @@ internal class InventorySlot : MonoBehaviour
 
         var textObj = shaker.gameObject.AddNewChild("Text");
         textObj.transform.localPosition = new(-UIConstants.INV_SLOT_X_SPACE / 2, 0);
-        textObj.transform.localScale = new(UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE, UIConstants.INV_SLOT_TEXT_SCALE);
+        textObj.transform.localScale = new(
+            UIConstants.INV_SLOT_TEXT_SCALE,
+            UIConstants.INV_SLOT_TEXT_SCALE,
+            UIConstants.INV_SLOT_TEXT_SCALE
+        );
         var text = textObj.AddComponent<TextMesh>();
         text.fontSize = UIConstants.INV_SLOT_TEXT_SIZE;
         text.alignment = TextAlignment.Center;
@@ -36,14 +47,20 @@ internal class InventorySlot : MonoBehaviour
         {
             var hiddenTextObj = shaker.gameObject.AddNewChild("Text");
             hiddenTextObj.transform.localPosition = new(UIConstants.INV_SLOT_TEXT_USED_X_POS, 0);
-            hiddenTextObj.transform.localScale = new(UIConstants.INV_SLOT_TEXT_USED_SCALE, UIConstants.INV_SLOT_TEXT_USED_SCALE, UIConstants.INV_SLOT_TEXT_USED_SCALE);
+            hiddenTextObj.transform.localScale = new(
+                UIConstants.INV_SLOT_TEXT_USED_SCALE,
+                UIConstants.INV_SLOT_TEXT_USED_SCALE,
+                UIConstants.INV_SLOT_TEXT_USED_SCALE
+            );
             var hiddenText = hiddenTextObj.AddComponent<TextMesh>();
             hiddenText.fontSize = UIConstants.INV_SLOT_TEXT_USED_SIZE;
             hiddenText.alignment = TextAlignment.Center;
             hiddenText.anchor = TextAnchor.MiddleCenter;
             hiddenText.color = new(0.6f, 0.6f, 0.6f);
             hiddenText.text = "(used)";
-            hiddenTextObj.GetOrAddComponent<MeshRenderer>().SetUILayer(UISortingOrder.InventoryText);
+            hiddenTextObj
+                .GetOrAddComponent<MeshRenderer>()
+                .SetUILayer(UISortingOrder.InventoryText);
         }
 
         var slot = localParent.AddComponent<InventorySlot>();
@@ -62,9 +79,11 @@ internal class InventorySlot : MonoBehaviour
 
     internal void Shake() => shaker?.Shake();
 
-    internal void FadeIn(float duration) => gameObject.Recursively(go => go.FadeAlpha(0, 1, duration));
+    internal void FadeIn(float duration) =>
+        gameObject.Recursively(go => go.FadeAlpha(0, 1, duration));
 
-    internal void FadeOut(float duration) => gameObject.Recursively(go => go.FadeAlpha(0, duration));
+    internal void FadeOut(float duration) =>
+        gameObject.Recursively(go => go.FadeAlpha(0, duration));
 
     private static readonly Color lossColor = new(0.8f, 0, 0);
     private static readonly Color gainColor = new(0.8f, 0.8f, 0.8f);
@@ -72,7 +91,8 @@ internal class InventorySlot : MonoBehaviour
     private void Update()
     {
         int newValue = valueGetter!();
-        if (displayAmount == newValue) return;
+        if (displayAmount == newValue)
+            return;
 
         ticker += Time.deltaTime;
         if (ticker >= UIConstants.INV_SLOT_TICK_INTERVAL)
@@ -80,13 +100,20 @@ internal class InventorySlot : MonoBehaviour
             ticker -= UIConstants.INV_SLOT_TICK_INTERVAL;
 
             bool positive = displayAmount < newValue;
-            if (positive) ++displayAmount;
-            else --displayAmount;
-            if (displayAmount == newValue) ticker = 0;
+            if (positive)
+                ++displayAmount;
+            else
+                --displayAmount;
+            if (displayAmount == newValue)
+                ticker = 0;
 
             var change = gameObject.AddNewChild("Change");
             change.transform.position = text!.transform.position;
-            change.transform.localScale = new(UIConstants.INV_SLOT_TEXT_CHANGE_SCALE, UIConstants.INV_SLOT_TEXT_CHANGE_SCALE, UIConstants.INV_SLOT_TEXT_CHANGE_SCALE);
+            change.transform.localScale = new(
+                UIConstants.INV_SLOT_TEXT_CHANGE_SCALE,
+                UIConstants.INV_SLOT_TEXT_CHANGE_SCALE,
+                UIConstants.INV_SLOT_TEXT_CHANGE_SCALE
+            );
             var changeText = change.AddComponent<TextMesh>();
             changeText.color = positive ? gainColor : lossColor;
             changeText.fontSize = UIConstants.INV_SLOT_TEXT_SIZE;

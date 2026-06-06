@@ -31,8 +31,11 @@ internal class GemstoneCavernModule : ItemChanger.Modules.Module
         ModHooks.SetPlayerBoolHook -= SetPlayerBool;
     }
 
-    private bool GetPlayerBool(string name, bool orig) => name == BREAKABLE_WALL_NAME ? BrokeWall : orig;
-    private bool SetPlayerBool(string name, bool value) => name == BREAKABLE_WALL_NAME ? (BrokeWall = value) : value;
+    private bool GetPlayerBool(string name, bool orig) =>
+        name == BREAKABLE_WALL_NAME ? BrokeWall : orig;
+
+    private bool SetPlayerBool(string name, bool value) =>
+        name == BREAKABLE_WALL_NAME ? (BrokeWall = value) : value;
 
     private const string GATE_NAME = "right_gemstonecavern";
     private const string BREAKABLE_WALL_NAME = "bugPrince_brokeGemstoneCavernWall";
@@ -51,7 +54,12 @@ internal class GemstoneCavernModule : ItemChanger.Modules.Module
         ceiling.transform.rotation = Quaternion.Euler(0, 0, 179.18f);
 
         // Don't bulldoze the player.
-        scene.FindGameObject("Crystal Crawler (1)").LocateMyFSM("Crawler").GetState("Walk").GetFirstActionOfType<WalkLeftRight>().startLeft = true;
+        scene
+            .FindGameObject("Crystal Crawler (1)")
+            .LocateMyFSM("Crawler")
+            .GetState("Walk")
+            .GetFirstActionOfType<WalkLeftRight>()
+            .startLeft = true;
 
         GameObject tilemapEditorObj = new("TilemapEditor");
         var tilemapEditor = tilemapEditorObj.AddComponent<TilemapEditor>();
@@ -84,7 +92,8 @@ internal class GemstoneCavernModule : ItemChanger.Modules.Module
 
     private void ApplyTransitionFixes(Transition t)
     {
-        if (t.SceneName == SceneNames.Mines_20 && t.GateName == GATE_NAME) BrokeWall = true;
+        if (t.SceneName == SceneNames.Mines_20 && t.GateName == GATE_NAME)
+            BrokeWall = true;
     }
 }
 
@@ -100,9 +109,12 @@ internal class TilemapEditor : MonoBehaviour
         if (tilemap == null)
         {
             tilemap = GameObject.Find("TileMap")?.GetComponent<tk2dTileMap>();
-            if (tilemap == null) return;
+            if (tilemap == null)
+                return;
 
-            for (int x = P1.x; x < P2.x; x++) for (int y = P1.y; y < P2.y; y++) tilemap.ClearTile(x, y, 0);
+            for (int x = P1.x; x < P2.x; x++)
+            for (int y = P1.y; y < P2.y; y++)
+                tilemap.ClearTile(x, y, 0);
             tilemap.ForceBuild();
             tilemap.gameObject.DoOnDestroy(() => tilemap = null);
         }

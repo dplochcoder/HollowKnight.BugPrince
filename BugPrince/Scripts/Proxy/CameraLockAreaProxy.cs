@@ -1,8 +1,8 @@
-﻿using BugPrince.Scripts.InternalLib;
+﻿using System.Linq;
+using BugPrince.Scripts.InternalLib;
 using BugPrince.Util;
 using GlobalEnums;
 using ItemChanger.Extensions;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,9 +11,14 @@ namespace BugPrince.Scripts.Proxy;
 [Shim]
 internal class CameraLockAreaProxy : MonoBehaviour
 {
-    [ShimField] public bool preventLookUp;
-    [ShimField] public bool preventLookDown;
-    [ShimField] public bool maxPriority;
+    [ShimField]
+    public bool preventLookUp;
+
+    [ShimField]
+    public bool preventLookDown;
+
+    [ShimField]
+    public bool maxPriority;
 
     private void Start()
     {
@@ -33,7 +38,8 @@ internal class CameraLockAreaProxy : MonoBehaviour
         var siblings = transform.parent.gameObject.Children().ToList();
         foreach (var go in siblings)
         {
-            if (go == gameObject) continue;
+            if (go == gameObject)
+                continue;
 
             GameObject triggerObj = new($"{parentName}.Trigger{++i}");
             triggerObj.SetActive(false);

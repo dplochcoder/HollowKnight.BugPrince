@@ -13,10 +13,26 @@ internal class SelectionCorners : MonoBehaviour
 
         var shaker = obj.AddNewChildShaker();
 
-        SelectionCorner.Create(shaker.gameObject, new(-UIConstants.SELECTION_WIDTH / 2, UIConstants.SELECTION_HEIGHT / 2), 0);
-        SelectionCorner.Create(shaker.gameObject, new(-UIConstants.SELECTION_WIDTH / 2, -UIConstants.SELECTION_HEIGHT / 2), 90);
-        SelectionCorner.Create(shaker.gameObject, new(UIConstants.SELECTION_WIDTH / 2, -UIConstants.SELECTION_HEIGHT / 2), 180);
-        SelectionCorner.Create(shaker.gameObject, new(UIConstants.SELECTION_WIDTH / 2, UIConstants.SELECTION_HEIGHT / 2), 270);
+        SelectionCorner.Create(
+            shaker.gameObject,
+            new(-UIConstants.SELECTION_WIDTH / 2, UIConstants.SELECTION_HEIGHT / 2),
+            0
+        );
+        SelectionCorner.Create(
+            shaker.gameObject,
+            new(-UIConstants.SELECTION_WIDTH / 2, -UIConstants.SELECTION_HEIGHT / 2),
+            90
+        );
+        SelectionCorner.Create(
+            shaker.gameObject,
+            new(UIConstants.SELECTION_WIDTH / 2, -UIConstants.SELECTION_HEIGHT / 2),
+            180
+        );
+        SelectionCorner.Create(
+            shaker.gameObject,
+            new(UIConstants.SELECTION_WIDTH / 2, UIConstants.SELECTION_HEIGHT / 2),
+            270
+        );
 
         var corners = obj.AddComponent<SelectionCorners>();
         corners.shaker = shaker;
@@ -33,15 +49,18 @@ internal class SelectionCorners : MonoBehaviour
 
     internal void Shake() => shaker?.Shake();
 
-    internal void FadeOut(float duration) => gameObject.Recursively(go => go.FadeAlpha(0, duration));
+    internal void FadeOut(float duration) =>
+        gameObject.Recursively(go => go.FadeAlpha(0, duration));
 
     private void Update()
     {
         var dist = target - transform.localPosition;
         var move = Time.deltaTime * UIConstants.SELECTION_VELOCITY;
 
-        if (move >= dist.magnitude) transform.localPosition = target;
-        else transform.Translate(move * dist.normalized);
+        if (move >= dist.magnitude)
+            transform.localPosition = target;
+        else
+            transform.Translate(move * dist.normalized);
     }
 }
 
@@ -70,6 +89,9 @@ internal class SelectionCorner : MonoBehaviour
     {
         timer = (timer + Time.deltaTime) % UIConstants.SELECTION_OSCILLATION_TIME;
         var sine = Mathf.Sin(timer * 2 * Mathf.PI / UIConstants.SELECTION_OSCILLATION_TIME);
-        transform.localPosition = new(UIConstants.SELECTION_OSCILLATION_DIST * sine, -UIConstants.SELECTION_OSCILLATION_DIST * sine);
+        transform.localPosition = new(
+            UIConstants.SELECTION_OSCILLATION_DIST * sine,
+            -UIConstants.SELECTION_OSCILLATION_DIST * sine
+        );
     }
 }

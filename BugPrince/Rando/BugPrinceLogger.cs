@@ -7,10 +7,12 @@ internal class BugPrinceLogger : RandoLogger
 {
     public override void Log(LogArguments args)
     {
-        if (!BugPrinceMod.RS.IsEnabled) return;
+        if (!BugPrinceMod.RS.IsEnabled)
+            return;
 
         var ls = RandoInterop.LS;
-        if (ls == null) return;
+        if (ls == null)
+            return;
         LogManager.Write(tw => JsonUtil.Serialize(tw, ls), "BugPrinceSpoiler.json");
     }
 }

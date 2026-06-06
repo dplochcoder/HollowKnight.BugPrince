@@ -12,7 +12,8 @@ public static class DataUpdater
         UpdateJson(CostGroup.GetProducers(), root, "cost_groups");
 
         var locations = Locations.GetLocations();
-        foreach (var e in locations) e.Value.Update(e.Key);
+        foreach (var e in locations)
+            e.Value.Update(e.Key);
         UpdateJson(Locations.GetLocations(), root, "locations");
 
         UpdateJson(Transitions.GetTransitions(), root, "transitions");
@@ -25,19 +26,26 @@ public static class DataUpdater
         CopyDlls(root);
     }
 
-    private static void UpdateJson<T>(T obj, string root, string name) where T : class
+    private static void UpdateJson<T>(T obj, string root, string name)
+        where T : class
     {
         var path = $"{root}/BugPrince/Resources/Data/{name}.json";
         JsonUtil.RewriteJsonFile(obj, path);
     }
 
-    private static void CopyDlls(string root) => CopyDll(root, "UnityScriptShims/bin/Debug/net472/BugPrince.dll", "BugPrince/Unity/Assets/Assemblies/BugPrince.dll");
+    private static void CopyDlls(string root) =>
+        CopyDll(
+            root,
+            "UnityScriptShims/bin/Debug/net472/BugPrince.dll",
+            "BugPrince/Unity/Assets/Assemblies/BugPrince.dll"
+        );
 
     private static void CopyDll(string root, string src, string dst)
     {
         var inputDll = Path.Combine(root, src);
         var outputDll = Path.Combine(root, dst);
-        if (File.Exists(outputDll)) File.Delete(outputDll);
+        if (File.Exists(outputDll))
+            File.Delete(outputDll);
         File.Copy(inputDll, outputDll);
     }
 }

@@ -1,10 +1,10 @@
-﻿using BugPrince.Util;
+﻿using System.Collections.Generic;
+using BugPrince.Util;
 using GlobalEnums;
 using ItemChanger.Extensions;
 using Modding.Converters;
 using Newtonsoft.Json;
 using SFCore.Utils;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,8 +12,11 @@ namespace BugPrince.IC.Tags;
 
 internal record ColliderBox
 {
-    [JsonConverter(typeof(Vector2Converter))] public Vector2 p1;
-    [JsonConverter(typeof(Vector2Converter))] public Vector2 p2;
+    [JsonConverter(typeof(Vector2Converter))]
+    public Vector2 p1;
+
+    [JsonConverter(typeof(Vector2Converter))]
+    public Vector2 p2;
     public bool Spikes;
     public bool Terrain;
 
@@ -25,7 +28,8 @@ internal record ColliderBox
         var box = obj.AddComponent<BoxCollider2D>();
         box.size = new(Mathf.Abs(p2.x - p1.x), Mathf.Abs(p2.y - p1.y));
 
-        if (Terrain) obj.layer = (int)PhysLayers.TERRAIN;
+        if (Terrain)
+            obj.layer = (int)PhysLayers.TERRAIN;
         else
         {
             box.isTrigger = true;
@@ -34,11 +38,14 @@ internal record ColliderBox
             damage.damageDealt = 1;
             damage.hazardType = 2;
 
-            if (!Spikes) obj.AddComponent<NonBouncer>();
+            if (!Spikes)
+                obj.AddComponent<NonBouncer>();
             else
             {
                 var tink = obj.AddComponent<TinkEffect>();
-                tink.blockEffect = BugPrincePreloader.Instance.Goam!.GetComponent<TinkEffect>().blockEffect;
+                tink.blockEffect = BugPrincePreloader
+                    .Instance.Goam!.GetComponent<TinkEffect>()
+                    .blockEffect;
                 tink.SetAttr("boxCollider", box);
                 tink.useNailPosition = true;
             }
@@ -60,9 +67,15 @@ internal class WindowBreakTag : SceneModifierTag
     public float PaneY2;
     public bool Left;
     public List<ColliderBox> HazardBoxes = [];
-    [JsonConverter(typeof(Vector2Converter))] public Vector2 HazardRespawnTriggerPos;
-    [JsonConverter(typeof(Vector2Converter))] public Vector2 HazardRespawnTriggerSize;
-    [JsonConverter(typeof(Vector2Converter))] public Vector2 HazardRespawnMarkerPos;
+
+    [JsonConverter(typeof(Vector2Converter))]
+    public Vector2 HazardRespawnTriggerPos;
+
+    [JsonConverter(typeof(Vector2Converter))]
+    public Vector2 HazardRespawnTriggerSize;
+
+    [JsonConverter(typeof(Vector2Converter))]
+    public Vector2 HazardRespawnMarkerPos;
     public bool RespawnRight;
 
     public bool Broken;
@@ -77,8 +90,10 @@ internal class WindowBreakTag : SceneModifierTag
         var terrain = scene.FindGameObject(TerrainPath)!;
         var window = scene.FindGameObject(WindowPath)!;
 
-        if (Broken) BreakWindow(terrain, window, true);
-        else EditWindow(terrain, window);
+        if (Broken)
+            BreakWindow(terrain, window, true);
+        else
+            EditWindow(terrain, window);
     }
 
     private static readonly EmbeddedSprite crackedWindow = new("Game.cracked_window");
@@ -90,10 +105,7 @@ internal class WindowBreakTag : SceneModifierTag
         var marker = markerObj.AddComponent<HazardRespawnMarker>();
         marker.respawnFacingRight = RespawnRight;
 
-        GameObject triggerObj = new("Trigger")
-        {
-            layer = (int)PhysLayers.HERO_DETECTOR
-        };
+        GameObject triggerObj = new("Trigger") { layer = (int)PhysLayers.HERO_DETECTOR };
         triggerObj.transform.position = HazardRespawnTriggerPos;
         var box = triggerObj.AddComponent<BoxCollider2D>();
         box.size = HazardRespawnTriggerSize;
@@ -104,12 +116,10 @@ internal class WindowBreakTag : SceneModifierTag
 
     private void EditWindow(GameObject terrain, GameObject window)
     {
-        window.FindChild("ruin_layered_0055_w")!.GetComponent<SpriteRenderer>().sprite = crackedWindow.Value;
+        window.FindChild("ruin_layered_0055_w")!.GetComponent<SpriteRenderer>().sprite =
+            crackedWindow.Value;
 
-        GameObject detector = new("BreakDetector")
-        {
-            layer = (int)PhysLayers.INTERACTIVE_OBJECT
-        };
+        GameObject detector = new("BreakDetector") { layer = (int)PhysLayers.INTERACTIVE_OBJECT };
         detector.transform.position = new(PaneX, (PaneY1 + PaneY2) / 2);
         detector.AddComponent<NonBouncer>();
 
@@ -130,10 +140,12 @@ internal class WindowBreakTag : SceneModifierTag
                 EmbeddedSprite clippedSprite = new(ClippedDressingSpriteName);
                 child.gameObject.GetComponent<SpriteRenderer>().sprite = clippedSprite.Value;
             }
-            else child.gameObject.SetActive(false);
+            else
+                child.gameObject.SetActive(false);
         }
 
-        if (immediate) return;
+        if (immediate)
+            return;
         Broken = true;
 
         window.PlaySoundEffect(BugPrincePreloader.Instance.QuakeFloorGlassShatterAudio);
@@ -143,10 +155,14 @@ internal class WindowBreakTag : SceneModifierTag
         {
             var speed = Random.Range(15f, 25f);
             var angle = Random.Range(20f, 50f);
-            if (Left) angle = 180 - angle;
+            if (Left)
+                angle = 180 - angle;
 
             var velocity = Quaternion.Euler(0, 0, angle) * new Vector3(speed, 0, 0);
-            GameObjectUtil.FlingGlassDebris(Vector3.Lerp(new(PaneX, PaneY1), new(PaneX, PaneY2), Random.Range(0f, 1f)), velocity);
+            GameObjectUtil.FlingGlassDebris(
+                Vector3.Lerp(new(PaneX, PaneY1), new(PaneX, PaneY2), Random.Range(0f, 1f)),
+                velocity
+            );
         }
     }
 }

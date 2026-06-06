@@ -1,13 +1,13 @@
-﻿using BugPrince.Util;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using BugPrince.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Locations;
 using PurenailCore.SystemUtil;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,7 +17,8 @@ internal class CrystallizedMoundChallengeLocation : ContainerLocation
 {
     protected override void OnLoad() => Events.AddSceneChangeEdit(UnsafeSceneName, ModifyScene);
 
-    protected override void OnUnload() => Events.RemoveSceneChangeEdit(UnsafeSceneName, ModifyScene);
+    protected override void OnUnload() =>
+        Events.RemoveSceneChangeEdit(UnsafeSceneName, ModifyScene);
 
     private void ModifyScene(Scene scene)
     {
@@ -31,11 +32,12 @@ internal class CrystallizedMoundChallengeLocation : ContainerLocation
 internal class LanternControl : MonoBehaviour
 {
     private static readonly Vector3 LANTERN_POSITION = new(6.8f, 11.1f, 5.6f);
-    private static readonly List<Vector2> SHINY_POSITIONS = [
+    private static readonly List<Vector2> SHINY_POSITIONS =
+    [
         new(104.8f, 10.7f),
         new(93.3f, 4.8f),
         new(79.8f, 3.4f),
-        new(86.3f, 17.2f)
+        new(86.3f, 17.2f),
     ];
 
     internal ContainerLocation? Location;
@@ -45,7 +47,8 @@ internal class LanternControl : MonoBehaviour
         var lanternClone = Instantiate(BugPrincePreloader.Instance.NightmareLantern!);
 
         lanternClone.transform.position = LANTERN_POSITION;
-        foreach (var child in lanternClone.Children()) child.SetActive(false);
+        foreach (var child in lanternClone.Children())
+            child.SetActive(false);
         lanternClone.SetActive(true);
 
         var bigLantern = lanternClone.FindChild("big_lantern")!;
@@ -58,7 +61,10 @@ internal class LanternControl : MonoBehaviour
         hitState.RemoveTransitionsTo("Spark");
         hitState.AddLastAction(new Lambda(OnHit));
 
-        lightSound = (fsm.GetState("Spark").GetActionsOfType<AudioPlayerOneShotSingle>()[1].audioClip.Value as AudioClip)!;
+        lightSound = (
+            fsm.GetState("Spark").GetActionsOfType<AudioPlayerOneShotSingle>()[1].audioClip.Value
+            as AudioClip
+        )!;
         sharpFlash = lanternClone.FindChild("Sharp Flash")!;
         flamePillar = lanternClone.FindChild("Flame Pillar")!;
 
@@ -70,7 +76,8 @@ internal class LanternControl : MonoBehaviour
 
         var firstLightParent = lanternClone.FindChild("Lantern First Light")!;
         var firstLightObj = firstLightParent.FindChild("particle_flame (1)")!;
-        foreach (var child in firstLightParent.Children()) child.SetActive(false);
+        foreach (var child in firstLightParent.Children())
+            child.SetActive(false);
         firstLightObj.SetActive(true);
         firstLightParent.SetActive(true);
         firstLight = firstLightObj.GetComponent<ParticleSystem>();
@@ -87,7 +94,9 @@ internal class LanternControl : MonoBehaviour
         Deactivate(grimmFlameChildren, true);
 
         var finalFlamesParent = brazier.FindChild("Final Flames")!;
-        finalFlames = finalFlamesParent.FindChild("particle_flame (1)")!.GetComponent<ParticleSystem>();
+        finalFlames = finalFlamesParent
+            .FindChild("particle_flame (1)")!
+            .GetComponent<ParticleSystem>();
         finalFlames.gameObject.SetActive(true);
         finalFlamesParent.SetActive(true);
         Deactivate([finalFlames.gameObject], true);
@@ -96,12 +105,24 @@ internal class LanternControl : MonoBehaviour
         dreamWalls.Add(SpawnDreamWall(new(43.5f, 49f), false));
 
         platforms = [.. FindObjectsOfType<FlipPlatform>().Select(p => p.gameObject)];
-        enemies = [.. FindObjectsOfType<HealthManager>().Where(hm => hm.name.Contains("Crystal Flyer") || hm.name.Contains("Crawler") || hm.name.Contains("Roller"))];
-        shinies = [.. SHINY_POSITIONS.Select(p => {
-            var obj = GameObjectUtil.MakeShinyDecorator();
-            obj.transform.position = p;
-            return obj;
-        })];
+        enemies =
+        [
+            .. FindObjectsOfType<HealthManager>()
+                .Where(hm =>
+                    hm.name.Contains("Crystal Flyer")
+                    || hm.name.Contains("Crawler")
+                    || hm.name.Contains("Roller")
+                ),
+        ];
+        shinies =
+        [
+            .. SHINY_POSITIONS.Select(p =>
+            {
+                var obj = GameObjectUtil.MakeShinyDecorator();
+                obj.transform.position = p;
+                return obj;
+            }),
+        ];
     }
 
     private AudioClip? lightSound;
@@ -132,7 +153,8 @@ internal class LanternControl : MonoBehaviour
         flamePillar?.SetActive(true);
         finalFlames?.Play();
         Activate(dreamParticles);
-        if (!complete) dreamWalls.ForEach(w => w.SendEvent("DREAM GATE CLOSE"));
+        if (!complete)
+            dreamWalls.ForEach(w => w.SendEvent("DREAM GATE CLOSE"));
         gameObject.PlaySoundEffect(lightSound!);
         platforms.ForEach(p => p.SetActive(false));
         enemies.Where(hm => hm.hp > 0).ForEach(hm => hm.gameObject.SetActive(false));
@@ -146,7 +168,8 @@ internal class LanternControl : MonoBehaviour
             Activate(grimmFlameChildren);
             mainAudioLoop?.SetActive(true);
             firstLight?.Play();
-        };
+        }
+        ;
         StartCoroutine(Animate());
     }
 
@@ -174,7 +197,10 @@ internal class LanternControl : MonoBehaviour
         if (hitProgress >= 2.9f)
         {
             lit = !lit;
-            if (lit) Light(); else Extinguish();
+            if (lit)
+                Light();
+            else
+                Extinguish();
             hitProgress = 0;
         }
     }
@@ -191,10 +217,13 @@ internal class LanternControl : MonoBehaviour
     private void Update()
     {
         sinceLastHit += Time.deltaTime;
-        if (sinceLastHit > 1) hitProgress -= Time.deltaTime;
-        if (hitProgress < 0) hitProgress = 0;
+        if (sinceLastHit > 1)
+            hitProgress -= Time.deltaTime;
+        if (hitProgress < 0)
+            hitProgress = 0;
 
-        if (complete) return;
+        if (complete)
+            return;
 
         var kPos = HeroController.instance.transform.position;
         if (lit && kPos.x >= X1 && kPos.x <= X2 && kPos.y >= Y1 && kPos.y <= Y2)
@@ -208,15 +237,18 @@ internal class LanternControl : MonoBehaviour
                 complete = true;
             }
         }
-        else victoryTimer = 0;
+        else
+            victoryTimer = 0;
     }
 
     private static void Activate(List<GameObject> objects)
     {
         foreach (var obj in objects)
         {
-            if (obj.GetComponent<ParticleSystem>() is ParticleSystem sys) sys.Play();
-            else obj.SetActive(true);
+            if (obj.GetComponent<ParticleSystem>() is ParticleSystem sys)
+                sys.Play();
+            else
+                obj.SetActive(true);
         }
     }
 
@@ -224,8 +256,15 @@ internal class LanternControl : MonoBehaviour
     {
         foreach (var obj in objects)
         {
-            if (obj.GetComponent<ParticleSystem>() is ParticleSystem sys) sys.Stop(true, hard ? ParticleSystemStopBehavior.StopEmittingAndClear : ParticleSystemStopBehavior.StopEmitting);
-            else obj.SetActive(false);
+            if (obj.GetComponent<ParticleSystem>() is ParticleSystem sys)
+                sys.Stop(
+                    true,
+                    hard
+                        ? ParticleSystemStopBehavior.StopEmittingAndClear
+                        : ParticleSystemStopBehavior.StopEmitting
+                );
+            else
+                obj.SetActive(false);
         }
     }
 }
