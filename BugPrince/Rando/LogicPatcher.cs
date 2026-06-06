@@ -26,17 +26,14 @@ internal static class LogicPatcher
 
         RandoInterop.LS = new();
 
-        if (BugPrinceMod.RS.EnableTransitionChoices)
+        lmb.AddItem(DiceTotemItem.LogicItem());
+        lmb.AddItem(PushPinItem.LogicItem());
+        lmb.AddItem(CoinItem.LogicItem());
+        lmb.AddItem(GemItem.LogicItem());
+        if (BugPrinceMod.RS.EnableTransitionChoices && BugPrinceMod.RS.AreCostsEnabled)
         {
-            lmb.AddItem(DiceTotemItem.LogicItem());
-            lmb.AddItem(PushPinItem.LogicItem());
-            if (BugPrinceMod.RS.AreCostsEnabled)
-            {
-                lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
-                lmb.AddCostTypeTerms();
-                lmb.AddItem(CoinItem.LogicItem());
-                lmb.AddItem(GemItem.LogicItem());
-            }
+            lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
+            lmb.AddCostTypeTerms();
         }
 
         foreach (var transition in Transitions.GetTransitions())
