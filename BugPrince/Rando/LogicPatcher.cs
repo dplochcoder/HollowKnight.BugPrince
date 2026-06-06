@@ -30,11 +30,9 @@ internal static class LogicPatcher
         lmb.AddItem(PushPinItem.LogicItem());
         lmb.AddItem(CoinItem.LogicItem());
         lmb.AddItem(GemItem.LogicItem());
+        lmb.AddCostTypeTerms();
         if (BugPrinceMod.RS.EnableTransitionChoices && BugPrinceMod.RS.AreCostsEnabled)
-        {
             lmb.VariableResolver = new BugPrinceVariableResolver(lmb.VariableResolver);
-            lmb.AddCostTypeTerms();
-        }
 
         foreach (var transition in Transitions.GetTransitions())
         {
