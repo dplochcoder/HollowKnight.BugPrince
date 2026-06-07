@@ -53463,9 +53463,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 627370492}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -394377506, guid: 5d178a64d3a248a4498d12948ce537dd, type: 3}
+  m_Script: {fileID: 48811052, guid: f2b1c8022f32ee74aa096b8aa52bfc68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blurSize: 53.7
 --- !u!23 &627370495
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -53624,7 +53625,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_LocalPosition.x
@@ -53667,6 +53668,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Gate
+      value: 
+      objectReference: {fileID: 645726739}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Machine
+      value: 
+      objectReference: {fileID: 645726738}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: TollCost
       value: 1500
       objectReference: {fileID: 0}
@@ -53691,6 +53700,16 @@ PrefabInstance:
 --- !u!4 &645726737 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 645726736}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &645726738 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 731829760101493571, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 645726736}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &645726739 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3106935480272894238, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
   m_PrefabInstance: {fileID: 645726736}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &650394629
@@ -60194,7 +60213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_LocalPosition.x
@@ -60237,6 +60256,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Gate
+      value: 
+      objectReference: {fileID: 986870458}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Machine
+      value: 
+      objectReference: {fileID: 986870457}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: TollCost
       value: 2000
       objectReference: {fileID: 0}
@@ -60261,6 +60288,16 @@ PrefabInstance:
 --- !u!4 &986870456 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 986870455}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &986870457 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 731829760101493571, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 986870455}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &986870458 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3106935480272894238, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
   m_PrefabInstance: {fileID: 986870455}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &989410416
@@ -70744,7 +70781,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_LocalPosition.x
@@ -70787,6 +70824,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Gate
+      value: 
+      objectReference: {fileID: 1578341251}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Machine
+      value: 
+      objectReference: {fileID: 1578341250}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: TollCost
       value: 1000
       objectReference: {fileID: 0}
@@ -70811,6 +70856,16 @@ PrefabInstance:
 --- !u!4 &1578341249 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 1578341248}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1578341250 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 731829760101493571, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 1578341248}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1578341251 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3106935480272894238, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
   m_PrefabInstance: {fileID: 1578341248}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1580732531
@@ -79015,7 +79070,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: m_LocalPosition.x
@@ -79058,6 +79113,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Gate
+      value: 
+      objectReference: {fileID: 2006831575}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+      propertyPath: Machine
+      value: 
+      objectReference: {fileID: 2006831574}
+    - target: {fileID: 2337140786860413440, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
       propertyPath: TollCost
       value: 500
       objectReference: {fileID: 0}
@@ -79082,6 +79145,16 @@ PrefabInstance:
 --- !u!4 &2006831573 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1511779620562197555, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 2006831572}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2006831574 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 731829760101493571, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
+  m_PrefabInstance: {fileID: 2006831572}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2006831575 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3106935480272894238, guid: 9f03a7248c32c4743b87a830c6af9501, type: 3}
   m_PrefabInstance: {fileID: 2006831572}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2008250155
