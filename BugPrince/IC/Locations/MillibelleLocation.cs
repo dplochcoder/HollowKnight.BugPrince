@@ -33,6 +33,7 @@ internal class MillibelleLocation : ExistingContainerLocation
             ("Down", FlingDirection.Down),
         ];
         Wrapped<int> numHits = new(NUM_HITS);
+        HashSet<AbstractItem> spawned = [];
         foreach (var (name, dir) in dirs)
         {
             var dirCopy = dir;
@@ -45,9 +46,13 @@ internal class MillibelleLocation : ExistingContainerLocation
 
                         foreach (var item in Placement.Items)
                         {
-                            if (!item.GiveOrFling(Placement, fsm.gameObject.transform, dirCopy))
+                            if (
+                                !spawned.Contains(item)
+                                && !item.GiveOrFling(Placement, fsm.gameObject.transform, dirCopy)
+                            )
                                 continue;
 
+                            spawned.Add(item);
                             numHits.Value = NUM_HITS;
                             break;
                         }
