@@ -16,3 +16,4 @@ RandoSettingsManager
 Randomizable Levers
 SFCore
 TheRealJournalRando
+ConnectionSettingsRando

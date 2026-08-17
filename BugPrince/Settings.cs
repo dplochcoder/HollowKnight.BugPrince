@@ -39,6 +39,8 @@ internal class LocationSettingAttribute : Attribute
 
 internal class MapShopSettingAttribute : Attribute { }
 
+file class CSRIgnoreAttribute : Attribute { }
+
 public record RandomizationSettings
 {
     public bool EnableTransitionChoices = false;
@@ -51,42 +53,54 @@ public record RandomizationSettings
     [MenuRange(0, 20)]
     public int RefreshCycle = 5;
 
+    internal const int MAX_STARTING_DICE_TOTEMS = 3;
+
     [RelicSetting]
-    [MenuRange(0, 3)]
+    [MenuRange(0, MAX_STARTING_DICE_TOTEMS)]
     [DynamicBound(nameof(TotalDiceTotems), true)]
+    [CSRIgnore]
     public int StartingDiceTotems = 0;
 
+    internal const int MAX_TOTAL_DICE_TOTEMS = 10;
+
     [RelicSetting]
-    [MenuRange(0, 10)]
+    [MenuRange(0, MAX_TOTAL_DICE_TOTEMS)]
     [DynamicBound(nameof(StartingDiceTotems), false)]
+    [CSRIgnore]
     public int TotalDiceTotems = 7;
 
-    [RelicSetting]
-    [MenuRange(0, 2)]
-    [DynamicBound(nameof(TotalPushPins), true)]
-    public int StartingPushPins = 0;
+    internal const int MAX_STARTING_PUSH_PINS = 2;
 
     [RelicSetting]
-    [MenuRange(0, 7)]
+    [MenuRange(0, MAX_STARTING_PUSH_PINS)]
+    [DynamicBound(nameof(TotalPushPins), true)]
+    [CSRIgnore]
+    public int StartingPushPins = 0;
+
+    internal const int MAX_TOTAL_PUSH_PINS = 7;
+
+    [RelicSetting]
+    [MenuRange(0, MAX_TOTAL_PUSH_PINS)]
     [DynamicBound(nameof(StartingPushPins), false)]
+    [CSRIgnore]
     public int TotalPushPins = 5;
 
     public bool EnableCoinsAndGems;
 
     [CostSetting]
-    [MenuRange(0, 5)]
+    [MenuRange(0, 2)]
     public int CoinTolerance = 1;
 
     [CostSetting]
-    [MenuRange(0, 10)]
+    [MenuRange(0, 5)]
     public int CoinDuplicates = 1;
 
     [CostSetting]
-    [MenuRange(0, 5)]
+    [MenuRange(0, 2)]
     public int GemTolerance = 2;
 
     [CostSetting]
-    [MenuRange(0, 10)]
+    [MenuRange(0, 5)]
     public int GemDuplicates = 2;
 
     [LocationSetting(LocationPool.MapShop)]
@@ -94,15 +108,20 @@ public record RandomizationSettings
 
     [MapShopSetting]
     [DynamicBound(nameof(MaximumMaps), true)]
+    [CSRIgnore]
     public int MinimumMaps = 1;
 
     [MapShopSetting]
     [DynamicBound(nameof(MinimumMaps), false)]
     [DynamicBound(nameof(MaximumMapsLimit), true)]
+    [CSRIgnore]
     public int MaximumMaps = 10;
 
+    internal const int MAX_MAP_TOLERANCE = 4;
+
     [MapShopSetting]
-    [MenuRange(0, 10)]
+    [MenuRange(0, MAX_MAP_TOLERANCE)]
+    [CSRIgnore]
     public int MapTolerance = 2;
 
     private int MaximumMapsLimit() => 13 - MapTolerance;
