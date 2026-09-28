@@ -55,7 +55,7 @@ internal class ConnectionMenu
         entryButton = new(connectionsPage, "Bug Prince");
         entryButton.AddHideAndShowEvent(bugPrincePage);
 
-        factory = new(bugPrincePage, BugPrinceMod.GS.RandoSettings);
+        factory = new(bugPrincePage, Settings);
         factory
             .Elements.OfType<MenuItem<bool>>()
             .ForEach(e => e.SelfChanged += _ => UpdateColorsAndVisibility());
@@ -159,6 +159,7 @@ internal class ConnectionMenu
 
     internal void ApplySettings(RandomizationSettings settings)
     {
+        Settings.CopyFrom(settings);
         factory.SetMenuValues(settings);
         UpdateColorsAndVisibility();
     }

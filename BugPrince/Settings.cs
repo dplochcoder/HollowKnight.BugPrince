@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using MenuChanger.Attributes;
 using Newtonsoft.Json;
+using PurenailCore.SystemUtil;
 
 namespace BugPrince;
 
@@ -41,7 +42,7 @@ internal class MapShopSettingAttribute : Attribute { }
 
 file class CSRIgnoreAttribute : Attribute { }
 
-public record RandomizationSettings
+public class RandomizationSettings : Copyable<RandomizationSettings>
 {
     public bool EnableTransitionChoices = false;
 
